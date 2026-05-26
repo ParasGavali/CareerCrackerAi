@@ -117,13 +117,20 @@ export interface CodingProblem {
   testCases: TestCase[];
   hints: string[];
   difficulty: 'easy' | 'medium' | 'hard';
-  category: 'Arrays' | 'Strings' | 'Dynamic Programming' | 'Math' | 'Sorting' | 'Graphs' | 'Trees' | 'Linked Lists' | 'Stack & Queue' | 'Searching';
+  category: 'arrays' | 'strings' | 'dp' | 'math' | 'sorting' | 'graphs' | 'trees' | 'greedy';
   companies: string[];
   tags: string[];
-  starterCode: {
+  starterCode?: {
     language: string;
     code: string;
   }[];
+  solutionTemplates: {
+    c: string;
+    cpp: string;
+    java: string;
+    python: string;
+    javascript: string;
+  };
   totalSubmissions: number;
   acceptedSubmissions: number;
   acceptanceRate?: number;
@@ -144,7 +151,10 @@ export interface CodingSubmission {
   totalTestCases: number;
   output?: string;
   error?: string;
+  errorMessage?: string;
   submittedAt: string;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface CodeRunResult {

@@ -7,6 +7,7 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { analyticsApi } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid,

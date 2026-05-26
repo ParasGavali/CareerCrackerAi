@@ -23,9 +23,10 @@ const sidebarLinks = [
 
 interface SidebarProps {
   className?: string;
+  activePath?: string;
 }
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, activePath }: SidebarProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const [collapsed, setCollapsed] = useState(false);

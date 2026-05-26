@@ -118,7 +118,7 @@ export default function ProblemPlaygroundPage() {
         acceptanceRate: 72.5
       }
     ];
-    return list.find(item => item.slug === pSlug) || list[0];
+    return (list.find(item => item.slug === pSlug) || list[0]) as any as CodingProblem;
   };
 
   // 2. Language Change Handler

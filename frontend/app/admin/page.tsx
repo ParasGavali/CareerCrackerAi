@@ -13,7 +13,7 @@ import type { User, Question } from '@/types';
 import {
   ShieldAlert, Settings, Users, Database,
   FileSpreadsheet, Trash2, Plus, Edit3, Search,
-  CheckCircle, ShieldCheck, XCircle, ArrowRight
+  CheckCircle, ShieldCheck, XCircle, ArrowRight, X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -76,9 +76,9 @@ export default function AdminPage() {
 
   const generateMockAdminData = () => {
     setUsersList([
-      { _id: '101', name: 'Rohan Sharma', email: 'student@careercracker.ai', role: 'student', college: 'Global Engineering College', department: 'Computer Engineering', batch: '2026', totalScore: 780, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-      { _id: '102', name: 'Aarav Mehta', email: 'aarav@iitb.ac.in', role: 'student', college: 'IIT Bombay', department: 'Computer Engineering', batch: '2026', totalScore: 1250, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-      { _id: '103', name: 'System Admin', email: 'admin@careercracker.ai', role: 'admin', college: 'Global Engineering College', department: 'Computer Engineering', batch: '2026', totalScore: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+      { _id: '101', name: 'Rohan Sharma', email: 'student@careercracker.ai', role: 'student', college: 'Global Engineering College', department: 'Computer Engineering', batch: '2026', score: 780, totalScore: 780, testsAttempted: 18, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      { _id: '102', name: 'Aarav Mehta', email: 'aarav@iitb.ac.in', role: 'student', college: 'IIT Bombay', department: 'Computer Engineering', batch: '2026', score: 1250, totalScore: 1250, testsAttempted: 32, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      { _id: '103', name: 'System Admin', email: 'admin@careercracker.ai', role: 'admin', college: 'Global Engineering College', department: 'Computer Engineering', batch: '2026', score: 0, totalScore: 0, testsAttempted: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
     ]);
 
     setQuestionsList([
@@ -89,14 +89,15 @@ export default function AdminPage() {
   };
 
   const handleUpdateRole = async (userId: string, newRole: string) => {
+    const roleCast = newRole as 'student' | 'admin';
     try {
       await adminApi.updateUserRole(userId, newRole);
-      setUsersList(prev => prev.map(u => u._id === userId ? { ...u, role: newRole } : u));
+      setUsersList(prev => prev.map(u => u._id === userId ? { ...u, role: roleCast } : u));
       toast.success('Role updated successfully!');
     } catch (e) {
       console.error(e);
       // Local updates for fallback mode
-      setUsersList(prev => prev.map(u => u._id === userId ? { ...u, role: newRole } : u));
+      setUsersList(prev => prev.map(u => u._id === userId ? { ...u, role: roleCast } : u));
       toast.success('Role updated successfully! (Demo mode)');
     }
   };
@@ -197,7 +198,7 @@ export default function AdminPage() {
   return (
     <ProtectedRoute>
       <div className="flex min-h-screen bg-[#0a0a0f] text-white">
-        <Sidebar activePath="/admin" />
+        <Sidebar />
 
         <div className="flex-1 min-h-screen overflow-y-auto pl-0 lg:pl-64">
           <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
@@ -476,6 +477,7 @@ export default function AdminPage() {
                                 onChange={(e) => {
                                   const text = e.target.value;
                                   setEditingQuestion(prev => {
+                                    if (!prev) return null;
                                     const nextOpts = [...(prev.options || [])];
                                     nextOpts[idx] = { ...nextOpts[idx], text };
                                     return { ...prev, options: nextOpts };
@@ -524,7 +526,7 @@ export default function AdminPage() {
                             <label className="text-slate-400 uppercase tracking-wider text-[9px] block">Category</label>
                             <select
                               value={editingQuestion.category}
-                              onChange={(e) => setEditingQuestion(prev => ({ ...prev, category: e.target.value }))}
+                              onChange={(e) => setEditingQuestion(prev => ({ ...prev, category: e.target.value as any }))}
                               className="w-full bg-slate-900 border border-white/5 rounded-xl px-3 py-2 text-slate-300 focus:outline-none focus:border-purple-500 transition-all cursor-pointer font-bold"
                             >
                               <option value="Quantitative Aptitude">Quantitative</option>

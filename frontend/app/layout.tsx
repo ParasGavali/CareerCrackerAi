@@ -11,6 +11,12 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
+export const viewport = {
+  themeColor: '#7c3aed',
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: 'CareerCracker AI - Ace Your Placement',
   description:
@@ -27,8 +33,6 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_IN',
   },
-  themeColor: '#7c3aed',
-  viewport: 'width=device-width, initial-scale=1',
 };
 
 export default function RootLayout({

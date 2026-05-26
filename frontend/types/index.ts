@@ -10,6 +10,7 @@ export interface User {
   role: 'student' | 'admin';
   profilePicture?: string;
   score: number;
+  totalScore?: number;
   rank?: number;
   testsAttempted: number;
   createdAt: string;

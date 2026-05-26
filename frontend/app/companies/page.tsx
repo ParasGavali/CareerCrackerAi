@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ProtectedRoute } from '@/components/ui/ProtectedRoute';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { cn } from '@/lib/utils';
 import {
   Building2, Sparkles, ChevronRight, Award,
   Terminal, ShieldCheck, Briefcase, Zap

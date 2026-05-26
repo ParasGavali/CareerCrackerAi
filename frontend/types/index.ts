@@ -30,7 +30,8 @@ export interface Question {
   options: QuestionOption[];
   correctOption?: string;
   explanation?: string;
-  category: 'Quantitative Aptitude' | 'Logical Reasoning' | 'Verbal Ability';
+  category: string;
+  shortcutTrick?: string;
   subcategory: string;
   difficulty: 'easy' | 'medium' | 'hard';
   companies: string[];
@@ -51,7 +52,7 @@ export interface Test {
   _id: string;
   title: string;
   description?: string;
-  type: 'company' | 'topic' | 'quick' | 'full';
+  type?: 'company' | 'topic' | 'quick' | 'full';
   company?: string;
   category?: string;
   questions: Question[] | string[];
@@ -62,6 +63,7 @@ export interface Test {
   instructions?: string[];
   isActive: boolean;
   attemptCount: number;
+  tags?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -84,6 +86,8 @@ export interface TestAttempt {
   startedAt: string;
   submittedAt: string;
   status: 'in-progress' | 'completed' | 'abandoned';
+  totalQuestions: number;
+  createdAt: string;
   rank?: number;
   categoryScores?: {
     category: string;
@@ -109,33 +113,34 @@ export interface CodingProblem {
   inputFormat?: string;
   outputFormat?: string;
   constraints?: string;
-  examples: {
+  examples?: {
     input: string;
     output: string;
     explanation?: string;
   }[];
   testCases: TestCase[];
-  hints: string[];
+  hints?: string[];
   difficulty: 'easy' | 'medium' | 'hard';
   category: 'arrays' | 'strings' | 'dp' | 'math' | 'sorting' | 'graphs' | 'trees' | 'greedy';
-  companies: string[];
-  tags: string[];
+  companies?: string[];
+  companyTags?: string[];
+  tags?: string[];
   starterCode?: {
     language: string;
     code: string;
   }[];
-  solutionTemplates: {
-    c: string;
-    cpp: string;
-    java: string;
-    python: string;
-    javascript: string;
+  solutionTemplates?: {
+    c?: string;
+    cpp?: string;
+    java?: string;
+    python?: string;
+    javascript?: string;
   };
-  totalSubmissions: number;
-  acceptedSubmissions: number;
+  totalSubmissions?: number;
+  acceptedSubmissions?: number;
   acceptanceRate?: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CodingSubmission {
@@ -207,14 +212,20 @@ export interface DashboardStats {
 
 export interface LeaderboardEntry {
   rank: number;
-  user: {
+  user?: {
     _id: string;
     name: string;
     college?: string;
     department?: string;
     batch?: string;
   };
-  score: number;
+  _id?: string;
+  userId?: string;
+  avatar?: string;
+  name: string;
+  college?: string;
+  totalScore: number;
+  score?: number;
   testsAttempted: number;
   accuracy: number;
   badge?: string;

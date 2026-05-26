@@ -67,7 +67,7 @@ export default function ProblemPlaygroundPage() {
         const fallback = generateFallbackProblem(slug);
         if (fallback) {
           setProblem(fallback);
-          setCode(fallback.solutionTemplates.javascript || '// Write code here');
+          setCode(fallback.solutionTemplates?.javascript || '// Write code here');
         } else {
           toast.error('Problem not found');
           router.push('/coding');

@@ -62,7 +62,7 @@ function FeatureCard({
   color,
   delay,
 }: {
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>;
   title: string;
   description: string;
   color: string;

@@ -29,7 +29,24 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: [process.env.FRONTEND_URL || 'http://localhost:3000'],
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    
+    const allowed = [
+      'http://localhost:3000',
+      'http://localhost:5000',
+      'http://127.0.0.1:3000'
+    ];
+    
+    const isVercel = origin.endsWith('.vercel.app');
+    const isCustomFrontend = process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL;
+    
+    if (allowed.indexOf(origin) !== -1 || isVercel || isCustomFrontend) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

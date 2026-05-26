@@ -156,22 +156,6 @@ function LoginForm() {
             <p className="text-slate-400">Sign in to continue your preparation journey</p>
           </div>
 
-          {/* Demo credentials notice */}
-          <div className="mb-6 p-4 rounded-xl border border-blue-500/20 bg-blue-500/5">
-            <div className="flex items-start gap-2">
-              <Sparkles size={14} className="text-blue-400 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-blue-300 text-xs font-semibold mb-1">Demo Credentials</p>
-                <p className="text-slate-400 text-xs">
-                  Email: <span className="text-slate-300 font-mono">student@careercracker.ai</span>
-                </p>
-                <p className="text-slate-400 text-xs">
-                  Password: <span className="text-slate-300 font-mono">Student@123</span>
-                </p>
-              </div>
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Email */}
             <div>
@@ -181,7 +165,7 @@ function LoginForm() {
                 <input
                   {...register('email')}
                   type="email"
-                  placeholder="student@careercracker.ai"
+                  placeholder="you@example.com"
                   className="input-field neon-focus pl-10"
                 />
               </div>

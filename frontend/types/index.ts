@@ -303,9 +303,12 @@ export interface RegisterData {
 
 export interface AuthResponse {
   success: boolean;
-  token: string;
-  refreshToken: string;
-  user: User;
+  message?: string;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+    user: User;
+  };
 }
 
 // ==================== FORM TYPES ====================

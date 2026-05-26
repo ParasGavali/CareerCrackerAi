@@ -19,12 +19,16 @@ import { cn } from '@/lib/utils';
 const schema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
-  phone: z.string().min(10, 'Enter a valid phone number').optional().or(z.literal('')),
+  phone: z.string()
+    .regex(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits')
+    .optional()
+    .or(z.literal('')),
   college: z.string().optional(),
   department: z.string().optional(),
   batch: z.string().optional(),
   password: z.string()
     .min(8, 'Password must be at least 8 characters')
+    .regex(/[a-z]/, 'Must contain at least one lowercase letter')
     .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
     .regex(/[0-9]/, 'Must contain at least one number'),
   confirmPassword: z.string(),
@@ -40,9 +44,9 @@ function getPasswordStrength(password: string): { score: number; label: string; 
   let score = 0;
   if (password.length >= 8) score++;
   if (password.length >= 12) score++;
+  if (/[a-z]/.test(password)) score++;
   if (/[A-Z]/.test(password)) score++;
   if (/[0-9]/.test(password)) score++;
-  if (/[^A-Za-z0-9]/.test(password)) score++;
 
   if (score <= 1) return { score, label: 'Very Weak', color: '#ef4444' };
   if (score <= 2) return { score, label: 'Weak', color: '#f59e0b' };
@@ -83,13 +87,15 @@ export default function RegisterPage() {
         department: data.department,
         batch: data.batch,
       });
-      saveTokens(response.data.token, response.data.refreshToken);
+      const { accessToken, refreshToken } = response.data.data;
+      saveTokens(accessToken, refreshToken);
       await login(data.email, data.password);
       toast.success('Account created! Welcome to CareerCracker AI 🚀');
       router.push('/dashboard');
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      toast.error(error?.response?.data?.message || 'Registration failed. Please try again.');
+      const error = err as { response?: { data?: { message?: string; errors?: { field: string; message: string }[] } } };
+      const validationError = error?.response?.data?.errors?.[0]?.message;
+      toast.error(validationError || error?.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

@@ -48,8 +48,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const response = await authApi.login(email, password);
-    const { token, refreshToken, user: loggedInUser } = response.data;
-    saveTokens(token, refreshToken);
+    const { accessToken, refreshToken, user: loggedInUser } = response.data.data;
+    saveTokens(accessToken, refreshToken);
     setUser(loggedInUser);
   };
 

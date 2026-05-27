@@ -152,9 +152,9 @@ export const testsApi = {
   startTest: (id: string) =>
     api.post<ApiResponse<{ attemptId: string; questions: Question[]; duration: number }>>(`/tests/${id}/start`),
 
-  submitTest: (attemptId: string, answers: Record<string, string>, timeTaken: number, tabSwitches: number) =>
-    api.post<ApiResponse<TestAttempt>>(`/tests/attempts/${attemptId}/submit`, {
-      answers, timeTaken, tabSwitches
+  submitTest: (testId: string, attemptId: string, answers: { questionId: string; selectedOption: string; timeTaken?: number }[], timeTaken: number) =>
+    api.post<ApiResponse<TestAttempt>>(`/tests/${testId}/submit`, {
+      attemptId, answers, timeTaken
     }),
 
   getMyAttempts: (params?: { page?: number; limit?: number }) =>
@@ -163,8 +163,8 @@ export const testsApi = {
   getAttempt: (attemptId: string) =>
     api.get<ApiResponse<TestAttempt>>(`/tests/attempts/${attemptId}`),
 
-  logTabSwitch: (attemptId: string) =>
-    api.post(`/tests/attempts/${attemptId}/tab-switch`),
+  logTabSwitch: (testId: string, attemptId: string) =>
+    api.post(`/tests/${testId}/tab-switch`, { attemptId }),
 };
 
 // ==================== CODING APIs ====================

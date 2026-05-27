@@ -115,18 +115,18 @@ export default function CompanyHubPage() {
 
   return (
     <ProtectedRoute>
-      <div className="flex min-h-screen bg-[#0a0a0f] text-white">
+      <div className="flex min-h-screen bg-surface text-on-surface font-body-md">
         <Sidebar activePath="/companies" />
 
         <div className="flex-1 min-h-screen overflow-y-auto pl-0 lg:pl-64">
-          <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
+          <div className="max-w-6xl mx-auto px-margin-mobile md:px-margin-desktop py-md">
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-white flex items-center gap-2.5">
-                <Briefcase className="text-purple-500" />
+              <h1 className="font-headline-lg text-headline-lg text-on-surface flex items-center gap-xs">
+                <Briefcase className="text-primary" />
                 Company Placement Hub
               </h1>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="font-body-md text-body-md text-on-surface-variant mt-xs">
                 Access curated company-specific assessment strategies, historical test patterns, and customized mock tests.
               </p>
             </div>
@@ -137,30 +137,30 @@ export default function CompanyHubPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
               onClick={() => router.push('/companies/tcs')}
-              className="glass-card p-6 md:p-8 border-purple-500/20 bg-gradient-to-r from-purple-900/10 via-[#0a0a0f] to-blue-900/10 mb-8 relative overflow-hidden group cursor-pointer hover:border-purple-500/40 transition-all"
+              className="glass-card p-6 md:p-8 border border-outline-variant/30 bg-gradient-to-r from-secondary/5 via-surface-container-lowest to-primary/5 mb-8 relative overflow-hidden group cursor-pointer hover:border-primary/40 transition-all ambient-shadow"
             >
               {/* Glow spots */}
-              <div className="absolute top-[-50px] left-[-50px] w-48 h-48 bg-purple-600/10 rounded-full blur-[80px]" />
-              <div className="absolute bottom-[-50px] right-[-50px] w-48 h-48 bg-blue-600/10 rounded-full blur-[80px]" />
+              <div className="absolute top-[-50px] left-[-50px] w-48 h-48 bg-primary/5 rounded-full blur-[80px]" />
+              <div className="absolute bottom-[-50px] right-[-50px] w-48 h-48 bg-secondary/5 rounded-full blur-[80px]" />
 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                 <div className="space-y-3 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="bg-purple-500/20 border border-purple-500/30 text-purple-300 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md flex items-center gap-1">
+                    <span className="bg-secondary/10 border border-secondary/20 text-secondary text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md flex items-center gap-1">
                       <Sparkles size={11} /> FEATURED ASSESSMENT
                     </span>
-                    <span className="bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-md">
+                    <span className="bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded-md">
                       Ninja & Digital 2026
                     </span>
                   </div>
-                  <h2 className="text-xl md:text-2xl font-black text-white leading-tight">
+                  <h2 className="text-xl md:text-2xl font-black text-on-surface leading-tight">
                     TCS National Qualifier Test (NQT) Prep Kit
                   </h2>
-                  <p className="text-slate-400 text-xs md:text-sm leading-relaxed max-w-2xl">
+                  <p className="text-on-surface-variant text-xs md:text-sm leading-relaxed max-w-2xl">
                     Prepare for the massive campus recruitment drive of Tata Consultancy Services. Complete blueprint breakdown including Numerical Ability (Aptitude), Reasoning puzzles, and Advanced Coding templates.
                   </p>
                   
-                  <div className="flex flex-wrap gap-4 text-xs text-slate-500 pt-2">
+                  <div className="flex flex-wrap gap-4 text-xs text-outline pt-2">
                     <span className="flex items-center gap-1"><Terminal size={13} /> 15 Aptitude blueprints</span>
                     <span>•</span>
                     <span className="flex items-center gap-1"><ShieldCheck size={13} /> 3 Complete Mock Exams</span>
@@ -175,8 +175,8 @@ export default function CompanyHubPage() {
             </motion.div>
 
             {/* Title section */}
-            <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-              <Building2 size={18} className="text-purple-500" />
+            <h2 className="text-lg font-bold text-on-surface mb-6 flex items-center gap-2">
+              <Building2 size={18} className="text-primary" />
               Target Recruitment Portals
             </h2>
 
@@ -190,44 +190,44 @@ export default function CompanyHubPage() {
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                   onClick={() => router.push(`/companies/${company.slug}`)}
                   className={cn(
-                    'glass-card p-6 border-white/5 cursor-pointer relative overflow-hidden group hover:bg-slate-900/10 hover:border-purple-500/20 transition-all'
+                    'glass-card p-6 border border-outline-variant/30 cursor-pointer relative overflow-hidden group hover:bg-surface-container-low hover:border-primary/30 transition-all ambient-shadow'
                   )}
                 >
                   {/* Hover background color glow */}
-                  <div className={cn('absolute -top-12 -right-12 w-28 h-28 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none bg-gradient-to-br', company.glowColor)} />
+                  <div className="absolute -top-12 -right-12 w-28 h-28 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none bg-gradient-to-br from-primary/10 to-secondary/10" />
 
                   {/* Logo Text Styled Premium */}
                   <div className="flex justify-between items-start mb-4">
-                    <div className="h-10 px-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-black tracking-tight text-white text-base">
+                    <div className="h-10 px-3 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center font-black tracking-tight text-primary text-base">
                       {company.name}
                     </div>
-                    <span className="text-[9px] font-black uppercase bg-white/5 border border-white/10 text-slate-500 px-2 py-0.5 rounded">
+                    <span className="text-[9px] font-black uppercase bg-surface-container-high border border-outline-variant text-on-surface-variant px-2 py-0.5 rounded">
                       Diff: {company.difficulty}
                     </span>
                   </div>
 
                   {/* Tagline */}
-                  <h4 className="text-sm font-bold text-white group-hover:text-purple-400 transition-colors mb-1.5 leading-tight">
+                  <h4 className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors mb-1.5 leading-tight">
                     {company.name} Placement prep
                   </h4>
-                  <p className="text-slate-500 text-[11px] font-medium leading-relaxed mb-6">
+                  <p className="text-on-surface-variant text-[11px] font-medium leading-relaxed mb-6">
                     {company.tagline}
                   </p>
 
                   {/* Info pills */}
-                  <div className="border-t border-white/5 pt-4 space-y-2 text-xs">
-                    <div className="flex items-center justify-between text-slate-500 text-[10px]">
+                  <div className="border-t border-outline-variant/30 pt-4 space-y-2 text-xs">
+                    <div className="flex items-center justify-between text-on-surface-variant text-[10px]">
                       <span>Pattern Style:</span>
-                      <span className="text-slate-300 font-bold">{company.highlightText}</span>
+                      <span className="text-on-surface font-bold">{company.highlightText}</span>
                     </div>
-                    <div className="flex items-center justify-between text-slate-500 text-[10px]">
+                    <div className="flex items-center justify-between text-on-surface-variant text-[10px]">
                       <span>Exam Timing:</span>
-                      <span className="text-slate-300 font-bold">{company.duration}</span>
+                      <span className="text-on-surface font-bold">{company.duration}</span>
                     </div>
                   </div>
 
                   {/* Hover Arrow indicator */}
-                  <div className="mt-5 flex items-center justify-end text-[10px] uppercase tracking-wider font-extrabold text-purple-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
+                  <div className="mt-5 flex items-center justify-end text-[10px] uppercase tracking-wider font-extrabold text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
                     Start Prep
                     <ChevronRight size={12} className="ml-1" />
                   </div>

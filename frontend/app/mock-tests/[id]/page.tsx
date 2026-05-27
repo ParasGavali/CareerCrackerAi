@@ -12,7 +12,7 @@ import type { Question } from '@/types';
 import toast from 'react-hot-toast';
 import {
   AlertTriangle, ShieldAlert, Monitor, CheckCircle,
-  HelpCircle, ChevronLeft, ChevronRight, CornerDownRight, X
+  HelpCircle, ChevronLeft, ChevronRight, CornerDownRight
 } from 'lucide-react';
 
 export default function TakeMockTestPage() {
@@ -132,8 +132,8 @@ export default function TakeMockTestPage() {
       toast.error(`Security Warning: Tab switch / focus loss detected! (${nextCount}/3)`);
 
       // Log tab switch to server
-      if (attemptId && attemptId !== 'demo') {
-        testsApi.logTabSwitch(attemptId).catch(console.error);
+      if (attemptId && !attemptId.includes('demo')) {
+        testsApi.logTabSwitch(testId, attemptId).catch(console.error);
       }
 
       if (nextCount >= 3) {
@@ -144,7 +144,7 @@ export default function TakeMockTestPage() {
 
       return nextCount;
     });
-  }, [loading, isSubmitting, attemptId]);
+  }, [loading, isSubmitting, attemptId, testId]);
 
   useEffect(() => {
     const onVisibilityChange = () => {
@@ -186,10 +186,17 @@ export default function TakeMockTestPage() {
         document.exitFullscreen().catch(console.error);
       }
 
-      const res = await testsApi.submitTest(attemptId, answers, timeTaken, tabSwitches);
+      // Map dynamic answers Record<string, string> to backend formatted array
+      const formattedAnswers = Object.entries(answers).map(([qId, val]) => ({
+        questionId: qId,
+        selectedOption: val,
+        timeTaken: 0
+      }));
+
+      await testsApi.submitTest(testId, attemptId, formattedAnswers, timeTaken);
       
       toast.success('Exam submitted successfully!');
-      // Store in session for quick results review
+      
       const quizResult = {
         questions,
         answers,
@@ -250,7 +257,7 @@ export default function TakeMockTestPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
+      <div className="min-h-screen flex items-center justify-center bg-surface">
         <LoadingSpinner size="xl" text="Setting up secure environment..." />
       </div>
     );
@@ -260,19 +267,19 @@ export default function TakeMockTestPage() {
   if (!isFullscreen) {
     return (
       <ProtectedRoute>
-        <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0f] text-white p-4">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="min-h-screen flex flex-col items-center justify-center bg-surface text-on-surface p-4 relative overflow-hidden">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
           
-          <div className="glass-card p-8 max-w-lg w-full text-center relative z-10 border-white/5">
-            <ShieldAlert size={56} className="text-purple-500 mx-auto mb-5 animate-pulse" />
-            <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Secure Placement Assessment</h1>
-            <p className="text-sm text-slate-400 mb-6 leading-relaxed">
-              This is an official placement-style exam with anti-cheat monitoring. To start this exam, you must enter <strong className="text-white">Fullscreen Mode</strong>.
+          <div className="bg-surface-container-lowest p-8 max-w-lg w-full text-center relative z-10 border border-outline-variant/30 rounded-xl ambient-shadow">
+            <ShieldAlert size={56} className="text-primary mx-auto mb-5 animate-pulse" />
+            <h1 className="text-2xl font-black text-on-surface mb-2 tracking-tight">Secure Placement Assessment</h1>
+            <p className="text-sm text-on-surface-variant font-medium mb-6 leading-relaxed">
+              This is an official placement-style exam with anti-cheat monitoring. To start this exam, you must enter <strong className="text-on-surface">Fullscreen Mode</strong>.
             </p>
 
-            <div className="bg-slate-900/60 border border-white/5 rounded-xl p-4 text-left space-y-3 mb-8 text-xs text-slate-400">
-              <h3 className="font-bold text-white flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
-                <Monitor size={14} className="text-purple-400" />
+            <div className="bg-surface border border-outline-variant/30 rounded-xl p-4 text-left space-y-3 mb-8 text-xs text-on-surface-variant font-semibold">
+              <h3 className="font-bold text-on-surface flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
+                <Monitor size={14} className="text-primary" />
                 Assessment Instructions:
               </h3>
               <p>• Navigating away from this tab or minimizing window will trigger a <strong>Security Violation</strong>.</p>
@@ -283,7 +290,7 @@ export default function TakeMockTestPage() {
 
             <button
               onClick={requestFullscreen}
-              className="w-full btn-glow py-3.5 px-6 rounded-xl text-white font-extrabold text-sm tracking-wide cursor-pointer transition-all flex items-center justify-center gap-2"
+              className="w-full btn-glow py-3.5 px-6 rounded-xl text-white font-extrabold text-sm tracking-wide cursor-pointer transition-all flex items-center justify-center gap-2 shadow-sm"
             >
               <Monitor size={16} />
               Launch Secure Fullscreen Test
@@ -302,26 +309,26 @@ export default function TakeMockTestPage() {
     <ProtectedRoute>
       <div
         ref={examContainerRef}
-        className="min-h-screen bg-[#0a0a0f] text-white flex flex-col select-none"
+        className="min-h-screen bg-surface text-on-surface flex flex-col select-none"
         style={{ userSelect: 'none' }}
       >
         {/* Secure Exam Top Bar */}
-        <div className="sticky top-0 z-20 bg-slate-950 border-b border-white/5 px-6 py-4 flex items-center justify-between gap-6">
+        <div className="sticky top-0 z-20 bg-surface-container border-b border-outline-variant/30 px-6 py-4 flex items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-bold text-red-400 animate-pulse">
+            <div className="bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-bold text-red-700 animate-pulse">
               <ShieldAlert size={14} />
               SECURE BROWSER ACTIVE
             </div>
             <div className="hidden md:block">
-              <h2 className="text-sm font-bold text-white leading-tight">Mock Placement Assessment</h2>
-              <p className="text-[10px] text-slate-500 font-semibold mt-0.5">Attempt ID: {attemptId.slice(0, 15)}...</p>
+              <h2 className="text-sm font-bold text-on-surface leading-tight">Mock Placement Assessment</h2>
+              <p className="text-[10px] text-on-surface-variant font-semibold mt-0.5">Attempt ID: {attemptId.slice(0, 15)}...</p>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
             {/* Timer */}
             <div className="flex items-center gap-2.5">
-              <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider hidden sm:inline">Time Remaining:</span>
+              <span className="text-xs text-on-surface-variant font-semibold uppercase tracking-wider hidden sm:inline">Time Remaining:</span>
               <Timer
                 duration={duration * 60}
                 onExpire={() => handleFinalSubmit(false)}
@@ -333,7 +340,7 @@ export default function TakeMockTestPage() {
 
             <button
               onClick={() => setShowSubmitModal(true)}
-              className="btn-glow px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded-xl text-white cursor-pointer"
+              className="btn-glow px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded-xl text-white cursor-pointer shadow-sm"
             >
               Submit Exam
             </button>
@@ -345,19 +352,19 @@ export default function TakeMockTestPage() {
           {/* Left: Question Area */}
           <div className="flex-1 overflow-y-auto px-6 py-8">
             <div className="max-w-3xl mx-auto">
-              <div className="glass-card p-6 border-white/5 mb-6 relative overflow-hidden">
+              <div className="bg-surface-container-lowest p-6 border border-outline-variant/30 rounded-xl mb-6 relative overflow-hidden ambient-shadow">
                 {/* Question Info Header */}
-                <div className="flex items-center justify-between border-b border-white/5 pb-3.5 mb-5 text-xs">
-                  <span className="font-extrabold text-purple-400 uppercase tracking-widest">
+                <div className="flex items-center justify-between border-b border-outline-variant/30 pb-3.5 mb-5 text-xs">
+                  <span className="font-extrabold text-primary uppercase tracking-widest">
                     Question {currentIndex + 1} of {totalQuestions}
                   </span>
-                  <span className="bg-white/5 border border-white/10 px-2.5 py-1 rounded text-[10px] font-bold text-slate-400 uppercase">
+                  <span className="bg-surface border border-outline-variant/30 px-2.5 py-1 rounded text-[10px] font-bold text-on-surface-variant uppercase">
                     {currentQuestion?.category || 'General'}
                   </span>
                 </div>
 
                 {/* Question Text */}
-                <h3 className="text-white font-semibold text-lg leading-relaxed mb-6">
+                <h3 className="text-on-surface font-semibold text-lg leading-relaxed mb-6">
                   {currentQuestion?.questionText}
                 </h3>
 
@@ -372,18 +379,18 @@ export default function TakeMockTestPage() {
                         key={opt.id || optLetter}
                         onClick={() => handleSelectOption(optLetter.toLowerCase())}
                         className={cn(
-                          'w-full text-left p-4 rounded-xl border text-sm flex items-center gap-3.5 transition-all cursor-pointer',
+                          'w-full text-left p-4 rounded-xl border text-sm flex items-center gap-3.5 transition-all cursor-pointer font-medium',
                           isSelected
-                            ? 'bg-purple-600/10 border-purple-500/50 text-purple-300 font-bold'
-                            : 'bg-slate-900/40 border-white/5 text-slate-400 hover:border-white/10 hover:text-slate-300'
+                            ? 'bg-primary/10 border-primary text-primary font-bold shadow-sm'
+                            : 'bg-surface border border-outline-variant/30 text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-low/50'
                         )}
                       >
                         <span
                           className={cn(
-                            'w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center border transition-all',
+                            'w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center border transition-all shrink-0',
                             isSelected
-                              ? 'bg-purple-600 border-purple-500 text-white'
-                              : 'bg-slate-800 border-white/5 text-slate-500'
+                              ? 'bg-primary border-primary text-on-primary'
+                              : 'bg-surface-container border border-outline-variant/30 text-on-surface-variant'
                           )}
                         >
                           {optLetter}
@@ -401,7 +408,7 @@ export default function TakeMockTestPage() {
                   <button
                     onClick={() => setCurrentIndex(p => Math.max(0, p - 1))}
                     disabled={currentIndex === 0}
-                    className="flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl border border-white/5 text-slate-400 text-xs font-bold uppercase tracking-wider hover:border-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                    className="flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl border border-outline-variant text-on-surface-variant text-xs font-bold uppercase tracking-wider hover:border-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
                   >
                     <ChevronLeft size={16} />
                     Previous
@@ -411,15 +418,15 @@ export default function TakeMockTestPage() {
                     className={cn(
                       'px-4.5 py-2.5 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all cursor-pointer',
                       flagged.has(currentQuestion?._id)
-                        ? 'border-orange-500/50 bg-orange-500/10 text-orange-400'
-                        : 'border-white/5 text-slate-400 hover:border-orange-500/20 hover:text-orange-400'
+                        ? 'border-amber-500/50 bg-amber-500/10 text-amber-700 shadow-sm'
+                        : 'border-outline-variant text-on-surface-variant hover:border-amber-500/20 hover:text-amber-600'
                     )}
                   >
                     {flagged.has(currentQuestion?._id) ? 'Bookmarked' : 'Bookmark'}
                   </button>
                   <button
                     onClick={handleClearAnswer}
-                    className="px-4 py-2.5 rounded-xl text-slate-500 text-xs font-bold uppercase tracking-wider hover:text-slate-400 transition-all cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl text-on-surface-variant text-xs font-bold uppercase tracking-wider hover:text-on-surface transition-all cursor-pointer"
                   >
                     Clear Response
                   </button>
@@ -429,7 +436,7 @@ export default function TakeMockTestPage() {
                   {currentIndex < totalQuestions - 1 ? (
                     <button
                       onClick={() => setCurrentIndex(p => Math.min(totalQuestions - 1, p + 1))}
-                      className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold uppercase tracking-wider hover:bg-purple-500/20 transition-all cursor-pointer"
+                      className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider hover:bg-primary/25 transition-all cursor-pointer shadow-sm"
                     >
                       Next
                       <ChevronRight size={16} />
@@ -437,7 +444,7 @@ export default function TakeMockTestPage() {
                   ) : (
                     <button
                       onClick={() => setShowSubmitModal(true)}
-                      className="btn-glow px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider text-white cursor-pointer"
+                      className="btn-glow px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider text-white cursor-pointer shadow-sm"
                     >
                       Finish Exam
                     </button>
@@ -448,10 +455,10 @@ export default function TakeMockTestPage() {
           </div>
 
           {/* Right Panel: Navigator Panel */}
-          <div className="w-80 border-l border-white/5 bg-slate-950 px-6 py-8 flex flex-col justify-between hidden lg:flex select-none">
+          <div className="w-80 border-l border-outline-variant/30 bg-surface-container px-6 py-8 flex flex-col justify-between hidden lg:flex select-none shrink-0">
             <div>
-              <h3 className="font-extrabold text-white text-xs uppercase tracking-wider mb-5 flex items-center gap-2">
-                <CornerDownRight size={14} className="text-purple-400" />
+              <h3 className="font-extrabold text-on-surface text-xs uppercase tracking-wider mb-5 flex items-center gap-2">
+                <CornerDownRight size={14} className="text-primary" />
                 Exam Navigator
               </h3>
 
@@ -467,14 +474,14 @@ export default function TakeMockTestPage() {
                       key={q._id}
                       onClick={() => setCurrentIndex(i)}
                       className={cn(
-                        'w-10 h-10 rounded-lg text-xs font-bold transition-all cursor-pointer',
+                        'w-10 h-10 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-sm',
                         isCurrent
-                          ? 'bg-purple-600 text-white'
+                          ? 'bg-primary text-on-primary'
                           : isFlagged
-                          ? 'bg-orange-500/30 border border-orange-500/50 text-orange-400'
+                          ? 'bg-amber-500/10 border border-amber-500/30 text-amber-700'
                           : isAnswered
-                          ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
-                          : 'bg-slate-900 border border-white/5 text-slate-500 hover:border-purple-500/30'
+                          ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-700'
+                          : 'bg-surface border border-outline-variant/30 text-on-surface-variant hover:border-primary'
                       )}
                     >
                       {i + 1}
@@ -484,29 +491,29 @@ export default function TakeMockTestPage() {
               </div>
 
               {/* Navigator Legend */}
-              <div className="space-y-2 border-t border-white/5 pt-4 text-xs">
+              <div className="space-y-2 border-t border-outline-variant/30 pt-4 text-xs font-semibold">
                 {[
-                  { color: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400', label: `Answered (${answeredCount})` },
-                  { color: 'bg-slate-900 border-white/5 text-slate-500', label: `Unanswered (${totalQuestions - answeredCount})` },
-                  { color: 'bg-orange-500/30 border-orange-500/50 text-orange-400', label: `Bookmarked (${flagged.size})` },
-                  { color: 'bg-purple-600 text-white', label: 'Current Question' }
+                  { color: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700', label: `Answered (${answeredCount})` },
+                  { color: 'bg-surface border border-outline-variant/30 text-on-surface-variant', label: `Unanswered (${totalQuestions - answeredCount})` },
+                  { color: 'bg-amber-500/10 border-amber-500/30 text-amber-700', label: `Bookmarked (${flagged.size})` },
+                  { color: 'bg-primary text-on-primary', label: 'Current Question' }
                 ].map(legend => (
                   <div key={legend.label} className="flex items-center gap-2.5">
                     <div className={cn('w-5 h-5 rounded border shrink-0', legend.color)} />
-                    <span className="text-slate-400 font-medium">{legend.label}</span>
+                    <span className="text-on-surface-variant font-medium">{legend.label}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Diagnostics security tracker */}
-            <div className="bg-slate-900/50 border border-white/5 rounded-xl p-4 space-y-2 text-[10px] text-slate-500">
-              <p className="font-semibold text-slate-400 flex items-center gap-1">
-                <ShieldAlert size={12} className="text-yellow-400" />
+            <div className="bg-surface border border-outline-variant/30 rounded-xl p-4 space-y-2 text-[10px] text-on-surface-variant font-semibold">
+              <p className="font-bold text-on-surface flex items-center gap-1">
+                <ShieldAlert size={12} className="text-amber-600 animate-pulse" />
                 SECURITY LOG
               </p>
-              <p>• Total window blurs: <strong className="text-slate-400">{tabSwitches} / 3 Allowed</strong></p>
-              <p>• Enforced Fullscreen Mode: <strong className="text-emerald-400">Yes</strong></p>
+              <p>• Total window blurs: <strong className="text-on-surface">{tabSwitches} / 3 Allowed</strong></p>
+              <p>• Enforced Fullscreen Mode: <strong className="text-emerald-700">Yes</strong></p>
             </div>
           </div>
         </div>
@@ -519,30 +526,30 @@ export default function TakeMockTestPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
               >
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="glass-card max-w-md w-full p-6 text-center border-red-500/30"
+                  className="bg-surface-container-lowest max-w-md w-full p-6 text-center border border-red-500/30 rounded-2xl ambient-shadow"
                 >
                   <div className="w-16 h-16 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-                    <AlertTriangle size={32} className="text-red-400" />
+                    <AlertTriangle size={32} className="text-red-700" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">Security Warning!</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed mb-6">
+                  <h3 className="text-xl font-black text-on-surface mb-2">Security Warning!</h3>
+                  <p className="text-xs text-on-surface-variant font-semibold leading-relaxed mb-6">
                     A tab-switch or window blur has been detected. This event has been logged on the server.
                     Forced submission will occur if you switch tabs again.
                   </p>
                   
-                  <div className="bg-slate-900 border border-white/5 rounded-xl p-3.5 text-center text-xs text-yellow-400 font-semibold mb-6">
+                  <div className="bg-surface border border-outline-variant rounded-xl p-3.5 text-center text-xs text-amber-600 font-bold mb-6">
                     🚨 Warning count: {tabSwitches} / 3
                   </div>
 
                   <button
                     onClick={() => { setShowWarningModal(false); requestFullscreen(); }}
-                    className="w-full btn-glow py-3 rounded-xl text-white text-xs font-bold uppercase tracking-wider cursor-pointer"
+                    className="w-full btn-glow py-3 rounded-xl text-white text-xs font-bold uppercase tracking-wider cursor-pointer shadow-sm"
                   >
                     Resume Secure Exam
                   </button>
@@ -560,35 +567,35 @@ export default function TakeMockTestPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/70 z-50"
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
                 onClick={() => setShowSubmitModal(false)}
               />
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
               >
-                <div className="glass-card max-w-md w-full p-6 text-center border-white/5" onClick={e => e.stopPropagation()}>
-                  <div className="w-16 h-16 bg-purple-500/10 border border-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <HelpCircle size={32} className="text-purple-400" />
+                <div className="bg-surface-container-lowest max-w-md w-full p-6 text-center border border-outline-variant/30 rounded-2xl ambient-shadow pointer-events-auto" onClick={e => e.stopPropagation()}>
+                  <div className="w-16 h-16 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <HelpCircle size={32} className="text-primary" />
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">Submit Exam Scorecard?</h3>
-                  <p className="text-xs text-slate-400 mb-6 leading-relaxed">
-                    You have answered <strong className="text-white">{answeredCount}</strong> out of <strong className="text-white">{totalQuestions}</strong> questions. Are you sure you want to finish this placement assessment?
+                  <h3 className="text-lg font-black text-on-surface mb-2">Submit Exam Scorecard?</h3>
+                  <p className="text-xs text-on-surface-variant font-semibold mb-6 leading-relaxed">
+                    You have answered <strong className="text-on-surface">{answeredCount}</strong> out of <strong className="text-on-surface">{totalQuestions}</strong> questions. Are you sure you want to finish this placement assessment?
                   </p>
 
                   <div className="flex gap-4">
                     <button
                       onClick={() => setShowSubmitModal(false)}
-                      className="flex-1 py-3 rounded-xl border border-white/5 text-slate-400 text-xs font-bold uppercase tracking-wider hover:border-white/10 transition-all cursor-pointer"
+                      className="flex-1 py-3 rounded-xl border border-outline-variant text-on-surface-variant text-xs font-bold uppercase tracking-wider hover:border-primary transition-all cursor-pointer"
                     >
                       Resume
                     </button>
                     <button
                       onClick={() => handleFinalSubmit(false)}
                       disabled={isSubmitting}
-                      className="flex-1 btn-glow py-3 rounded-xl text-white text-xs font-bold uppercase tracking-wider cursor-pointer"
+                      className="flex-1 btn-glow py-3 rounded-xl text-white text-xs font-bold uppercase tracking-wider cursor-pointer shadow-sm"
                     >
                       {isSubmitting ? 'Submitting...' : 'Yes, Submit'}
                     </button>

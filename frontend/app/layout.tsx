@@ -1,18 +1,18 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { Toaster } from 'react-hot-toast';
 
-const inter = Inter({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  weight: ['400', '500', '600', '700', '800'],
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-sans',
 });
 
 export const viewport = {
-  themeColor: '#7c3aed',
+  themeColor: '#004ac6',
   width: 'device-width',
   initialScale: 1,
 };
@@ -41,20 +41,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`} style={{ background: '#0a0a0f' }}>
+    <html lang="en" className={plusJakarta.variable} suppressHydrationWarning>
+      <body className={`${plusJakarta.className} antialiased`} style={{ background: '#F8FAFC' }}>
         <AuthProvider>
           {children}
           <Toaster
             position="top-right"
             toastOptions={{
               style: {
-                background: '#12121f',
-                color: '#f8fafc',
-                border: '1px solid rgba(124, 58, 237, 0.3)',
-                borderRadius: '12px',
+                background: '#FFFFFF',
+                color: '#191c1e',
+                border: '1px solid rgba(195, 198, 215, 0.4)',
+                borderRadius: '8px',
                 fontSize: '14px',
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: 'var(--font-sans), sans-serif',
+                boxShadow: '0px 10px 30px rgba(15, 23, 42, 0.05)',
               },
               success: {
                 iconTheme: {
@@ -64,7 +65,7 @@ export default function RootLayout({
               },
               error: {
                 iconTheme: {
-                  primary: '#ef4444',
+                  primary: '#ba1a1a',
                   secondary: '#fff',
                 },
               },

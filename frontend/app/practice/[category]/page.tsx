@@ -60,22 +60,22 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
   }[category] || slugToTitle(category);
 
   const categoryColor = {
-    quantitative: '#7c3aed',
-    logical: '#2563eb',
-    verbal: '#10b981',
-  }[category] || '#7c3aed';
+    quantitative: '#004ac6',
+    logical: '#712ae2',
+    verbal: '#004ac6',
+  }[category] || '#004ac6';
 
   const totalQuestions = topics.reduce((sum, t) => sum + t.questionCount, 0);
   const avgAccuracy = topics.reduce((sum, t) => sum + (t.accuracy || 0), 0) / topics.length;
 
   return (
     <ProtectedRoute>
-      <div className="flex h-screen overflow-hidden" style={{ background: '#0a0a0f' }}>
+      <div className="flex h-screen overflow-hidden bg-surface">
         <Sidebar />
         <div className="flex-1 ml-[260px] overflow-auto">
-          <div className="p-6 md:p-8 max-w-6xl">
+          <div className="p-6 md:p-8 max-w-6xl mx-auto">
             {/* Back */}
-            <Link href="/practice" className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors text-sm">
+            <Link href="/practice" className="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary mb-6 transition-colors text-sm font-semibold">
               <ArrowLeft size={16} />
               Back to Practice
             </Link>
@@ -84,32 +84,30 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass-card p-6 mb-8 relative overflow-hidden"
+              className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 mb-8 relative overflow-hidden ambient-shadow"
             >
-              <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-10"
-                style={{ background: `radial-gradient(circle, ${categoryColor}, transparent)` }}
-              />
+              <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
               <div className="relative z-10">
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <h1 className="text-3xl font-black text-white mb-2">{categoryTitle}</h1>
-                    <div className="flex items-center gap-4">
-                      <span className="flex items-center gap-1.5 text-sm text-slate-400">
-                        <BookOpen size={14} />
+                    <h1 className="text-3xl font-black text-on-surface mb-2">{categoryTitle}</h1>
+                    <div className="flex flex-wrap items-center gap-4">
+                      <span className="flex items-center gap-1.5 text-sm text-on-surface-variant font-medium">
+                        <BookOpen size={14} className="text-outline" />
                         {totalQuestions.toLocaleString()} Questions
                       </span>
-                      <span className="flex items-center gap-1.5 text-sm text-slate-400">
-                        <Target size={14} />
+                      <span className="flex items-center gap-1.5 text-sm text-on-surface-variant font-medium">
+                        <Target size={14} className="text-outline" />
                         {topics.length} Topics
                       </span>
-                      <span className="text-sm font-semibold" style={{ color: categoryColor }}>
+                      <span className="text-sm font-bold" style={{ color: categoryColor }}>
                         Your Avg: {avgAccuracy.toFixed(0)}%
                       </span>
                     </div>
                   </div>
-                  <Link href={`/practice/quiz?category=${category}&count=25`}>
+                  <Link href={`/practice/quiz?category=${category}&count=25`} className="shrink-0">
                     <motion.button
-                      className="btn-glow px-5 py-2.5 text-sm font-semibold rounded-xl text-white flex items-center gap-2"
+                      className="btn-glow px-5 py-2.5 text-sm font-semibold rounded-xl text-white flex items-center gap-2 cursor-pointer shadow-sm"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.98 }}
                     >
@@ -128,10 +126,10 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                   key={d}
                   onClick={() => setSelectedDifficulty(d)}
                   className={cn(
-                    'px-4 py-2 rounded-xl text-sm font-medium transition-all border',
+                    'px-4 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer',
                     selectedDifficulty === d
-                      ? 'bg-purple-500/20 border-purple-500/50 text-purple-300'
-                      : 'border-white/8 text-slate-400 hover:border-white/20 hover:text-slate-200'
+                      ? 'bg-primary/10 border-primary text-primary shadow-sm'
+                      : 'border-outline-variant text-on-surface-variant hover:border-primary/50 hover:bg-primary/5 font-semibold'
                   )}
                 >
                   {d === 'all' ? 'All Levels' : d.charAt(0).toUpperCase() + d.slice(1)}
@@ -150,26 +148,26 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                   whileHover={{ y: -2 }}
                 >
                   <Link href={`/practice/quiz?category=${category}&subcategory=${topic.id}&count=15`}>
-                    <div className="glass-card p-5 border border-white/5 hover:border-purple-500/30 transition-all cursor-pointer group">
+                    <div className="bg-surface-container-lowest p-5 border border-outline-variant/30 hover:border-primary/50 hover:bg-surface-container-low/50 transition-all cursor-pointer group rounded-xl ambient-shadow">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
-                          <h3 className="text-base font-bold text-white group-hover:text-purple-300 transition-colors">
+                          <h3 className="text-base font-bold text-on-surface group-hover:text-primary transition-colors">
                             {topic.name}
                           </h3>
-                          <p className="text-slate-400 text-xs mt-1">{topic.description}</p>
+                          <p className="text-on-surface-variant text-xs font-semibold mt-1 leading-relaxed">{topic.description}</p>
                         </div>
                         <DifficultyBadge difficulty={topic.difficulty} size="sm" className="ml-3 flex-shrink-0" />
                       </div>
 
                       <div className="flex items-center gap-4 mb-3">
-                        <span className="text-xs text-slate-500 flex items-center gap-1">
-                          <BookOpen size={11} />
+                        <span className="text-xs text-on-surface-variant font-semibold flex items-center gap-1">
+                          <BookOpen size={11} className="text-outline" />
                           {topic.questionCount} questions
                         </span>
                         {topic.accuracy !== undefined && (
                           <span className={cn(
-                            'text-xs font-semibold',
-                            topic.accuracy >= 75 ? 'text-emerald-400' : topic.accuracy >= 55 ? 'text-yellow-400' : 'text-red-400'
+                            'text-xs font-bold',
+                            topic.accuracy >= 75 ? 'text-emerald-600' : topic.accuracy >= 55 ? 'text-amber-600' : 'text-red-600'
                           )}>
                             Your accuracy: {topic.accuracy}%
                           </span>
@@ -178,19 +176,19 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
 
                       {/* Accuracy bar */}
                       {topic.accuracy !== undefined && (
-                        <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-1 bg-surface-container rounded-full overflow-hidden">
                           <div
                             className={cn(
                               'h-full rounded-full transition-all duration-500',
-                              topic.accuracy >= 75 ? 'bg-emerald-500' : topic.accuracy >= 55 ? 'bg-yellow-500' : 'bg-red-500'
+                              topic.accuracy >= 75 ? 'bg-emerald-500' : topic.accuracy >= 55 ? 'bg-amber-500' : 'bg-red-500'
                             )}
                             style={{ width: `${topic.accuracy}%` }}
                           />
                         </div>
                       )}
 
-                      <div className="flex items-center justify-end mt-3">
-                        <span className="text-xs text-purple-400 group-hover:text-purple-300 flex items-center gap-1 font-semibold">
+                      <div className="flex items-center justify-end mt-3 border-t border-outline-variant/10 pt-3">
+                        <span className="text-xs text-primary group-hover:text-secondary flex items-center gap-1 font-bold">
                           Practice <ChevronRight size={12} />
                         </span>
                       </div>

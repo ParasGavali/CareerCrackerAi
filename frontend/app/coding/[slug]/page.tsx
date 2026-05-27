@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Editor from '@monaco-editor/react';
@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import type { CodingProblem, CodingSubmission } from '@/types';
 import {
   Code2, Terminal, CheckCircle2, XCircle, Play,
-  Send, RotateCcw, HelpCircle, ChevronLeft, Award, List
+  Send, RotateCcw, HelpCircle, ChevronLeft, Award
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -55,11 +55,8 @@ export default function ProblemPlaygroundPage() {
         const data = res.data.data;
         if (data) {
           setProblem(data);
-          // Set initial template
           const temps = data.solutionTemplates || {};
           setCode(temps.javascript || '// Write code here');
-          
-          // Load submissions
           fetchSubmissions(data._id);
         }
       } catch (err) {
@@ -121,7 +118,6 @@ export default function ProblemPlaygroundPage() {
     return (list.find(item => item.slug === pSlug) || list[0]) as any as CodingProblem;
   };
 
-  // 2. Language Change Handler
   const handleLanguageChange = (lang: typeof language) => {
     setLanguage(lang);
     if (problem) {
@@ -130,7 +126,6 @@ export default function ProblemPlaygroundPage() {
     }
   };
 
-  // 3. Reset Template
   const handleResetCode = () => {
     if (problem) {
       const temps = problem.solutionTemplates || {};
@@ -139,7 +134,6 @@ export default function ProblemPlaygroundPage() {
     }
   };
 
-  // 4. Run Code (Custom Test input)
   const handleRunCode = async () => {
     if (!problem) return;
     setIsRunning(true);
@@ -170,7 +164,6 @@ export default function ProblemPlaygroundPage() {
     }
   };
 
-  // 5. Submit Code (Test Cases)
   const handleFinalSubmit = async () => {
     if (!problem) return;
     setIsSubmitting(true);
@@ -196,7 +189,6 @@ export default function ProblemPlaygroundPage() {
         total: data?.totalTestCases
       });
 
-      // Reload submissions
       fetchSubmissions(problem._id);
     } catch (err: any) {
       console.error('Error submitting code:', err);
@@ -213,7 +205,7 @@ export default function ProblemPlaygroundPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
+      <div className="min-h-screen flex items-center justify-center bg-surface">
         <LoadingSpinner size="xl" text="Pre-heating Node child-process container sandbox..." />
       </div>
     );
@@ -221,11 +213,11 @@ export default function ProblemPlaygroundPage() {
 
   if (!problem) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f] text-white">
-        <div className="text-center">
-          <HelpCircle size={48} className="text-purple-500 mx-auto mb-4" />
+      <div className="min-h-screen flex items-center justify-center bg-surface text-on-surface">
+        <div className="text-center bg-surface-container-lowest p-8 border border-outline-variant rounded-2xl ambient-shadow max-w-sm w-full mx-auto">
+          <HelpCircle size={48} className="text-primary mx-auto mb-4 animate-bounce" />
           <h2 className="text-xl font-bold">Problem Not Found</h2>
-          <button onClick={() => router.push('/coding')} className="btn-glow mt-4 px-6 py-2.5 rounded-xl">
+          <button onClick={() => router.push('/coding')} className="btn-glow mt-4 px-6 py-2.5 rounded-xl cursor-pointer">
             Go Back
           </button>
         </div>
@@ -235,19 +227,19 @@ export default function ProblemPlaygroundPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-[#07070a] text-white flex flex-col">
+      <div className="min-h-screen bg-surface text-on-surface flex flex-col">
         {/* Full IDE Header bar */}
-        <div className="bg-[#0b0b12] border-b border-white/5 px-4 py-3 flex items-center justify-between gap-6 shrink-0">
+        <div className="bg-surface-container border-b border-outline-variant/30 px-4 py-3 flex items-center justify-between gap-6 shrink-0 shadow-sm">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push('/coding')}
-              className="text-slate-400 hover:text-white transition-all cursor-pointer"
+              className="text-on-surface-variant hover:text-primary transition-all cursor-pointer"
             >
               <ChevronLeft size={20} />
             </button>
             <div className="flex items-center gap-2">
-              <Code2 className="text-purple-500" />
-              <h2 className="text-sm font-extrabold text-white">{problem.title}</h2>
+              <Code2 className="text-primary" />
+              <h2 className="text-sm font-extrabold text-on-surface">{problem.title}</h2>
               <DifficultyBadge difficulty={problem.difficulty} />
             </div>
           </div>
@@ -257,7 +249,7 @@ export default function ProblemPlaygroundPage() {
             <select
               value={language}
               onChange={(e) => handleLanguageChange(e.target.value as any)}
-              className="bg-slate-950 border border-white/5 rounded-xl px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-purple-500 cursor-pointer transition-all font-bold"
+              className="bg-surface-container-lowest border border-outline-variant rounded-xl px-3 py-1.5 text-xs text-on-surface focus:outline-none focus:border-primary cursor-pointer transition-all font-bold shadow-sm"
             >
               <option value="javascript">JavaScript (Node.js)</option>
               <option value="python">Python 3</option>
@@ -268,7 +260,7 @@ export default function ProblemPlaygroundPage() {
 
             <button
               onClick={handleResetCode}
-              className="p-2 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white transition-all cursor-pointer"
+              className="p-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface-variant hover:text-primary transition-all cursor-pointer shadow-sm"
               title="Reset Template Code"
             >
               <RotateCcw size={14} />
@@ -277,19 +269,19 @@ export default function ProblemPlaygroundPage() {
         </div>
 
         {/* Workspace body (Split screen 40/60) */}
-        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden bg-surface">
           
           {/* Left panel: Problem Description & submissions (40%) */}
-          <div className="w-full md:w-[40%] border-r border-white/5 bg-[#0a0a10] flex flex-col overflow-hidden">
+          <div className="w-full md:w-[40%] border-r border-outline-variant/30 bg-surface flex flex-col overflow-hidden">
             {/* Tabs */}
-            <div className="flex border-b border-white/5 bg-slate-950/60 shrink-0">
+            <div className="flex border-b border-outline-variant/30 bg-surface-container shrink-0">
               <button
                 onClick={() => setActiveLeftTab('description')}
                 className={cn(
                   'px-6 py-3 text-xs font-black uppercase tracking-wider transition-all border-b-2 cursor-pointer',
                   activeLeftTab === 'description'
-                    ? 'border-purple-500 text-purple-300 bg-[#0a0a10]/60'
-                    : 'border-transparent text-slate-500 hover:text-slate-300'
+                    ? 'border-primary text-primary bg-surface font-black'
+                    : 'border-transparent text-on-surface-variant hover:text-primary'
                 )}
               >
                 Description
@@ -299,8 +291,8 @@ export default function ProblemPlaygroundPage() {
                 className={cn(
                   'px-6 py-3 text-xs font-black uppercase tracking-wider transition-all border-b-2 cursor-pointer',
                   activeLeftTab === 'submissions'
-                    ? 'border-purple-500 text-purple-300 bg-[#0a0a10]/60'
-                    : 'border-transparent text-slate-500 hover:text-slate-300'
+                    ? 'border-primary text-primary bg-surface font-black'
+                    : 'border-transparent text-on-surface-variant hover:text-primary'
                 )}
               >
                 Submissions ({pastSubmissions.length})
@@ -308,7 +300,7 @@ export default function ProblemPlaygroundPage() {
             </div>
 
             {/* Description Tab Contents */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 text-on-surface">
               <AnimatePresence mode="wait">
                 {activeLeftTab === 'description' ? (
                   <motion.div
@@ -316,19 +308,19 @@ export default function ProblemPlaygroundPage() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}
-                    className="space-y-6 text-sm leading-relaxed text-slate-300"
+                    className="space-y-6 text-sm leading-relaxed text-on-surface-variant font-semibold"
                   >
                     {/* HTML description */}
                     <div
-                      className="prose prose-invert max-w-none text-slate-300 text-xs md:text-sm"
+                      className="prose prose-slate max-w-none text-on-surface-variant text-xs md:text-sm"
                       dangerouslySetInnerHTML={{ __html: problem.description }}
                     />
 
                     {/* Constraints */}
                     {problem.constraints && (
-                      <div className="bg-slate-950/60 border border-white/5 rounded-xl p-4 space-y-2">
-                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">Constraints:</h4>
-                        <pre className="text-xs text-purple-300 font-mono whitespace-pre-wrap">{problem.constraints}</pre>
+                      <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 space-y-2 ambient-shadow">
+                        <h4 className="text-xs font-bold text-on-surface uppercase tracking-wider">Constraints:</h4>
+                        <pre className="text-xs text-secondary font-mono whitespace-pre-wrap font-bold">{problem.constraints}</pre>
                       </div>
                     )}
 
@@ -336,15 +328,15 @@ export default function ProblemPlaygroundPage() {
                     {(problem.inputFormat || problem.outputFormat) && (
                       <div className="grid grid-cols-1 gap-4">
                         {problem.inputFormat && (
-                          <div className="bg-slate-950/40 border border-white/5 rounded-xl p-4">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-1.5">Input Format:</h4>
-                            <p className="text-xs text-slate-400">{problem.inputFormat}</p>
+                          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 ambient-shadow">
+                            <h4 className="text-xs font-bold text-on-surface uppercase tracking-wider mb-1.5">Input Format:</h4>
+                            <p className="text-xs text-on-surface-variant">{problem.inputFormat}</p>
                           </div>
                         )}
                         {problem.outputFormat && (
-                          <div className="bg-slate-950/40 border border-white/5 rounded-xl p-4">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-1.5">Output Format:</h4>
-                            <p className="text-xs text-slate-400">{problem.outputFormat}</p>
+                          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 ambient-shadow">
+                            <h4 className="text-xs font-bold text-on-surface uppercase tracking-wider mb-1.5">Output Format:</h4>
+                            <p className="text-xs text-on-surface-variant">{problem.outputFormat}</p>
                           </div>
                         )}
                       </div>
@@ -353,11 +345,11 @@ export default function ProblemPlaygroundPage() {
                     {/* Examples */}
                     {problem.examples && problem.examples.map((eg, idx) => (
                       <div key={idx} className="space-y-2">
-                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">Example {idx + 1}:</h4>
-                        <div className="bg-slate-950/60 border border-white/5 rounded-xl p-4 font-mono text-xs space-y-2">
-                          <p><strong className="text-purple-400">Input:</strong><br />{eg.input}</p>
-                          <p><strong className="text-emerald-400">Output:</strong><br />{eg.output}</p>
-                          {eg.explanation && <p className="text-slate-500 italic mt-1 font-sans"><strong className="text-slate-400 not-italic">Explanation:</strong> {eg.explanation}</p>}
+                        <h4 className="text-xs font-bold text-on-surface uppercase tracking-wider">Example {idx + 1}:</h4>
+                        <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 font-mono text-xs space-y-2 ambient-shadow text-on-surface-variant">
+                          <p><strong className="text-primary font-bold">Input:</strong><br />{eg.input}</p>
+                          <p><strong className="text-secondary font-bold">Output:</strong><br />{eg.output}</p>
+                          {eg.explanation && <p className="text-on-surface-variant italic mt-1 font-sans"><strong className="text-on-surface not-italic font-bold">Explanation:</strong> {eg.explanation}</p>}
                         </div>
                       </div>
                     ))}
@@ -365,21 +357,21 @@ export default function ProblemPlaygroundPage() {
                     {/* Hints (Expandable) */}
                     {problem.hints && problem.hints.length > 0 && (
                       <div className="space-y-2">
-                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">Hints:</h4>
+                        <h4 className="text-xs font-bold text-on-surface uppercase tracking-wider">Hints:</h4>
                         <div className="space-y-2">
                           {problem.hints.map((hint, hIdx) => {
                             const isExpanded = expandedHintIndex === hIdx;
                             return (
-                              <div key={hIdx} className="bg-slate-950/40 border border-white/5 rounded-xl overflow-hidden text-xs">
+                              <div key={hIdx} className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden text-xs ambient-shadow">
                                 <button
                                   onClick={() => setExpandedHintIndex(isExpanded ? null : hIdx)}
-                                  className="w-full text-left px-4 py-3 font-semibold text-slate-400 hover:text-white flex items-center justify-between cursor-pointer"
+                                  className="w-full text-left px-4 py-3 font-bold text-on-surface-variant hover:text-primary flex items-center justify-between cursor-pointer"
                                 >
                                   <span>Hint {hIdx + 1}</span>
-                                  <span className="text-[10px] text-purple-400 font-bold uppercase">{isExpanded ? 'Hide' : 'Reveal'}</span>
+                                  <span className="text-[10px] text-primary font-bold uppercase">{isExpanded ? 'Hide' : 'Reveal'}</span>
                                 </button>
                                 {isExpanded && (
-                                  <div className="px-4 pb-3 text-slate-300 leading-relaxed border-t border-white/5 pt-2">
+                                  <div className="px-4 pb-3 text-on-surface-variant font-medium leading-relaxed border-t border-outline-variant/30 pt-2 bg-surface">
                                     {hint}
                                   </div>
                                 )}
@@ -400,38 +392,38 @@ export default function ProblemPlaygroundPage() {
                     className="space-y-4"
                   >
                     {pastSubmissions.length === 0 ? (
-                      <div className="text-center py-12 text-slate-500 text-xs">
+                      <div className="text-center py-12 text-on-surface-variant font-medium text-xs">
                         No submissions recorded for this challenge yet.
                       </div>
                     ) : (
                       pastSubmissions.map((sub) => (
                         <div
                           key={sub._id}
-                          className="bg-slate-950/60 border border-white/5 rounded-xl p-4 flex items-center justify-between gap-4 text-xs font-mono"
+                          className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 flex items-center justify-between gap-4 text-xs font-mono ambient-shadow"
                         >
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               {sub.status === 'accepted' ? (
-                                <span className="text-emerald-400 font-black flex items-center gap-1">
+                                <span className="text-emerald-600 font-black flex items-center gap-0.5">
                                   <CheckCircle2 size={13} /> ACCEPTED
                                 </span>
                               ) : (
-                                <span className="text-red-400 font-black flex items-center gap-1">
+                                <span className="text-red-600 font-black flex items-center gap-0.5">
                                   <XCircle size={13} /> {sub.status?.toUpperCase() || 'FAILED'}
                                 </span>
                               )}
-                              <span className="text-[10px] bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-slate-500 uppercase">
+                              <span className="text-[10px] bg-primary/10 border border-primary/20 px-1.5 py-0.5 rounded text-primary uppercase font-bold">
                                 {sub.language}
                               </span>
                             </div>
-                            <p className="text-[10px] text-slate-500 font-sans">
+                            <p className="text-[10px] text-on-surface-variant font-sans font-semibold">
                               {new Date(sub.createdAt).toLocaleString()}
                             </p>
                           </div>
 
                           <div className="text-right space-y-1">
-                            <p className="text-slate-400 font-semibold">{sub.testCasesPassed || 0}/{sub.totalTestCases || 1} Passed</p>
-                            <p className="text-[10px] text-slate-600">{sub.executionTime || 0}ms execution</p>
+                            <p className="text-on-surface font-bold">{sub.testCasesPassed || 0}/{sub.totalTestCases || 1} Passed</p>
+                            <p className="text-[10px] text-on-surface-variant font-semibold">{sub.executionTime || 0}ms execution</p>
                           </div>
                         </div>
                       ))
@@ -469,11 +461,11 @@ export default function ProblemPlaygroundPage() {
             </div>
 
             {/* Console Console / Interactive Stdin box (30%) */}
-            <div className="h-64 border-t border-white/5 bg-slate-950 flex flex-col overflow-hidden shrink-0">
+            <div className="h-64 border-t border-outline-variant/30 bg-surface-container flex flex-col overflow-hidden shrink-0">
               {/* Header Tab selectors */}
-              <div className="flex items-center justify-between border-b border-white/5 bg-[#090910] px-4 shrink-0">
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5 py-3">
-                  <Terminal size={12} className="text-purple-400" />
+              <div className="flex items-center justify-between border-b border-outline-variant/30 bg-surface px-4 shrink-0 shadow-sm">
+                <span className="text-[10px] font-black uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5 py-3">
+                  <Terminal size={12} className="text-primary" />
                   Terminal Console Sandbox
                 </span>
                 
@@ -481,15 +473,15 @@ export default function ProblemPlaygroundPage() {
                   <button
                     onClick={handleRunCode}
                     disabled={isRunning || isSubmitting}
-                    className="inline-flex items-center gap-1 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all disabled:opacity-40 cursor-pointer"
+                    className="inline-flex items-center gap-1 bg-surface border border-outline-variant/40 hover:bg-surface-container-low text-on-surface-variant px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all disabled:opacity-40 cursor-pointer shadow-sm"
                   >
-                    <Play size={12} className="text-emerald-400" />
+                    <Play size={12} className="text-emerald-600 fill-emerald-600/10" />
                     Run Code
                   </button>
                   <button
                     onClick={handleFinalSubmit}
                     disabled={isRunning || isSubmitting}
-                    className="inline-flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white px-4 py-1.5 rounded-lg text-xs font-bold shadow-lg transition-all disabled:opacity-40 cursor-pointer"
+                    className="inline-flex items-center gap-1 bg-primary hover:bg-secondary text-white px-4 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all disabled:opacity-40 cursor-pointer"
                   >
                     <Send size={12} />
                     {isSubmitting ? 'Submitting...' : 'Submit Code'}
@@ -498,63 +490,63 @@ export default function ProblemPlaygroundPage() {
               </div>
 
               {/* Console Body */}
-              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/5 overflow-hidden">
+              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-outline-variant/30 overflow-hidden">
                 {/* Input Textbox (Left) */}
-                <div className="flex flex-col p-3 overflow-hidden">
-                  <label className="text-[9px] font-black uppercase text-slate-600 tracking-wider mb-1 block">Custom Standard Input (Stdin)</label>
+                <div className="flex flex-col p-3 overflow-hidden bg-surface">
+                  <label className="text-[9px] font-black uppercase text-on-surface-variant tracking-wider mb-1 block">Custom Standard Input (Stdin)</label>
                   <textarea
                     value={customInput}
                     onChange={(e) => setCustomInput(e.target.value)}
                     placeholder="Enter standard input parameters here (e.g. 9\n4\n2 7 11 15)"
-                    className="w-full flex-1 bg-slate-900 border border-white/5 hover:border-white/10 focus:border-purple-500 focus:outline-none rounded-xl p-3 text-xs font-mono text-slate-300 resize-none"
+                    className="w-full flex-1 bg-surface-container-lowest border border-outline-variant rounded-xl p-3 text-xs font-mono text-on-surface resize-none focus:border-primary focus:outline-none shadow-sm"
                   />
                 </div>
 
                 {/* Output Console Box (Right) */}
-                <div className="flex flex-col p-3 overflow-y-auto bg-slate-950 font-mono text-xs">
-                  <span className="text-[9px] font-black uppercase text-slate-600 tracking-wider mb-2 block">Standard Output / Sandbox Verdict</span>
+                <div className="flex flex-col p-3 overflow-y-auto bg-surface-container-lowest font-mono text-xs text-on-surface">
+                  <span className="text-[9px] font-black uppercase text-on-surface-variant tracking-wider mb-2 block">Standard Output / Sandbox Verdict</span>
 
                   {isRunning || isSubmitting ? (
-                    <div className="flex-1 flex items-center justify-center">
+                    <div className="flex-1 flex items-center justify-center bg-surface">
                       <LoadingSpinner size="sm" text="Executing code..." />
                     </div>
                   ) : terminalResult ? (
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                      <div className="flex items-center justify-between border-b border-outline-variant/30 pb-2">
                         {terminalResult.status === 'accepted' || terminalResult.status === 'success' ? (
-                          <span className="text-emerald-400 font-bold flex items-center gap-1 text-[11px]">
+                          <span className="text-emerald-600 font-bold flex items-center gap-1 text-[11px]">
                             <CheckCircle2 size={13} /> {terminalResult.status.toUpperCase()}
                           </span>
                         ) : (
-                          <span className="text-red-400 font-bold flex items-center gap-1 text-[11px]">
+                          <span className="text-red-600 font-bold flex items-center gap-1 text-[11px]">
                             <XCircle size={13} /> {terminalResult.status.toUpperCase()}
                           </span>
                         )}
                         {terminalResult.executionTime !== undefined && (
-                          <span className="text-[10px] text-slate-500">Execution time: {terminalResult.executionTime}ms</span>
+                          <span className="text-[10px] text-on-surface-variant font-semibold">Execution time: {terminalResult.executionTime}ms</span>
                         )}
                       </div>
 
                       {terminalResult.passed !== undefined && terminalResult.total !== undefined && (
-                        <p className="text-[11px] text-slate-300 font-semibold bg-white/5 px-2.5 py-1.5 rounded-lg inline-block">
+                        <p className="text-[11px] text-primary font-bold bg-primary/10 border border-primary/20 px-2.5 py-1.5 rounded-lg inline-block">
                           🎯 Test cases passed: {terminalResult.passed} / {terminalResult.total}
                         </p>
                       )}
 
                       {/* Error or stdout display */}
                       {terminalResult.error ? (
-                        <pre className="text-red-400 whitespace-pre-wrap font-mono text-[11px] bg-red-950/20 border border-red-500/20 p-3 rounded-lg mt-2">
+                        <pre className="text-red-600 whitespace-pre-wrap font-mono text-[11px] bg-red-500/10 border border-red-500/20 p-3 rounded-lg mt-2">
                           {terminalResult.error}
                         </pre>
                       ) : (
-                        <pre className="text-slate-300 whitespace-pre-wrap font-mono text-[11px] bg-slate-900 border border-white/5 p-3 rounded-lg mt-2">
+                        <pre className="text-on-surface whitespace-pre-wrap font-mono text-[11px] bg-surface border border-outline-variant/30 p-3 rounded-lg mt-2 font-semibold">
                           {terminalResult.output || '[No output was produced]'}
                         </pre>
                       )}
                     </div>
                   ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-slate-600 text-[10px] border border-dashed border-white/5 rounded-xl">
-                      <Terminal size={22} className="text-slate-700 mb-1" />
+                    <div className="flex-1 flex flex-col items-center justify-center text-on-surface-variant text-[10px] border border-dashed border-outline-variant rounded-xl bg-surface">
+                      <Terminal size={22} className="text-outline mb-1" />
                       Compile or Submit to see execution results.
                     </div>
                   )}

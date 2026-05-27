@@ -8,7 +8,7 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { DifficultyBadge } from '@/components/ui/DifficultyBadge';
 import {
   BookOpen, Calculator, Brain, MessageSquare, Shuffle, Clock, ChevronRight,
-  TrendingUp, Zap, Target, ArrowRight, Lock
+  TrendingUp, Zap, Target, ArrowRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -17,9 +17,8 @@ const categories = [
     id: 'quantitative',
     label: 'Quantitative Aptitude',
     icon: Calculator,
-    color: '#7c3aed',
-    bgGradient: 'from-purple-600/20 to-blue-600/10',
-    borderColor: 'border-purple-500/20 hover:border-purple-500/50',
+    color: '#004ac6',
+    borderColor: 'border-primary/20 hover:border-primary/50',
     description: 'Number systems, percentages, profit & loss, time & work, speed & distance, and more.',
     questionCount: 4200,
     topics: 18,
@@ -30,9 +29,8 @@ const categories = [
     id: 'logical',
     label: 'Logical Reasoning',
     icon: Brain,
-    color: '#2563eb',
-    bgGradient: 'from-blue-600/20 to-cyan-600/10',
-    borderColor: 'border-blue-500/20 hover:border-blue-500/50',
+    color: '#712ae2',
+    borderColor: 'border-secondary/20 hover:border-secondary/50',
     description: 'Series completion, analogies, blood relations, coding-decoding, puzzles, and arrangements.',
     questionCount: 3800,
     topics: 14,
@@ -43,9 +41,8 @@ const categories = [
     id: 'verbal',
     label: 'Verbal Ability',
     icon: MessageSquare,
-    color: '#10b981',
-    bgGradient: 'from-emerald-600/20 to-teal-600/10',
-    borderColor: 'border-emerald-500/20 hover:border-emerald-500/50',
+    color: '#004ac6',
+    borderColor: 'border-primary/20 hover:border-primary/50',
     description: 'Reading comprehension, vocabulary, grammar, sentence completion, and verbal reasoning.',
     questionCount: 2100,
     topics: 10,
@@ -67,49 +64,46 @@ const recentHistory = [
 ];
 
 function CategoryCard({ category }: { category: typeof categories[0] }) {
-  const { icon: Icon, label, color, bgGradient, borderColor, description, questionCount, topics, userAccuracy, slug } = category;
+  const { icon: Icon, label, color, borderColor, description, questionCount, topics, userAccuracy, slug } = category;
 
   return (
     <motion.div
       whileHover={{ y: -4, scale: 1.01 }}
       transition={{ duration: 0.2 }}
-      className={cn('glass-card-hover p-6 border', borderColor, 'relative overflow-hidden cursor-pointer')}
+      className={cn('bg-surface-container-lowest p-6 border rounded-xl ambient-shadow relative overflow-hidden cursor-pointer', borderColor)}
     >
       <Link href={`/practice/${slug}`}>
-        {/* Background gradient */}
-        <div className={cn('absolute inset-0 bg-gradient-to-br opacity-60 pointer-events-none', bgGradient)} />
-
         <div className="relative z-10">
           {/* Icon & accuracy */}
           <div className="flex items-start justify-between mb-5">
             <div className="w-14 h-14 rounded-2xl flex items-center justify-center"
-              style={{ background: `${color}20`, border: `2px solid ${color}30` }}
+              style={{ background: `${color}10`, border: `2px solid ${color}20` }}
             >
               <Icon size={28} style={{ color }} />
             </div>
             <div className="text-right">
-              <p className="text-xs text-slate-500 mb-1">Your Accuracy</p>
+              <p className="text-xs text-on-surface-variant mb-1 font-semibold">Your Accuracy</p>
               <p className="text-2xl font-black" style={{ color }}>{userAccuracy}%</p>
             </div>
           </div>
 
-          <h3 className="text-xl font-bold text-white mb-2">{label}</h3>
-          <p className="text-slate-400 text-sm leading-relaxed mb-5">{description}</p>
+          <h3 className="text-xl font-bold text-on-surface mb-2">{label}</h3>
+          <p className="text-on-surface-variant text-sm leading-relaxed mb-5">{description}</p>
 
           <div className="flex items-center gap-4 mb-5">
-            <div className="flex items-center gap-1.5">
-              <BookOpen size={13} className="text-slate-500" />
-              <span className="text-xs text-slate-400">{questionCount.toLocaleString()} questions</span>
+            <div className="flex items-center gap-1.5 text-on-surface-variant font-medium">
+              <BookOpen size={13} className="text-outline" />
+              <span className="text-xs">{questionCount.toLocaleString()} questions</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Target size={13} className="text-slate-500" />
-              <span className="text-xs text-slate-400">{topics} topics</span>
+            <div className="flex items-center gap-1.5 text-on-surface-variant font-medium">
+              <Target size={13} className="text-outline" />
+              <span className="text-xs">{topics} topics</span>
             </div>
           </div>
 
           {/* Accuracy bar */}
           <div>
-            <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-3">
+            <div className="h-1.5 bg-surface-container rounded-full overflow-hidden mb-3">
               <motion.div
                 className="h-full rounded-full"
                 style={{ background: `linear-gradient(90deg, ${color}, ${color}99)` }}
@@ -121,10 +115,10 @@ function CategoryCard({ category }: { category: typeof categories[0] }) {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-on-surface-variant font-semibold">
                 {userAccuracy < 70 ? '⚠️ Needs practice' : userAccuracy < 85 ? '✅ Good progress' : '🔥 Excellent!'}
               </span>
-              <span className="flex items-center gap-1 text-xs font-semibold" style={{ color }}>
+              <span className="flex items-center gap-1 text-xs font-bold hover:underline" style={{ color }}>
                 Practice Now <ArrowRight size={12} />
               </span>
             </div>
@@ -141,15 +135,15 @@ function PracticeContent() {
   const [quickCount, setQuickCount] = useState(10);
 
   return (
-    <div className="flex-1 overflow-auto p-6 md:p-8 max-w-7xl">
+    <div className="flex-1 overflow-auto p-6 md:p-8 max-w-7xl mx-auto bg-surface">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-3xl font-black text-white mb-2">Aptitude Practice 📚</h1>
-        <p className="text-slate-400">Sharpen your skills with topic-wise practice questions</p>
+        <h1 className="text-3xl font-black text-on-surface mb-2">Aptitude Practice 📚</h1>
+        <p className="text-on-surface-variant font-medium">Sharpen your skills with topic-wise practice questions</p>
       </motion.div>
 
       {/* Category Cards */}
@@ -173,23 +167,22 @@ function PracticeContent() {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
-          className="glass-card p-6"
+          className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 ambient-shadow"
         >
-          <h3 className="font-bold text-white mb-2 flex items-center gap-2">
-            <Shuffle size={18} className="text-purple-400" />
+          <h3 className="font-bold text-on-surface mb-2 flex items-center gap-2">
+            <Shuffle size={18} className="text-primary" />
             Quick Practice
           </h3>
-          <p className="text-slate-400 text-sm mb-4">Jump into a quick practice session with random questions</p>
+          <p className="text-on-surface-variant text-sm mb-4 font-medium">Jump into a quick practice session with random questions</p>
 
           <div className="space-y-2 mb-5">
             <div className="flex gap-2">
               <div className="flex-1">
-                <label className="text-xs text-slate-500 mb-1 block">Category</label>
+                <label className="text-xs text-on-surface-variant font-semibold mb-1 block">Category</label>
                 <select
                   value={selectedCategory}
                   onChange={e => setSelectedCategory(e.target.value)}
-                  className="input-field text-sm"
-                  style={{ background: 'rgba(15,15,26,0.8)' }}
+                  className="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-primary transition-all cursor-pointer"
                 >
                   <option value="all">All Categories</option>
                   <option value="quantitative">Quantitative</option>
@@ -198,12 +191,11 @@ function PracticeContent() {
                 </select>
               </div>
               <div className="flex-1">
-                <label className="text-xs text-slate-500 mb-1 block">Difficulty</label>
+                <label className="text-xs text-on-surface-variant font-semibold mb-1 block">Difficulty</label>
                 <select
                   value={selectedDifficulty}
                   onChange={e => setSelectedDifficulty(e.target.value)}
-                  className="input-field text-sm"
-                  style={{ background: 'rgba(15,15,26,0.8)' }}
+                  className="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-primary transition-all cursor-pointer"
                 >
                   <option value="all">All Levels</option>
                   <option value="easy">Easy</option>
@@ -220,22 +212,22 @@ function PracticeContent() {
                 key={opt.count}
                 onClick={() => setQuickCount(opt.count)}
                 className={cn(
-                  'p-3 rounded-xl border text-center transition-all',
+                  'p-3 rounded-xl border text-center transition-all cursor-pointer',
                   quickCount === opt.count
-                    ? 'bg-purple-500/20 border-purple-500/50 text-purple-300'
-                    : 'border-white/8 text-slate-400 hover:border-purple-500/30 hover:bg-purple-500/10'
+                    ? 'bg-primary/10 border-primary text-primary font-bold shadow-sm'
+                    : 'border-outline-variant/60 text-on-surface-variant hover:border-primary/40 hover:bg-primary/5 font-semibold'
                 )}
               >
                 <opt.icon size={16} className="mx-auto mb-1" />
-                <span className="text-xs font-semibold block">{opt.count}Q</span>
-                <span className="text-xs text-slate-500">{opt.time}</span>
+                <span className="text-xs font-bold block">{opt.count}Q</span>
+                <span className="text-xs text-on-surface-variant font-medium">{opt.time}</span>
               </button>
             ))}
           </div>
 
           <Link href={`/practice/quiz?category=${selectedCategory}&difficulty=${selectedDifficulty}&count=${quickCount}`}>
             <motion.button
-              className="btn-glow w-full py-3 text-sm font-semibold rounded-xl text-white flex items-center justify-center gap-2"
+              className="btn-glow w-full py-3 text-sm font-semibold rounded-xl text-white flex items-center justify-center gap-2 cursor-pointer shadow-sm"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -250,24 +242,24 @@ function PracticeContent() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.35 }}
-          className="glass-card p-6"
+          className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 ambient-shadow"
         >
-          <h3 className="font-bold text-white mb-5 flex items-center gap-2">
-            <Clock size={18} className="text-blue-400" />
+          <h3 className="font-bold text-on-surface mb-5 flex items-center gap-2">
+            <Clock size={18} className="text-secondary" />
             Recent Practice
           </h3>
           <div className="space-y-3">
             {recentHistory.map((item) => (
-              <div key={item.topic} className="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 border border-white/5">
+              <div key={item.topic} className="flex items-center justify-between p-3 rounded-xl bg-surface border border-outline-variant/30 group hover:border-primary/30 transition-all">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{item.topic}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">{item.category} · {item.date}</p>
+                  <p className="text-sm font-bold text-on-surface truncate group-hover:text-primary transition-colors">{item.topic}</p>
+                  <p className="text-xs text-on-surface-variant font-semibold mt-0.5">{item.category} · {item.date}</p>
                 </div>
                 <div className="flex items-center gap-3 ml-3">
                   <DifficultyBadge difficulty={item.difficulty} size="sm" />
                   <span className={cn(
-                    'text-sm font-bold',
-                    item.score / item.total >= 0.8 ? 'text-emerald-400' : item.score / item.total >= 0.6 ? 'text-yellow-400' : 'text-red-400'
+                    'text-sm font-black',
+                    item.score / item.total >= 0.8 ? 'text-emerald-600' : item.score / item.total >= 0.6 ? 'text-amber-600' : 'text-red-600'
                   )}>
                     {item.score}/{item.total}
                   </span>
@@ -276,7 +268,7 @@ function PracticeContent() {
             ))}
           </div>
           <Link href="/analytics">
-            <button className="mt-4 w-full py-2.5 text-xs font-semibold rounded-xl text-purple-400 border border-purple-500/30 hover:bg-purple-500/10 transition-all flex items-center justify-center gap-1">
+            <button className="mt-4 w-full py-2.5 text-xs font-semibold rounded-xl text-primary border border-primary/30 hover:bg-primary/5 transition-all flex items-center justify-center gap-1 cursor-pointer">
               <TrendingUp size={13} />
               View Full History
             </button>
@@ -290,7 +282,7 @@ function PracticeContent() {
 export default function PracticePage() {
   return (
     <ProtectedRoute>
-      <div className="flex h-screen overflow-hidden" style={{ background: '#0a0a0f' }}>
+      <div className="flex h-screen overflow-hidden bg-surface">
         <Sidebar />
         <div className="flex-1 ml-[260px]">
           <PracticeContent />

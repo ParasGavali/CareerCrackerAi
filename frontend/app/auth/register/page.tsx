@@ -48,11 +48,11 @@ function getPasswordStrength(password: string): { score: number; label: string; 
   if (/[A-Z]/.test(password)) score++;
   if (/[0-9]/.test(password)) score++;
 
-  if (score <= 1) return { score, label: 'Very Weak', color: '#ef4444' };
-  if (score <= 2) return { score, label: 'Weak', color: '#f59e0b' };
-  if (score <= 3) return { score, label: 'Fair', color: '#eab308' };
-  if (score <= 4) return { score, label: 'Strong', color: '#10b981' };
-  return { score, label: 'Very Strong', color: '#06b6d4' };
+  if (score <= 1) return { score, label: 'Very Weak', color: '#ba1a1a' };
+  if (score <= 2) return { score, label: 'Weak', color: '#d97706' };
+  if (score <= 3) return { score, label: 'Fair', color: '#b45309' };
+  if (score <= 4) return { score, label: 'Strong', color: '#047857' };
+  return { score, label: 'Very Strong', color: '#0369a1' };
 }
 
 export default function RegisterPage() {
@@ -102,26 +102,22 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex" style={{ background: '#0a0a0f' }}>
+    <div className="min-h-screen flex bg-surface text-on-surface font-body-md">
       {/* LEFT PANEL */}
-      <div className="hidden lg:flex flex-col w-2/5 p-12 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(37,99,235,0.1) 100%)' }}
-      >
-        <div className="absolute inset-0"
+      <div className="hidden lg:flex flex-col w-2/5 p-12 relative overflow-hidden bg-surface-container border-r border-outline-variant/30">
+        <div className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: 'linear-gradient(rgba(124,58,237,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(124,58,237,0.1) 1px, transparent 1px)',
+            backgroundImage: 'linear-gradient(rgba(0, 74, 198, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 74, 198, 0.05) 1px, transparent 1px)',
             backgroundSize: '50px 50px',
           }}
         />
-        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full blur-3xl opacity-15"
-          style={{ background: 'radial-gradient(circle, #7c3aed, transparent)' }}
-        />
+        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex items-center gap-2 mb-16">
-          <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-sm">
             <Zap size={20} className="text-white" fill="white" />
           </div>
-          <span className="font-extrabold text-xl gradient-text-purple">CareerCracker AI</span>
+          <span className="font-extrabold text-xl text-primary">CareerCracker AI</span>
         </div>
 
         <div className="relative z-10 flex-1">
@@ -130,16 +126,16 @@ export default function RegisterPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7 }}
           >
-            <h2 className="text-3xl font-black text-white mb-4 leading-tight">
+            <h2 className="text-3xl font-black text-on-surface mb-4 leading-tight">
               Join 50,000+
               <br />
-              <span className="gradient-text">Future Professionals</span>
+              <span className="bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text font-black">Future Professionals</span>
             </h2>
-            <p className="text-slate-400 mb-8">
+            <p className="text-on-surface-variant font-semibold mb-8">
               Start your placement preparation journey today with our comprehensive AI-powered platform.
             </p>
 
-            <div className="space-y-3">
+            <div className="space-y-3 font-semibold text-on-surface-variant">
               {[
                 '✅ Free access to 500+ practice questions',
                 '✅ Mock tests for TCS, Infosys, and more',
@@ -147,18 +143,18 @@ export default function RegisterPage() {
                 '✅ Compete on national leaderboard',
                 '✅ Track your progress with detailed analytics',
               ].map(item => (
-                <p key={item} className="text-slate-300 text-sm">{item}</p>
+                <p key={item} className="text-sm">{item}</p>
               ))}
             </div>
           </motion.div>
         </div>
 
-        <div className="relative z-10 p-4 rounded-xl border border-purple-500/20 bg-purple-500/5">
+        <div className="relative z-10 p-4 rounded-xl border border-primary/20 bg-primary/5 shadow-sm">
           <div className="flex items-start gap-3">
-            <BookOpen size={18} className="text-purple-400 mt-0.5 flex-shrink-0" />
+            <BookOpen size={18} className="text-primary mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-white font-semibold text-sm">Did you know?</p>
-              <p className="text-slate-400 text-xs mt-1">
+              <p className="text-on-surface font-bold text-sm">Did you know?</p>
+              <p className="text-on-surface-variant text-xs font-semibold mt-1 leading-relaxed">
                 Students who practice with our platform score 40% higher in placement tests on average.
               </p>
             </div>
@@ -176,123 +172,123 @@ export default function RegisterPage() {
         >
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-2 mb-8">
-            <div className="w-9 h-9 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center">
+            <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
               <Zap size={18} className="text-white" fill="white" />
             </div>
-            <span className="font-extrabold text-lg gradient-text-purple">CareerCracker AI</span>
+            <span className="font-extrabold text-lg text-primary">CareerCracker AI</span>
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-black text-white mb-2">Create Your Account</h1>
-            <p className="text-slate-400">Start your placement preparation for free</p>
+            <h1 className="text-3xl font-black text-on-surface mb-2">Create Your Account</h1>
+            <p className="text-on-surface-variant font-semibold">Start your placement preparation for free</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">Full Name *</label>
+                <label className="block text-sm font-bold text-on-surface-variant mb-1.5">Full Name *</label>
                 <div className="relative">
-                  <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-outline" />
                   <input
                     {...register('name')}
                     placeholder="Rahul Sharma"
-                    className="input-field neon-focus pl-10 text-sm"
+                    className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-2.5 pl-10 text-sm text-on-surface focus:outline-none focus:border-primary transition-all shadow-sm font-medium"
                   />
                 </div>
-                {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name.message}</p>}
+                {errors.name && <p className="mt-1 text-xs text-red-600 font-semibold">{errors.name.message}</p>}
               </div>
 
               {/* Phone */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">Phone Number</label>
+                <label className="block text-sm font-bold text-on-surface-variant mb-1.5">Phone Number</label>
                 <div className="relative">
-                  <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-outline" />
                   <input
                     {...register('phone')}
                     placeholder="+91 9876543210"
-                    className="input-field neon-focus pl-10 text-sm"
+                    className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-2.5 pl-10 text-sm text-on-surface focus:outline-none focus:border-primary transition-all shadow-sm font-medium"
                   />
                 </div>
-                {errors.phone && <p className="mt-1 text-xs text-red-400">{errors.phone.message}</p>}
+                {errors.phone && <p className="mt-1 text-xs text-red-600 font-semibold">{errors.phone.message}</p>}
               </div>
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Email Address *</label>
+              <label className="block text-sm font-bold text-on-surface-variant mb-1.5">Email Address *</label>
               <div className="relative">
-                <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-outline" />
                 <input
                   {...register('email')}
                   type="email"
                   placeholder="you@example.com"
-                  className="input-field neon-focus pl-10 text-sm"
+                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-2.5 pl-10 text-sm text-on-surface focus:outline-none focus:border-primary transition-all shadow-sm font-medium"
                 />
               </div>
-              {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
+              {errors.email && <p className="mt-1 text-xs text-red-600 font-semibold">{errors.email.message}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* College */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">College</label>
+                <label className="block text-sm font-bold text-on-surface-variant mb-1.5">College</label>
                 <div className="relative">
-                  <GraduationCap size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <GraduationCap size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-outline" />
                   <input
                     {...register('college')}
                     placeholder="VIT Vellore"
-                    className="input-field neon-focus pl-10 text-sm"
+                    className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-2.5 pl-10 text-sm text-on-surface focus:outline-none focus:border-primary transition-all shadow-sm font-medium"
                   />
                 </div>
               </div>
 
               {/* Department */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">Department</label>
+                <label className="block text-sm font-bold text-on-surface-variant mb-1.5">Department</label>
                 <input
                   {...register('department')}
                   placeholder="CSE / ECE / IT"
-                  className="input-field neon-focus text-sm"
+                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-primary transition-all shadow-sm font-medium"
                 />
               </div>
             </div>
 
             {/* Batch */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Graduation Year</label>
+              <label className="block text-sm font-bold text-on-surface-variant mb-1.5">Graduation Year</label>
               <select
                 {...register('batch')}
-                className="input-field neon-focus text-sm"
+                className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-3.5 py-2.5 text-sm text-on-surface focus:outline-none focus:border-primary transition-all shadow-sm font-medium cursor-pointer"
               >
                 <option value="">Select year</option>
                 {['2024', '2025', '2026', '2027', '2028'].map(y => (
-                  <option key={y} value={y} style={{ background: '#12121f' }}>{y}</option>
+                  <option key={y} value={y} style={{ background: '#ffffff', color: '#191c1e' }}>{y}</option>
                 ))}
               </select>
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Password *</label>
+              <label className="block text-sm font-bold text-on-surface-variant mb-1.5">Password *</label>
               <div className="relative">
-                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-outline" />
                 <input
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Min. 8 characters"
-                  className="input-field neon-focus pl-10 pr-10 text-sm"
+                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-2.5 pl-10 pr-10 text-sm text-on-surface focus:outline-none focus:border-primary transition-all shadow-sm font-medium"
                   onChange={e => setPassword(e.target.value)}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface cursor-pointer"
                 >
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
-              {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
+              {errors.password && <p className="mt-1 text-xs text-red-600 font-semibold">{errors.password.message}</p>}
 
               {/* Password strength */}
               {password && (
@@ -303,37 +299,37 @@ export default function RegisterPage() {
                         key={i}
                         className="h-1 flex-1 rounded-full transition-all duration-300"
                         style={{
-                          background: i <= strength.score ? strength.color : 'rgba(30,30,58,0.8)',
+                          background: i <= strength.score ? strength.color : '#e2e8f0',
                         }}
                       />
                     ))}
                   </div>
-                  <p className="text-xs" style={{ color: strength.color }}>{strength.label}</p>
+                  <p className="text-xs font-bold" style={{ color: strength.color }}>{strength.label}</p>
                 </div>
               )}
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Confirm Password *</label>
+              <label className="block text-sm font-bold text-on-surface-variant mb-1.5">Confirm Password *</label>
               <div className="relative">
-                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-outline" />
                 <input
                   {...register('confirmPassword')}
                   type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="Repeat your password"
-                  className="input-field neon-focus pl-10 pr-10 text-sm"
+                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-2.5 pl-10 pr-10 text-sm text-on-surface focus:outline-none focus:border-primary transition-all shadow-sm font-medium"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface cursor-pointer"
                 >
                   {showConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="mt-1 text-xs text-red-400">{errors.confirmPassword.message}</p>
+                <p className="mt-1 text-xs text-red-600 font-semibold">{errors.confirmPassword.message}</p>
               )}
             </div>
 
@@ -344,22 +340,22 @@ export default function RegisterPage() {
                   {...register('terms')}
                   type="checkbox"
                   id="terms"
-                  className="mt-0.5 w-4 h-4 rounded border-slate-600 bg-slate-800 text-purple-600"
+                  className="mt-0.5 w-4 h-4 rounded border-outline-variant/60 bg-surface text-primary focus:ring-primary cursor-pointer"
                 />
-                <label htmlFor="terms" className="text-sm text-slate-400 leading-snug">
+                <label htmlFor="terms" className="text-sm text-on-surface-variant font-semibold leading-snug cursor-pointer">
                   I agree to the{' '}
-                  <Link href="/terms" className="text-purple-400 hover:text-purple-300">Terms of Service</Link>
+                  <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link>
                   {' '}and{' '}
-                  <Link href="/privacy" className="text-purple-400 hover:text-purple-300">Privacy Policy</Link>
+                  <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
                 </label>
               </div>
-              {errors.terms && <p className="mt-1 text-xs text-red-400">{errors.terms.message}</p>}
+              {errors.terms && <p className="mt-1 text-xs text-red-600 font-semibold">{errors.terms.message}</p>}
             </div>
 
             <motion.button
               type="submit"
               disabled={isLoading}
-              className="btn-glow w-full py-3.5 text-sm font-semibold rounded-xl text-white flex items-center justify-center gap-2 disabled:opacity-70"
+              className="btn-glow w-full py-3.5 text-sm font-semibold rounded-xl text-white flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer shadow-sm"
               whileHover={!isLoading ? { scale: 1.01 } : {}}
               whileTap={!isLoading ? { scale: 0.99 } : {}}
             >
@@ -377,9 +373,9 @@ export default function RegisterPage() {
             </motion.button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-400">
+          <p className="mt-6 text-center text-sm text-on-surface-variant font-semibold">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-purple-400 hover:text-purple-300 font-semibold">
+            <Link href="/auth/login" className="text-primary hover:underline font-bold">
               Sign in
             </Link>
           </p>

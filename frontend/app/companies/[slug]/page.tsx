@@ -195,11 +195,11 @@ export default function CompanyProfilePage() {
   if (!spec) {
     return (
       <ProtectedRoute>
-        <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f] text-white">
-          <div className="text-center">
-            <AlertCircle size={48} className="text-purple-500 mx-auto mb-4" />
-            <h2 className="text-xl font-bold">Company Profile Not Found</h2>
-            <button onClick={() => router.push('/companies')} className="btn-glow mt-4 px-6 py-2.5 rounded-xl">
+        <div className="min-h-screen flex items-center justify-center bg-surface text-on-surface font-body-md">
+          <div className="text-center bg-surface-container-lowest p-8 border border-outline-variant/30 rounded-2xl shadow-sm max-w-sm">
+            <AlertCircle size={48} className="text-primary mx-auto mb-4" />
+            <h2 className="font-headline-md text-headline-md text-on-surface mb-4">Company Profile Not Found</h2>
+            <button onClick={() => router.push('/companies')} className="btn-glow mt-4 px-6 py-2.5 rounded-xl bg-primary hover:bg-secondary w-full">
               Go Back
             </button>
           </div>
@@ -210,37 +210,37 @@ export default function CompanyProfilePage() {
 
   return (
     <ProtectedRoute>
-      <div className="flex min-h-screen bg-[#0a0a0f] text-white">
+      <div className="flex min-h-screen bg-surface text-on-surface font-body-md">
         <Sidebar activePath="/companies" />
 
         <div className="flex-1 min-h-screen overflow-y-auto pl-0 lg:pl-64">
-          <div className="max-w-4xl mx-auto px-4 md:px-8 py-8">
+          <div className="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-md">
             {/* Back button */}
             <button
               onClick={() => router.push('/companies')}
-              className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-white uppercase tracking-wider mb-6 cursor-pointer transition-colors"
+              className="flex items-center gap-1.5 text-xs font-bold text-on-surface-variant hover:text-primary uppercase tracking-wider mb-6 cursor-pointer transition-colors"
             >
               <ArrowLeft size={14} /> Back to Hub
             </button>
 
             {/* Profile Hero Card */}
-            <div className="glass-card p-6 md:p-8 border-white/5 relative overflow-hidden mb-8">
-              <div className="absolute top-0 right-0 w-36 h-36 bg-purple-600/5 rounded-bl-full blur-xl pointer-events-none" />
+            <div className="glass-card p-6 md:p-8 border border-outline-variant/30 relative overflow-hidden mb-8 ambient-shadow">
+              <div className="absolute top-0 right-0 w-36 h-36 bg-primary/5 rounded-bl-full blur-xl pointer-events-none" />
               
               <div className="relative z-10 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">
+                  <span className="bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">
                     Placement Strategy Kit
                   </span>
-                  <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold bg-emerald-500/5 border border-emerald-500/15 px-2.5 py-1 rounded-md">
+                  <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
                     <CheckCircle2 size={13} />
                     Historical Success Rate: {spec.successRate}
                   </div>
                 </div>
 
-                <h1 className="text-2xl md:text-3xl font-black text-white">{spec.name}</h1>
-                <p className="text-sm font-semibold text-purple-300 italic">{spec.tagline}</p>
-                <p className="text-xs md:text-sm text-slate-400 leading-relaxed mt-2">{spec.overview}</p>
+                <h1 className="font-headline-lg text-headline-lg text-on-surface">{spec.name}</h1>
+                <p className="text-sm font-semibold text-secondary italic">{spec.tagline}</p>
+                <p className="text-xs md:text-sm text-on-surface-variant leading-relaxed mt-2">{spec.overview}</p>
               </div>
             </div>
 
@@ -249,27 +249,27 @@ export default function CompanyProfilePage() {
               
               {/* Left Column: Pattern Structure (col-span-2) */}
               <div className="md:col-span-2 space-y-6">
-                <div className="glass-card p-5 border-white/5">
-                  <h3 className="text-base font-extrabold text-white mb-4 flex items-center gap-2 border-b border-white/5 pb-3">
-                    <BookOpen size={18} className="text-purple-400" />
+                <div className="glass-card p-5 border border-outline-variant/30 ambient-shadow">
+                  <h3 className="text-base font-extrabold text-on-surface mb-4 flex items-center gap-2 border-b border-outline-variant/30 pb-3">
+                    <BookOpen size={18} className="text-primary" />
                     Latest Test Pattern Structure
                   </h3>
 
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs border-collapse">
                       <thead>
-                        <tr className="bg-slate-950 text-slate-500 uppercase tracking-widest text-[9px] font-bold">
+                        <tr className="bg-surface-container text-on-surface-variant uppercase tracking-widest text-[9px] font-bold">
                           <th className="py-3 px-4">Evaluation Section</th>
                           <th className="py-3 px-4 text-center">Questions</th>
                           <th className="py-3 px-4 text-right">Time Duration</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/5 text-slate-300 font-medium">
+                      <tbody className="divide-y divide-outline-variant/30 text-on-surface font-medium">
                         {spec.pattern.map((section, sIdx) => (
-                          <tr key={sIdx} className="hover:bg-white/[0.01]">
-                            <td className="py-3.5 px-4 font-semibold text-white">{section.sectionName}</td>
-                            <td className="py-3.5 px-4 text-center text-slate-400 font-mono">{section.questions}</td>
-                            <td className="py-3.5 px-4 text-right text-slate-400 font-mono">{section.time}</td>
+                          <tr key={sIdx} className="hover:bg-surface-container-low/50">
+                            <td className="py-3.5 px-4 font-semibold text-on-surface">{section.sectionName}</td>
+                            <td className="py-3.5 px-4 text-center text-on-surface-variant font-mono">{section.questions}</td>
+                            <td className="py-3.5 px-4 text-right text-on-surface-variant font-mono">{section.time}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -280,7 +280,7 @@ export default function CompanyProfilePage() {
                   <div className="mt-6">
                     <button
                       onClick={handleLaunchExam}
-                      className="w-full btn-glow py-3 rounded-xl text-white font-extrabold text-xs tracking-wider uppercase flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                      className="w-full btn-glow py-3 rounded-xl text-white font-extrabold text-xs tracking-wider uppercase flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-primary hover:bg-secondary"
                     >
                       Launch Company Mock Exam
                       <ChevronRight size={14} />
@@ -293,16 +293,16 @@ export default function CompanyProfilePage() {
               <div className="md:col-span-1 space-y-6">
                 
                 {/* Core topics */}
-                <div className="glass-card p-5 border-white/5">
-                  <h3 className="text-xs font-black text-white uppercase tracking-wider mb-3.5 flex items-center gap-2">
-                    <Terminal size={14} className="text-purple-400" />
+                <div className="glass-card p-5 border border-outline-variant/30 ambient-shadow">
+                  <h3 className="text-xs font-black text-on-surface uppercase tracking-wider mb-3.5 flex items-center gap-2">
+                    <Terminal size={14} className="text-primary" />
                     Frequently Asked Topics
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {spec.topics.map(topic => (
                       <span
                         key={topic}
-                        className="bg-slate-900 border border-white/5 hover:border-purple-500/20 text-[10px] text-slate-400 font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                        className="bg-surface-container-low border border-outline-variant/50 hover:border-primary/30 text-[10px] text-on-surface-variant hover:text-primary font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
                         onClick={() => router.push('/practice')}
                       >
                         {topic}
@@ -312,8 +312,8 @@ export default function CompanyProfilePage() {
                 </div>
 
                 {/* Secure monitoring reminder */}
-                <div className="bg-yellow-500/5 border border-yellow-500/10 rounded-2xl p-5 space-y-3 text-xs leading-relaxed text-yellow-300/80">
-                  <h4 className="font-extrabold text-yellow-400 uppercase tracking-widest text-[10px] flex items-center gap-1.5">
+                <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-5 space-y-3 text-xs leading-relaxed text-amber-800/80">
+                  <h4 className="font-extrabold text-amber-700 uppercase tracking-widest text-[10px] flex items-center gap-1.5">
                     <ShieldCheck size={14} />
                     Secure Browser Rule
                   </h4>
@@ -325,16 +325,16 @@ export default function CompanyProfilePage() {
             </div>
 
             {/* Preparation Strategies Section */}
-            <div className="glass-card p-6 border-white/5 mt-8">
-              <h3 className="text-base font-extrabold text-white mb-4 flex items-center gap-2 border-b border-white/5 pb-3">
-                <Star size={18} className="text-yellow-400 animate-spin" style={{ animationDuration: '4s' }} />
+            <div className="glass-card p-6 border border-outline-variant/30 mt-8 ambient-shadow">
+              <h3 className="text-base font-extrabold text-on-surface mb-4 flex items-center gap-2 border-b border-outline-variant/30 pb-3">
+                <Star size={18} className="text-yellow-500 animate-spin" style={{ animationDuration: '4s' }} />
                 Targeted Preparation Strategy
               </h3>
 
               <div className="space-y-4">
                 {spec.strategies.map((tip, idx) => (
-                  <div key={idx} className="flex gap-4 items-start text-slate-300 text-xs md:text-sm leading-relaxed">
-                    <span className="w-6 h-6 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 font-black text-xs flex items-center justify-center shrink-0 mt-0.5 font-mono">
+                  <div key={idx} className="flex gap-4 items-start text-on-surface-variant text-xs md:text-sm leading-relaxed">
+                    <span className="w-6 h-6 rounded-lg bg-primary/10 border border-primary/20 text-primary font-black text-xs flex items-center justify-center shrink-0 mt-0.5 font-mono">
                       {idx + 1}
                     </span>
                     <p className="flex-1">{tip}</p>

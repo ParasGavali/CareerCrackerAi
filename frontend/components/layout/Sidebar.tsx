@@ -33,63 +33,67 @@ export function Sidebar({ className, activePath }: SidebarProps) {
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
   const avatarInitials = user ? generateAvatar(user.name) : 'U';
-  const avatarColor = user ? getAvatarColor(user.name) : 'from-purple-500 to-blue-500';
+  const avatarColor = user ? getAvatarColor(user.name) : 'from-[#004ac6] to-[#712ae2]';
 
   return (
     <motion.aside
-      animate={{ width: collapsed ? 72 : 260 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      animate={{ width: collapsed ? 72 : 256 }}
+      transition={{ duration: 0.25, ease: 'easeInOut' }}
+      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
       className={cn(
         'fixed left-0 top-0 h-full z-40 flex flex-col',
-        'border-r border-outline-variant/30 bg-surface-container-lowest shadow-sm',
+        'border-r border-[#c3c6d7]/40 bg-white',
+        'shadow-[1px_0_0_0_rgba(195,198,215,0.3)]',
         className
       )}
     >
       {/* Logo */}
-      <div className="flex items-center justify-between p-4 border-b border-outline-variant/30">
-        <Link href="/dashboard" className="flex items-center gap-2 overflow-hidden">
-          <div className="w-9 h-9 flex-shrink-0 bg-primary rounded-lg flex items-center justify-center shadow-sm">
-            <Zap size={18} className="text-white" fill="white" />
+      <div className="flex items-center justify-between px-4 py-4 border-b border-[#c3c6d7]/30 h-16">
+        <Link href="/dashboard" className="flex items-center gap-2.5 overflow-hidden">
+          <div className="w-9 h-9 flex-shrink-0 bg-[#004ac6] rounded-xl flex items-center justify-center shadow-sm">
+            <Zap size={17} className="text-white" fill="white" />
           </div>
           <AnimatePresence mode="wait">
             {!collapsed && (
               <motion.span
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className="font-extrabold text-base text-primary whitespace-nowrap"
+                exit={{ opacity: 0, x: -8 }}
+                transition={{ duration: 0.15 }}
+                className="font-extrabold text-[13.5px] text-[#191c1e] whitespace-nowrap leading-tight"
               >
-                CareerCracker AI
+                CareerCracker <span className="text-[#004ac6]">AI</span>
               </motion.span>
             )}
           </AnimatePresence>
         </Link>
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors flex-shrink-0"
+          className="p-1.5 rounded-lg text-[#737686] hover:text-[#004ac6] hover:bg-[#f2f4f6] transition-colors flex-shrink-0"
         >
-          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
         </button>
       </div>
 
       {/* Nav links */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
+      <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
         {sidebarLinks.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
           return (
             <Link
               key={href}
               href={href}
+              title={collapsed ? label : undefined}
               className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative overflow-hidden',
+                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 group relative',
                 active
-                  ? 'bg-primary/10 text-primary border-l-4 border-primary font-semibold shadow-sm'
-                  : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-l-4 border-transparent'
+                  ? 'bg-[#004ac6]/8 text-[#004ac6] border-l-[3px] border-[#004ac6]'
+                  : 'text-[#434655] hover:text-[#004ac6] hover:bg-[#f2f4f6] border-l-[3px] border-transparent'
               )}
             >
               <Icon
-                size={18}
-                className={cn('flex-shrink-0', active ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary')}
+                size={17}
+                className={cn('flex-shrink-0 transition-colors', active ? 'text-[#004ac6]' : 'text-[#737686] group-hover:text-[#004ac6]')}
               />
               <AnimatePresence mode="wait">
                 {!collapsed && (
@@ -97,22 +101,16 @@ export function Sidebar({ className, activePath }: SidebarProps) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
+                    transition={{ duration: 0.1 }}
                     className="whitespace-nowrap"
                   >
                     {label}
                   </motion.span>
                 )}
               </AnimatePresence>
-              {active && (
-                <motion.div
-                  layoutId="sidebar-active"
-                  className="absolute inset-0 bg-primary/5 rounded-xl"
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                />
-              )}
               {/* Tooltip on collapsed */}
               {collapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-inverse-surface text-inverse-on-surface text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[#191c1e] text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-lg">
                   {label}
                 </div>
               )}
@@ -122,14 +120,14 @@ export function Sidebar({ className, activePath }: SidebarProps) {
       </nav>
 
       {/* User profile card */}
-      <div className="border-t border-outline-variant/30 p-3">
+      <div className="border-t border-[#c3c6d7]/30 p-3">
         {user && (
           <div className={cn(
-            'rounded-xl p-3 bg-surface-container border border-outline-variant/40 shadow-sm',
+            'rounded-xl p-3 bg-[#f7f9fb] border border-[#c3c6d7]/40',
             'flex items-center gap-3'
           )}>
             <div className={cn(
-              'w-9 h-9 flex-shrink-0 rounded-lg bg-gradient-to-br flex items-center justify-center text-white text-sm font-bold',
+              'w-9 h-9 flex-shrink-0 rounded-xl bg-gradient-to-br flex items-center justify-center text-white text-xs font-bold',
               avatarColor
             )}>
               {avatarInitials}
@@ -140,14 +138,15 @@ export function Sidebar({ className, activePath }: SidebarProps) {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
+                  transition={{ duration: 0.1 }}
                   className="flex-1 min-w-0"
                 >
-                  <p className="text-on-surface text-sm font-semibold truncate">{user.name}</p>
+                  <p className="text-[#191c1e] text-sm font-bold truncate">{user.name}</p>
                   <div className="flex items-center gap-1 mt-0.5">
                     <Star size={10} className="text-amber-500 fill-amber-500" />
                     <span className="text-amber-700 text-xs font-semibold">{user.score || 0} pts</span>
                     {user.rank && (
-                      <span className="text-on-surface-variant text-xs">· #{user.rank}</span>
+                      <span className="text-[#737686] text-xs">· #{user.rank}</span>
                     )}
                   </div>
                 </motion.div>
@@ -156,7 +155,7 @@ export function Sidebar({ className, activePath }: SidebarProps) {
             {!collapsed && (
               <button
                 onClick={logout}
-                className="p-1.5 text-on-surface-variant hover:text-red-600 transition-colors flex-shrink-0"
+                className="p-1.5 text-[#737686] hover:text-red-600 transition-colors flex-shrink-0 rounded-lg hover:bg-red-50"
                 title="Sign out"
               >
                 <LogOut size={14} />

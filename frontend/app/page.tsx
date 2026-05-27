@@ -6,87 +6,52 @@ import { motion, useInView } from 'framer-motion';
 import { Navbar } from '@/components/layout/Navbar';
 import {
   Zap, BookOpen, FileText, Code2, BarChart3, Building2, Trophy,
-  ArrowRight, Star, CheckCircle, Users, Target, Award, ChevronRight,
-  Brain, Clock, Sparkles, Play
+  ArrowRight, Star, CheckCircle, Users, Target, Award,
+  Brain, Clock, Sparkles, Play, Shield, TrendingUp, ChevronRight
 } from 'lucide-react';
 
-// ==================== COUNT-UP HOOK ====================
-function useCountUp(end: number, duration: number = 2000, start: number = 0) {
-  const [count, setCount] = useState(start);
-  const inViewRef = useRef(false);
-
-  const animate = (startTime: number) => {
-    const now = Date.now();
-    const elapsed = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    setCount(Math.round(start + (end - start) * eased));
-    if (progress < 1) requestAnimationFrame(() => animate(startTime));
-  };
+function useCountUp(end: number, duration: number = 2000) {
+  const [count, setCount] = useState(0);
+  const triggered = useRef(false);
 
   const trigger = () => {
-    if (!inViewRef.current) {
-      inViewRef.current = true;
-      animate(Date.now());
-    }
+    if (triggered.current) return;
+    triggered.current = true;
+    const start = Date.now();
+    const tick = () => {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(end * eased));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
   };
 
   return { count, trigger };
 }
 
-// ==================== STAT COUNTER ====================
-function StatCounter({ value, label, suffix = '' }: { value: number; label: string; suffix?: string }) {
+function StatCounter({ value, label, suffix = '', icon: Icon, color }: {
+  value: number; label: string; suffix?: string;
+  icon: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>;
+  color: string;
+}) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
   const { count, trigger } = useCountUp(value);
 
-  useEffect(() => {
-    if (inView) trigger();
-  }, [inView, trigger]);
+  useEffect(() => { if (inView) trigger(); }, [inView]);
 
   return (
-    <div ref={ref} className="text-center px-6 py-4">
-      <div className="text-4xl md:text-5xl font-black text-primary mb-2 tabular-nums">
+    <div ref={ref} className="flex flex-col items-center text-center p-8 bg-white rounded-2xl border border-[#c3c6d7]/40 shadow-[0_2px_8px_rgba(15,23,42,0.06)]">
+      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4" style={{ backgroundColor: `${color}14` }}>
+        <Icon size={26} style={{ color }} />
+      </div>
+      <div className="text-4xl font-black text-[#191c1e] tabular-nums mb-1">
         {count.toLocaleString()}{suffix}
       </div>
-      <div className="text-on-surface-variant text-sm font-semibold">{label}</div>
+      <div className="text-sm font-semibold text-[#434655]">{label}</div>
     </div>
-  );
-}
-
-// ==================== FEATURE CARD ====================
-function FeatureCard({
-  icon: Icon,
-  title,
-  description,
-  color,
-  delay,
-}: {
-  icon: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>;
-  title: string;
-  description: string;
-  color: string;
-  delay: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      whileHover={{ y: -6, scale: 1.02 }}
-      className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/50 ambient-shadow flex flex-col items-center text-center group hover:border-primary/50 transition-colors cursor-default"
-    >
-      <div
-        className="w-16 h-16 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
-        style={{ background: `${color}10` }}
-      >
-        <Icon size={28} style={{ color }} />
-      </div>
-
-      <h3 className="font-headline-md text-lg font-bold text-on-surface mb-2">{title}</h3>
-      <p className="font-body-md text-sm text-on-surface-variant leading-relaxed">{description}</p>
-    </motion.div>
   );
 }
 
@@ -106,36 +71,42 @@ const features = [
     title: 'Aptitude Practice',
     description: 'Master Quantitative Aptitude, Logical Reasoning, and Verbal Ability with 10,000+ curated questions across all difficulty levels.',
     color: '#712ae2',
+    bg: '#712ae214',
   },
   {
     icon: FileText,
     title: 'Mock Tests',
     description: 'Simulate real company tests with timed, proctored mock exams. Company-specific test patterns for TCS, Infosys, Wipro and more.',
     color: '#004ac6',
+    bg: '#004ac614',
   },
   {
     icon: Code2,
     title: 'Coding Arena',
     description: 'Practice coding problems in our browser-based IDE supporting C++, Java, Python, and JavaScript with instant feedback.',
-    color: '#004ac6',
+    color: '#059669',
+    bg: '#05966914',
   },
   {
     icon: Brain,
     title: 'AI Analytics',
     description: 'Get personalized insights into your weak areas. AI-powered recommendations help you focus on topics that matter most.',
     color: '#712ae2',
+    bg: '#712ae214',
   },
   {
     icon: Building2,
     title: 'Company Prep',
     description: 'Dedicated preparation guides for each major IT company with test patterns, sample questions, and proven strategies.',
-    color: '#712ae2',
+    color: '#004ac6',
+    bg: '#004ac614',
   },
   {
     icon: Trophy,
     title: 'Leaderboard',
     description: 'Compete with students across India. Track your rank, celebrate achievements, and stay motivated with gamified learning.',
-    color: '#004ac6',
+    color: '#b45309',
+    bg: '#b4530914',
   },
 ];
 
@@ -161,13 +132,12 @@ const steps = [
 ];
 
 const companyDetails = [
-  { name: 'TCS', pattern: 'Numerical, Verbal, Logical + Coding', duration: '3h 30min', tag: 'NQT Based' },
-  { name: 'Infosys', pattern: 'Quant, Logical, Verbal + PseudoCode', duration: '2h 45min', tag: 'InfyTQ' },
-  { name: 'Wipro', pattern: 'Aptitude + Essay Writing + Interview', duration: '3h', tag: 'NLTH' },
-  { name: 'HCL', pattern: 'Quant, Reasoning, Verbal + Technical', duration: '2h 30min', tag: 'TechBee' },
-  { name: 'Accenture', pattern: 'Cognitive + Technical + Coding', duration: '3h', tag: 'Accenture Assoc.' },
-  { name: 'Cognizant', pattern: 'Aptitude + Reasoning + Coding', duration: '2h 15min', tag: 'GenC' },
-  { name: 'Capgemini', pattern: 'Pseudo-code + Quant + LR + Essay', duration: '3h 15min', tag: 'SVAR' },
+  { name: 'TCS', slug: 'tcs', pattern: 'Numerical, Verbal, Logical + Coding', duration: '3h 30min', tag: 'NQT', sections: 4, questions: 82 },
+  { name: 'Infosys', slug: 'infosys', pattern: 'Quant, Logical, Verbal + PseudoCode', duration: '2h 45min', tag: 'InfyTQ', sections: 5, questions: 37 },
+  { name: 'Wipro', slug: 'wipro', pattern: 'Aptitude + Essay Writing + Interview', duration: '3h', tag: 'NLTH', sections: 5, questions: 55 },
+  { name: 'HCL', slug: 'hcl', pattern: 'Quant, Reasoning, Verbal + Technical', duration: '2h 30min', tag: 'TechBee', sections: 4, questions: 41 },
+  { name: 'Accenture', slug: 'accenture', pattern: 'Cognitive + Technical + Coding', duration: '3h', tag: 'ASE', sections: 5, questions: 64 },
+  { name: 'Cognizant', slug: 'cognizant', pattern: 'Aptitude + Reasoning + Coding', duration: '2h 15min', tag: 'GenC', sections: 4, questions: 48 },
 ];
 
 const testimonials = [
@@ -178,7 +148,7 @@ const testimonials = [
     rating: 5,
     company: 'Placed at TCS',
     avatar: 'PS',
-    color: 'from-primary to-secondary',
+    avatarBg: '#004ac6',
   },
   {
     name: 'Rahul Verma',
@@ -187,7 +157,7 @@ const testimonials = [
     rating: 5,
     company: 'Placed at Infosys',
     avatar: 'RV',
-    color: 'from-secondary to-primary',
+    avatarBg: '#712ae2',
   },
   {
     name: 'Anjali Patel',
@@ -196,192 +166,221 @@ const testimonials = [
     rating: 5,
     company: 'Placed at Accenture',
     avatar: 'AP',
-    color: 'from-primary to-primary-container',
+    avatarBg: '#059669',
   },
 ];
 
 export default function LandingPage() {
   return (
-    <div className="bg-surface text-on-surface antialiased font-body-md overflow-x-hidden min-h-screen">
+    <div className="bg-[#f7f9fb] text-[#191c1e] antialiased overflow-x-hidden min-h-screen" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       <Navbar />
 
       {/* ==================== HERO ==================== */}
-      <main className="pt-[100px]">
-        <section className="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-xl text-center flex flex-col items-center justify-center">
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-xs px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-md"
-          >
-            <Sparkles size={14} className="text-primary" />
-            <span className="font-label-sm text-label-sm text-primary uppercase tracking-wider">AI-Powered Preparation</span>
-          </motion.div>
+      <main>
+        <section className="relative pt-28 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+          {/* Background decorations */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full opacity-[0.04]" style={{ background: 'radial-gradient(circle, #004ac6, transparent)' }} />
+            <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full opacity-[0.04]" style={{ background: 'radial-gradient(circle, #712ae2, transparent)' }} />
+            <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(195,198,215,0.35) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+          </div>
 
-          {/* Heading */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-display-lg text-display-lg max-w-4xl mx-auto mb-md leading-tight text-on-surface"
-          >
-            <span className="bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
-              Crack Your Placement
-            </span>{' '}
-            With AI
-          </motion.h1>
+          <div className="relative max-w-5xl mx-auto text-center">
+            {/* Pill badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#004ac6]/10 border border-[#004ac6]/20 mb-8"
+            >
+              <Sparkles size={13} className="text-[#004ac6]" />
+              <span className="text-xs font-bold text-[#004ac6] uppercase tracking-widest">AI-Powered Campus Placement Prep</span>
+            </motion.div>
 
-          {/* Subtext */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-lg leading-relaxed"
-          >
-            The ultimate AI-driven platform for engineering students to master aptitude, coding, and mock interviews. Get hired by top tech giants faster.
-          </motion.p>
+            {/* Hero Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.08] tracking-tight text-[#191c1e] mb-6"
+            >
+              Crack Your{' '}
+              <span style={{ background: 'linear-gradient(135deg, #004ac6 0%, #712ae2 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Dream Placement
+              </span>
+              <br />with AI
+            </motion.h1>
 
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-col sm:flex-row gap-sm justify-center items-center w-full sm:w-auto mb-xl"
-          >
-            <Link href="/auth/register" className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto font-label-md text-label-md bg-primary text-on-primary px-8 py-4 rounded-lg hover:bg-secondary transition-colors duration-300 ambient-shadow flex items-center justify-center gap-xs cursor-pointer">
-                Start For Free
-                <ArrowRight size={20} />
+            {/* Subheading */}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.25 }}
+              className="text-lg sm:text-xl text-[#434655] max-w-2xl mx-auto mb-10 leading-relaxed"
+            >
+              The ultimate AI-driven platform for engineering students to master aptitude, coding, and mock interviews. Get hired by top tech giants faster.
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-12"
+            >
+              <Link href="/auth/register">
+                <button className="btn-primary text-base px-8 py-3.5 rounded-xl w-full sm:w-auto">
+                  Start For Free
+                  <ArrowRight size={18} />
+                </button>
+              </Link>
+              <button className="btn-outline text-base px-8 py-3.5 rounded-xl w-full sm:w-auto">
+                <Play size={16} className="fill-current" />
+                Watch Demo
               </button>
-            </Link>
-            <button className="w-full sm:w-auto font-label-md text-label-md bg-transparent border border-outline-variant text-on-surface px-8 py-4 rounded-lg hover:border-primary hover:text-primary transition-colors duration-300 flex items-center justify-center gap-xs cursor-pointer">
-              Watch Demo
-              <Play size={20} className="fill-current" />
-            </button>
-          </motion.div>
+            </motion.div>
+
+            {/* Trust badges */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="flex flex-wrap justify-center gap-6 text-sm text-[#737686]"
+            >
+              {[
+                { icon: CheckCircle, text: '500+ free questions' },
+                { icon: Shield, text: 'No credit card needed' },
+                { icon: Users, text: '50,000+ students' },
+              ].map(({ icon: Icon, text }) => (
+                <span key={text} className="flex items-center gap-1.5">
+                  <Icon size={15} className="text-[#004ac6]" />
+                  {text}
+                </span>
+              ))}
+            </motion.div>
+          </div>
         </section>
 
-        {/* ==================== SOCIAL PROOF ==================== */}
-        <section className="py-lg border-y border-outline-variant/30 bg-surface-container-lowest">
-          <div className="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop text-center">
-            <p className="font-label-sm text-label-sm text-outline uppercase tracking-widest mb-md">
-              Trusted by 50,000+ Engineering Students to crack
+        {/* ==================== SOCIAL PROOF / COMPANIES ==================== */}
+        <section className="py-12 px-4 sm:px-6 lg:px-8 border-y border-[#c3c6d7]/40 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <p className="text-center text-xs font-bold text-[#737686] uppercase tracking-widest mb-8">
+              Trusted by 50,000+ engineering students preparing for
             </p>
-            <div className="flex flex-wrap justify-center items-center gap-lg md:gap-xl opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-14">
               {companies.map(c => (
-                <span key={c.name} className="font-headline-md text-headline-md font-bold text-on-surface">
+                <motion.span
+                  key={c.name}
+                  whileHover={{ scale: 1.08 }}
+                  className="text-xl font-black transition-all duration-200"
+                  style={{ color: c.color }}
+                >
                   {c.name}
-                </span>
+                </motion.span>
               ))}
             </div>
           </div>
         </section>
 
         {/* ==================== STATS ==================== */}
-        <section className="py-xl max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-md">
-            <div className="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant/50 ambient-shadow text-center flex flex-col items-center group hover:border-primary/50 transition-colors">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-sm group-hover:scale-110 transition-transform">
-                <Users size={32} className="text-primary" />
-              </div>
-              <h3 className="font-headline-lg text-headline-lg text-on-surface mb-xs">50,000+</h3>
-              <p className="font-body-md text-body-md text-on-surface-variant">Students Placed</p>
-            </div>
-            <div className="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant/50 ambient-shadow text-center flex flex-col items-center group hover:border-secondary/50 transition-colors">
-              <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mb-sm group-hover:scale-110 transition-transform">
-                <BookOpen size={32} className="text-secondary" />
-              </div>
-              <h3 className="font-headline-lg text-headline-lg text-on-surface mb-xs">10,000+</h3>
-              <p className="font-body-md text-body-md text-on-surface-variant">Practice Questions</p>
-            </div>
-            <div className="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant/50 ambient-shadow text-center flex flex-col items-center group hover:border-primary/50 transition-colors">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-sm group-hover:scale-110 transition-transform">
-                <Building2 size={32} className="text-primary" />
-              </div>
-              <h3 className="font-headline-lg text-headline-lg text-on-surface mb-xs">100+</h3>
-              <p className="font-body-md text-body-md text-on-surface-variant">Top Companies</p>
+        <section className="py-20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <StatCounter value={50000} label="Students Placed" suffix="+" icon={Users} color="#004ac6" />
+              <StatCounter value={10000} label="Practice Questions" suffix="+" icon={BookOpen} color="#712ae2" />
+              <StatCounter value={100} label="Top Companies" suffix="+" icon={Building2} color="#059669" />
             </div>
           </div>
         </section>
 
         {/* ==================== FEATURES ==================== */}
-        <section className="py-24 px-margin-mobile md:px-margin-desktop bg-surface-container-low/30 border-t border-outline-variant/20">
-          <div className="max-w-[1280px] mx-auto">
+        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white border-y border-[#c3c6d7]/30">
+          <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <span className="font-label-sm text-label-sm text-primary uppercase tracking-wider">Features</span>
-              <h2 className="font-display-lg text-headline-lg text-on-surface mt-3 mb-4">
+              <span className="text-xs font-bold text-[#004ac6] uppercase tracking-widest">Features</span>
+              <h2 className="text-4xl sm:text-5xl font-black text-[#191c1e] mt-4 mb-5 leading-tight">
                 Everything You Need to{' '}
-                <span className="bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
+                <span style={{ background: 'linear-gradient(135deg, #004ac6, #712ae2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                   Crack Placements
                 </span>
               </h2>
-              <p className="font-body-lg text-body-md text-on-surface-variant max-w-2xl mx-auto">
+              <p className="text-lg text-[#434655] max-w-2xl mx-auto">
                 A complete ecosystem for campus placement preparation — from practice to final offer.
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {features.map((feature, i) => (
-                <FeatureCard key={feature.title} {...feature} delay={i * 0.1} />
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                  whileHover={{ y: -4 }}
+                  className="group p-7 rounded-2xl border border-[#c3c6d7]/40 bg-[#f7f9fb] hover:bg-white hover:border-[#004ac6]/30 hover:shadow-[0_4px_20px_rgba(0,74,198,0.08)] transition-all duration-300 cursor-default"
+                >
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"
+                    style={{ backgroundColor: feature.bg }}
+                  >
+                    <feature.icon size={22} style={{ color: feature.color }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-[#191c1e] mb-2">{feature.title}</h3>
+                  <p className="text-sm text-[#434655] leading-relaxed">{feature.description}</p>
+                </motion.div>
               ))}
             </div>
           </div>
         </section>
 
         {/* ==================== HOW IT WORKS ==================== */}
-        <section className="py-24 px-margin-mobile md:px-margin-desktop bg-surface-container-lowest border-y border-outline-variant/30">
-          <div className="max-w-[1280px] mx-auto">
+        <section className="py-24 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <span className="font-label-sm text-label-sm text-primary uppercase tracking-wider">Process</span>
-              <h2 className="font-display-lg text-headline-lg text-on-surface mt-3 mb-4">
-                How It <span className="bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">Works</span>
+              <span className="text-xs font-bold text-[#004ac6] uppercase tracking-widest">How It Works</span>
+              <h2 className="text-4xl sm:text-5xl font-black text-[#191c1e] mt-4 mb-5 leading-tight">
+                Three Steps to{' '}
+                <span style={{ background: 'linear-gradient(135deg, #004ac6, #712ae2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  Placement Success
+                </span>
               </h2>
-              <p className="font-body-lg text-body-md text-on-surface-variant">Three simple steps to placement success</p>
+              <p className="text-lg text-[#434655]">Simple, structured, and effective</p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-lg relative">
-              {/* Connecting line */}
-              <div
-                className="hidden md:block absolute top-16 left-1/3 right-1/3 h-0.5 bg-outline-variant/40"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+              {/* Connector lines */}
+              <div className="hidden md:block absolute top-10 left-[33%] right-[33%] h-px bg-gradient-to-r from-[#004ac6]/30 to-[#712ae2]/30" />
 
               {steps.map((step, i) => (
                 <motion.div
                   key={step.number}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.2 }}
-                  className="text-center flex flex-col items-center"
+                  transition={{ duration: 0.5, delay: i * 0.15 }}
+                  className="flex flex-col items-center text-center"
                 >
-                  <div className="relative inline-flex mb-6">
-                    <motion.div
-                      className="w-16 h-16 rounded-full flex items-center justify-center"
-                      style={{
-                        background: 'linear-gradient(135deg, rgba(0, 74, 198, 0.1), rgba(113, 42, 226, 0.05))',
-                        border: '1px solid rgba(0, 74, 198, 0.2)',
-                      }}
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                    >
-                      <step.icon size={28} className="text-primary" />
-                    </motion.div>
-                    <span className="absolute -top-1 -right-1 w-6 h-6 bg-primary text-on-primary rounded-full flex items-center justify-center text-xs font-bold">
+                  <div className="relative mb-6">
+                    <div className="w-20 h-20 rounded-2xl bg-white border-2 border-[#c3c6d7]/50 flex items-center justify-center shadow-[0_2px_12px_rgba(0,74,198,0.08)]">
+                      <step.icon size={32} className="text-[#004ac6]" />
+                    </div>
+                    <span className="absolute -top-2 -right-2 w-7 h-7 bg-[#004ac6] text-white rounded-full flex items-center justify-center text-xs font-black">
                       {step.number}
                     </span>
                   </div>
-                  <h3 className="font-headline-md text-lg font-bold text-on-surface mb-3">{step.title}</h3>
-                  <p className="font-body-md text-sm text-on-surface-variant leading-relaxed max-w-xs">{step.description}</p>
+                  <h3 className="text-xl font-bold text-[#191c1e] mb-3">{step.title}</h3>
+                  <p className="text-sm text-[#434655] leading-relaxed max-w-xs">{step.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -389,23 +388,23 @@ export default function LandingPage() {
         </section>
 
         {/* ==================== COMPANY PREP ==================== */}
-        <section className="py-24 px-margin-mobile md:px-margin-desktop">
-          <div className="max-w-[1280px] mx-auto">
+        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white border-y border-[#c3c6d7]/30">
+          <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <span className="font-label-sm text-label-sm text-primary uppercase tracking-wider">Company Prep</span>
-              <h2 className="font-display-lg text-headline-lg text-on-surface mt-3 mb-4">
-                Company-Specific{' '}
-                <span className="bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
-                  Preparation
+              <span className="text-xs font-bold text-[#004ac6] uppercase tracking-widest">Company-Specific Prep</span>
+              <h2 className="text-4xl sm:text-5xl font-black text-[#191c1e] mt-4 mb-5 leading-tight">
+                Targeted Preparation for{' '}
+                <span style={{ background: 'linear-gradient(135deg, #004ac6, #712ae2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  Every Company
                 </span>
               </h2>
-              <p className="font-body-lg text-body-md text-on-surface-variant max-w-2xl mx-auto">
-                Tailored preparation for each company&apos;s unique test pattern and requirements
+              <p className="text-lg text-[#434655] max-w-2xl mx-auto">
+                Tailored preparation for each company's unique test pattern and requirements
               </p>
             </motion.div>
 
@@ -414,30 +413,31 @@ export default function LandingPage() {
               initial={{ opacity: 0, scale: 0.98 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="bg-surface-container-lowest p-6 md:p-8 mb-6 border border-primary/20 rounded-xl ambient-shadow relative overflow-hidden"
+              className="mb-6 p-8 rounded-2xl border border-[#004ac6]/25 bg-gradient-to-r from-[#004ac6]/5 via-white to-[#712ae2]/5 shadow-[0_2px_16px_rgba(0,74,198,0.08)] relative overflow-hidden"
             >
-              <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-3xl font-black text-primary">TCS</span>
-                    <span className="px-2.5 py-0.5 text-xs font-semibold bg-amber-500/10 text-amber-700 border border-amber-500/20 rounded-full">
+              <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-5" style={{ background: 'radial-gradient(circle, #712ae2, transparent)', transform: 'translate(30%, -30%)' }} />
+              <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-4xl font-black text-[#004ac6]">TCS</span>
+                    <span className="px-2.5 py-1 text-xs font-bold bg-amber-500/10 text-amber-700 border border-amber-500/25 rounded-full">
                       ⭐ Most Popular
                     </span>
                   </div>
-                  <h3 className="font-headline-md text-xl font-bold text-on-surface mb-2">TCS National Qualifier Test (NQT)</h3>
-                  <p className="font-body-md text-sm text-on-surface-variant mb-4 max-w-3xl leading-relaxed">
-                    India&apos;s largest campus recruitment drive. Numerical Ability, Verbal Ability, Reasoning Ability + Programming Logic & Coding sections.
+                  <h3 className="text-2xl font-bold text-[#191c1e] mb-2">TCS National Qualifier Test (NQT)</h3>
+                  <p className="text-sm text-[#434655] mb-5 max-w-2xl leading-relaxed">
+                    India&apos;s largest campus recruitment drive. Numerical Ability, Verbal Ability, Reasoning Ability + Programming Logic &amp; Coding sections.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {['3h 30min', '4 Sections', '82 Questions', 'High Competition'].map(tag => (
-                      <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary font-semibold">
+                      <span key={tag} className="text-xs px-3 py-1 rounded-full bg-[#004ac6]/8 border border-[#004ac6]/20 text-[#004ac6] font-semibold">
                         {tag}
                       </span>
                     ))}
                   </div>
                 </div>
-                <Link href="/companies/tcs" className="shrink-0 self-stretch md:self-auto flex items-center">
-                  <button className="w-full font-label-md text-label-md bg-primary text-on-primary px-6 py-3 rounded-lg hover:bg-secondary transition-colors duration-300 ambient-shadow flex items-center justify-center gap-xs cursor-pointer">
+                <Link href="/companies/tcs" className="shrink-0">
+                  <button className="btn-primary px-7 py-3.5 rounded-xl text-sm">
                     Prepare for TCS
                     <ArrowRight size={16} />
                   </button>
@@ -446,27 +446,32 @@ export default function LandingPage() {
             </motion.div>
 
             {/* Other companies grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md">
-              {companyDetails.slice(1).map((company, i) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {companyDetails.map((company, i) => (
                 <motion.div
                   key={company.name}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
-                  className="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/40 ambient-shadow hover:border-primary/50 transition-all duration-300 cursor-pointer group"
+                  transition={{ delay: i * 0.06 }}
+                  whileHover={{ y: -3 }}
                 >
-                  <Link href={`/companies/${company.name.toLowerCase()}`}>
-                    <div className="flex items-start justify-between mb-3">
-                      <span className="text-2xl font-black text-on-surface group-hover:text-primary transition-colors">{company.name}</span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-secondary/10 border border-secondary/20 text-secondary font-semibold">
+                  <Link href={`/companies/${company.slug}`} className="block p-6 rounded-2xl border border-[#c3c6d7]/40 bg-[#f7f9fb] hover:bg-white hover:border-[#004ac6]/30 hover:shadow-[0_4px_20px_rgba(0,74,198,0.07)] transition-all duration-300 group">
+                    <div className="flex items-start justify-between mb-4">
+                      <span className="text-2xl font-black text-[#191c1e] group-hover:text-[#004ac6] transition-colors">{company.name}</span>
+                      <span className="text-xs px-2.5 py-1 rounded-full bg-[#712ae2]/8 border border-[#712ae2]/20 text-[#712ae2] font-bold">
                         {company.tag}
                       </span>
                     </div>
-                    <p className="font-body-md text-xs text-on-surface-variant mb-4 leading-relaxed">{company.pattern}</p>
-                    <div className="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
-                      <Clock size={12} />
-                      <span>{company.duration}</span>
+                    <p className="text-xs text-[#434655] mb-4 leading-relaxed">{company.pattern}</p>
+                    <div className="flex items-center justify-between text-xs text-[#737686]">
+                      <span className="flex items-center gap-1.5">
+                        <Clock size={12} />
+                        {company.duration}
+                      </span>
+                      <span className="flex items-center gap-1 text-[#004ac6] font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                        Start Prep <ChevronRight size={12} />
+                      </span>
                     </div>
                   </Link>
                 </motion.div>
@@ -476,55 +481,59 @@ export default function LandingPage() {
         </section>
 
         {/* ==================== TESTIMONIALS ==================== */}
-        <section className="py-24 px-margin-mobile md:px-margin-desktop bg-surface-container-lowest border-y border-outline-variant/30">
-          <div className="max-w-[1280px] mx-auto">
+        <section className="py-24 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <span className="font-label-sm text-label-sm text-primary uppercase tracking-wider">Success Stories</span>
-              <h2 className="font-display-lg text-headline-lg text-on-surface mt-3 mb-4">
+              <span className="text-xs font-bold text-[#004ac6] uppercase tracking-widest">Success Stories</span>
+              <h2 className="text-4xl sm:text-5xl font-black text-[#191c1e] mt-4 mb-5 leading-tight">
                 Students Who{' '}
-                <span className="bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
+                <span style={{ background: 'linear-gradient(135deg, #004ac6, #712ae2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                   Cracked It
                 </span>
               </h2>
+              <p className="text-lg text-[#434655]">Real results from real students</p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-md">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {testimonials.map((t, i) => (
                 <motion.div
                   key={t.name}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.15 }}
+                  transition={{ delay: i * 0.12 }}
                   whileHover={{ y: -4 }}
-                  className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/40 ambient-shadow"
+                  className="p-7 rounded-2xl bg-white border border-[#c3c6d7]/40 shadow-[0_2px_8px_rgba(15,23,42,0.05)] flex flex-col"
                 >
                   {/* Stars */}
                   <div className="flex gap-1 mb-4">
                     {[...Array(t.rating)].map((_, j) => (
-                      <Star key={j} size={14} className="text-amber-500 fill-amber-500" />
+                      <Star key={j} size={14} className="text-amber-400 fill-amber-400" />
                     ))}
                   </div>
 
                   {/* Quote */}
-                  <p className="font-body-md text-sm text-on-surface-variant leading-relaxed mb-6 italic">
+                  <p className="text-sm text-[#434655] leading-relaxed mb-6 flex-1 italic">
                     &ldquo;{t.quote}&rdquo;
                   </p>
 
                   {/* Author */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-bold flex-shrink-0">
+                  <div className="flex items-center gap-3 pt-4 border-t border-[#c3c6d7]/30">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                      style={{ backgroundColor: t.avatarBg }}
+                    >
                       {t.avatar}
                     </div>
                     <div>
-                      <p className="font-headline-md text-sm font-semibold text-on-surface">{t.name}</p>
-                      <p className="font-body-md text-xs text-on-surface-variant">{t.college}</p>
-                      <p className="font-label-sm text-xs text-primary font-bold flex items-center gap-1 mt-0.5">
+                      <p className="text-sm font-bold text-[#191c1e]">{t.name}</p>
+                      <p className="text-xs text-[#737686]">{t.college}</p>
+                      <p className="text-xs text-[#004ac6] font-bold flex items-center gap-1 mt-0.5">
                         <CheckCircle size={10} />
                         {t.company}
                       </p>
@@ -536,53 +545,53 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ==================== CTA ==================== */}
-        <section className="py-24 px-margin-mobile md:px-margin-desktop bg-surface">
-          <div className="max-w-[1280px] mx-auto">
+        {/* ==================== CTA BANNER ==================== */}
+        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white border-t border-[#c3c6d7]/30">
+          <div className="max-w-4xl mx-auto">
             <motion.div
-              initial={{ opacity: 0, scale: 0.98 }}
+              initial={{ opacity: 0, scale: 0.97 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="relative overflow-hidden rounded-3xl p-12 text-center bg-surface-container border border-outline-variant ambient-shadow"
+              className="relative overflow-hidden rounded-3xl p-12 md:p-16 text-center"
+              style={{ background: 'linear-gradient(135deg, #004ac6 0%, #712ae2 100%)' }}
             >
-              <div className="relative z-10 flex flex-col items-center">
+              {/* Background pattern */}
+              <div className="absolute inset-0 pointer-events-none opacity-10" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+              <div className="relative z-10">
                 <motion.div
-                  animate={{ rotate: [0, 5, -5, 0] }}
+                  animate={{ rotate: [0, 8, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity }}
-                  className="text-6xl mb-6 inline-block"
+                  className="text-5xl mb-6 inline-block"
                 >
                   🚀
                 </motion.div>
-                <h2 className="font-display-lg text-headline-lg text-on-surface mb-4">
-                  Ready to Crack Your{' '}
-                  <span className="bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
-                    Dream Placement?
-                  </span>
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-5 leading-tight">
+                  Ready to Land Your<br />Dream Offer?
                 </h2>
-                <p className="font-body-lg text-body-md text-on-surface-variant mb-8 max-w-xl mx-auto">
+                <p className="text-lg text-white/80 mb-10 max-w-xl mx-auto">
                   Join 50,000+ students already preparing smarter. Start free today — no credit card required.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-sm justify-center w-full sm:w-auto">
-                  <Link href="/auth/register" className="w-full sm:w-auto">
-                    <button className="w-full font-label-md text-label-md bg-primary text-on-primary px-10 py-4 rounded-lg hover:bg-secondary transition-colors duration-300 ambient-shadow flex items-center justify-center gap-xs cursor-pointer">
-                      <Zap size={20} fill="currentColor" />
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link href="/auth/register">
+                    <button className="px-9 py-4 rounded-xl bg-white text-[#004ac6] font-bold text-base hover:bg-white/90 transition-all duration-200 shadow-[0_4px_16px_rgba(0,0,0,0.15)] flex items-center gap-2 w-full sm:w-auto justify-center">
+                      <Zap size={18} fill="currentColor" />
                       Start Preparing Now
                     </button>
                   </Link>
-                  <Link href="/auth/login" className="w-full sm:w-auto">
-                    <button className="w-full font-label-md text-label-md bg-transparent border border-outline-variant text-on-surface px-10 py-4 rounded-lg hover:border-primary hover:text-primary transition-colors duration-300 flex items-center justify-center gap-xs cursor-pointer">
+                  <Link href="/auth/login">
+                    <button className="px-9 py-4 rounded-xl bg-white/10 text-white font-bold text-base border border-white/30 hover:bg-white/20 transition-all duration-200 w-full sm:w-auto">
                       Already have an account?
                     </button>
                   </Link>
                 </div>
-                <p className="mt-6 text-on-surface-variant font-label-sm text-sm">
-                  <CheckCircle size={14} className="inline mr-1 text-primary" />
-                  500+ free questions &nbsp;·&nbsp;
-                  <CheckCircle size={14} className="inline mr-1 text-primary" />
-                  No credit card &nbsp;·&nbsp;
-                  <CheckCircle size={14} className="inline mr-1 text-primary" />
-                  Instant access
-                </p>
+                <div className="flex flex-wrap justify-center gap-6 mt-8 text-sm text-white/70">
+                  {['500+ free questions', 'No credit card', 'Instant access'].map(t => (
+                    <span key={t} className="flex items-center gap-1.5">
+                      <CheckCircle size={13} className="text-white/80" />
+                      {t}
+                    </span>
+                  ))}
+                </div>
               </div>
             </motion.div>
           </div>
@@ -590,23 +599,53 @@ export default function LandingPage() {
       </main>
 
       {/* ==================== FOOTER ==================== */}
-      <footer className="bg-surface-container-low border-t border-outline-variant w-full mt-xl">
-        <div className="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-lg max-w-[1280px] mx-auto gap-md">
-          <div className="font-display-lg text-headline-md font-bold text-primary flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Zap size={16} className="text-white" fill="white" />
+      <footer className="bg-[#191c1e] text-white/70">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+            {/* Brand */}
+            <div className="md:col-span-1">
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className="w-9 h-9 bg-[#004ac6] rounded-xl flex items-center justify-center shadow-sm">
+                  <Zap size={17} className="text-white" fill="white" />
+                </div>
+                <span className="font-extrabold text-lg text-white">CareerCracker AI</span>
+              </div>
+              <p className="text-sm leading-relaxed text-white/50">
+                Empowering engineering students to crack their dream placements through AI-powered preparation.
+              </p>
             </div>
-            CareerCracker AI
+            {/* Links */}
+            <div>
+              <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Platform</h4>
+              <div className="space-y-2.5">
+                {['Aptitude Practice', 'Mock Tests', 'Coding Arena', 'Company Prep', 'Analytics'].map(l => (
+                  <a key={l} href="#" className="block text-sm text-white/50 hover:text-white transition-colors">{l}</a>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Companies</h4>
+              <div className="space-y-2.5">
+                {['TCS NQT', 'Infosys', 'Wipro', 'HCL', 'Accenture'].map(l => (
+                  <a key={l} href="#" className="block text-sm text-white/50 hover:text-white transition-colors">{l}</a>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Company</h4>
+              <div className="space-y-2.5">
+                {['About Us', 'Privacy Policy', 'Terms of Service', 'Contact Support'].map(l => (
+                  <a key={l} href="#" className="block text-sm text-white/50 hover:text-white transition-colors">{l}</a>
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-md">
-            <a className="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">About Us</a>
-            <a className="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">Privacy Policy</a>
-            <a className="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">Terms of Service</a>
-            <a className="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">AI Methodology</a>
-            <a className="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">Contact Support</a>
-          </div>
-          <div className="font-body-md text-body-md text-on-surface-variant text-center md:text-right">
-            © 2024 CareerCracker AI. Empowering the next generation of talent.
+          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-white/40">© 2024 CareerCracker AI. Empowering the next generation of talent.</p>
+            <div className="flex items-center gap-1 text-sm text-white/40">
+              <TrendingUp size={14} />
+              <span>50,000+ students placed</span>
+            </div>
           </div>
         </div>
       </footer>

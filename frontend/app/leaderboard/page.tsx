@@ -142,7 +142,7 @@ export default function LeaderboardPage() {
   return (
     <ProtectedRoute>
       <div className="flex min-h-screen bg-surface text-on-surface font-body-md">
-        <Sidebar activePath="/leaderboard" />
+        <Sidebar />
 
         <div className="flex-1 min-h-screen overflow-y-auto pl-0 lg:pl-64">
           <div className="max-w-5xl mx-auto px-margin-mobile md:px-margin-desktop py-md">

@@ -12,7 +12,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import toast from 'react-hot-toast';
 import {
   Zap, Eye, EyeOff, Mail, Lock, ArrowRight,
-  BookOpen, Trophy, BarChart3, CheckCircle
+  CheckCircle, BookOpen, Trophy, BarChart3,
 } from 'lucide-react';
 
 const schema = z.object({
@@ -54,197 +54,264 @@ function LoginForm() {
     }
   };
 
+  const inputClass =
+    'w-full border border-[#E4E7EC] rounded-xl px-4 py-3 bg-white text-[#111827] placeholder:text-[#9CA3AF] focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/10 outline-none text-sm font-medium transition-all';
+
+  const labelClass = 'text-xs font-bold text-[#6B7280] uppercase tracking-wider mb-2 block';
+
+  const bullets = [
+    { icon: BookOpen, text: '10,000+ curated practice questions' },
+    { icon: Trophy, text: 'Company-specific mock tests' },
+    { icon: BarChart3, text: 'AI-powered analytics' },
+  ];
+
+  const stats = [
+    { value: '50K+', label: 'Students' },
+    { value: '95%', label: 'Success' },
+    { value: '100+', label: 'Companies' },
+  ];
+
   return (
-    <div className="min-h-screen flex bg-surface text-on-surface font-body-md">
+    <div className="min-h-screen flex" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+
       {/* ===== LEFT PANEL ===== */}
-      <div className="hidden lg:flex flex-col w-1/2 p-12 relative overflow-hidden bg-surface-container border-r border-outline-variant/30">
-        {/* Background */}
-        <div className="absolute inset-0 pointer-events-none"
+      <div
+        className="hidden lg:flex flex-col w-[45%] relative overflow-hidden"
+        style={{ backgroundColor: '#2563EB' }}
+      >
+        {/* Subtle dot pattern */}
+        <div
+          className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: 'linear-gradient(rgba(0, 74, 198, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 74, 198, 0.05) 1px, transparent 1px)',
-            backgroundSize: '50px 50px',
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)',
+            backgroundSize: '28px 28px',
           }}
         />
-        <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Logo */}
-        <div className="relative z-10 flex items-center gap-2">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-sm">
-            <Zap size={20} className="text-white" fill="white" />
+        {/* Glow blob */}
+        <div
+          className="absolute top-1/4 right-0 w-96 h-96 rounded-full pointer-events-none"
+          style={{ background: 'rgba(255,255,255,0.04)', filter: 'blur(64px)' }}
+        />
+
+        <div className="relative z-10 flex flex-col h-full p-12">
+          {/* Logo */}
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
+            >
+              <Zap size={20} className="text-white" fill="white" />
+            </div>
+            <span className="font-extrabold text-xl text-white tracking-tight">
+              CareerCracker AI
+            </span>
           </div>
-          <span className="font-extrabold text-xl text-primary">CareerCracker AI</span>
-        </div>
 
-        {/* Center content */}
-        <div className="relative z-10 flex-1 flex flex-col justify-center">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-          >
-            <h2 className="text-4xl font-black text-on-surface mb-4 leading-tight">
-              Your Placement
-              <br />
-              <span className="bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text font-black">Journey Starts Here</span>
-            </h2>
-            <p className="text-on-surface-variant font-medium text-lg mb-10 leading-relaxed">
-              Join 50,000+ students preparing for TCS, Infosys, Wipro, and more with AI-powered analytics.
-            </p>
+          {/* Center content */}
+          <div className="flex-1 flex flex-col justify-center">
+            <motion.div
+              initial={{ opacity: 0, x: -24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.65, delay: 0.15 }}
+            >
+              <h2 className="font-black text-4xl text-white leading-tight mb-5">
+                Your Success Story<br />Starts Here
+              </h2>
 
-            <div className="space-y-4">
-              {[
-                { icon: BookOpen, text: '10,000+ practice questions across all topics', color: '#004ac6' },
-                { icon: Trophy, text: 'Company-specific mock tests with real patterns', color: '#712ae2' },
-                { icon: BarChart3, text: 'AI-powered weakness detection & recommendations', color: '#004ac6' },
-              ].map(({ icon: Icon, text, color }) => (
-                <div key={text} className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ background: `${color}10`, border: `1px solid ${color}20` }}
-                  >
-                    <Icon size={16} style={{ color }} />
+              <div className="space-y-4 mb-12">
+                {bullets.map(({ icon: Icon, text }) => (
+                  <div key={text} className="flex items-center gap-3">
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.12)' }}
+                    >
+                      <Icon size={16} className="text-white" />
+                    </div>
+                    <span className="text-white/90 text-sm font-medium">{text}</span>
                   </div>
-                  <span className="text-on-surface-variant text-sm font-semibold">{text}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
 
-        {/* Bottom stats */}
-        <div className="relative z-10 grid grid-cols-3 gap-4">
-          {[
-            { value: '50K+', label: 'Students' },
-            { value: '95%', label: 'Success Rate' },
-            { value: '100+', label: 'Companies' },
-          ].map(({ value, label }) => (
-            <div key={label} className="text-center p-3 rounded-xl border border-outline-variant/30 bg-surface-container-lowest ambient-shadow">
-              <div className="text-2xl font-black text-primary">{value}</div>
-              <div className="text-on-surface-variant text-xs font-semibold mt-0.5">{label}</div>
-            </div>
-          ))}
+          {/* Stat boxes */}
+          <div className="grid grid-cols-3 gap-3">
+            {stats.map(({ value, label }) => (
+              <div
+                key={label}
+                className="text-center p-4 rounded-xl"
+                style={{ backgroundColor: 'rgba(255,255,255,0.10)' }}
+              >
+                <div className="text-2xl font-black text-white">{value}</div>
+                <div className="text-white/70 text-xs font-semibold mt-0.5">{label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* ===== RIGHT PANEL ===== */}
-      <div className="flex-1 flex items-center justify-center p-6 md:p-12">
+      <div
+        className="flex-1 flex items-center justify-center p-8 lg:p-16"
+        style={{ backgroundColor: '#F8FAFF' }}
+      >
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.55 }}
           className="w-full max-w-md"
         >
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-2 mb-8 justify-center">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-              <Zap size={20} className="text-white" fill="white" />
-            </div>
-            <span className="font-extrabold text-xl text-primary">CareerCracker AI</span>
-          </div>
-
-          <div className="mb-8">
-            <h1 className="text-3xl font-black text-on-surface mb-2">Welcome back 👋</h1>
-            <p className="text-on-surface-variant font-semibold">Sign in to continue your preparation journey</p>
-          </div>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-bold text-on-surface-variant mb-2">Email Address</label>
-              <div className="relative">
-                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-outline" />
-                <input
-                  {...register('email')}
-                  type="email"
-                  placeholder="you@example.com"
-                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-3 pl-10 text-sm text-on-surface focus:outline-none focus:border-primary transition-all shadow-sm font-medium"
-                />
-              </div>
-              {errors.email && (
-                <p className="mt-1.5 text-xs text-red-600 font-semibold">{errors.email.message}</p>
-              )}
-            </div>
-
-            {/* Password */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-bold text-on-surface-variant">Password</label>
-                <Link href="/auth/forgot-password" className="text-xs text-primary hover:underline transition-colors font-semibold">
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative">
-                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-outline" />
-                <input
-                  {...register('password')}
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-3 pl-10 pr-10 text-sm text-on-surface focus:outline-none focus:border-primary transition-all shadow-sm font-medium"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors cursor-pointer"
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-1.5 text-xs text-red-600 font-semibold">{errors.password.message}</p>
-              )}
-            </div>
-
-            {/* Remember me */}
-            <div className="flex items-center gap-2">
-              <input
-                {...register('rememberMe')}
-                type="checkbox"
-                id="rememberMe"
-                className="w-4 h-4 rounded border-outline-variant/60 bg-surface text-primary focus:ring-primary cursor-pointer"
-              />
-              <label htmlFor="rememberMe" className="text-sm text-on-surface-variant font-semibold cursor-pointer">
-                Remember me for 30 days
-              </label>
-            </div>
-
-            {/* Submit */}
-            <motion.button
-              type="submit"
-              disabled={isLoading}
-              className="btn-glow w-full py-3.5 text-sm font-semibold rounded-xl text-white flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer shadow-sm"
-              whileHover={!isLoading ? { scale: 1.01 } : {}}
-              whileTap={!isLoading ? { scale: 0.99 } : {}}
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: '#2563EB' }}
             >
-              {isLoading ? (
-                <>
-                  <LoadingSpinner size="sm" />
-                  Signing in...
-                </>
-              ) : (
-                <>
-                  Sign In
-                  <ArrowRight size={16} />
-                </>
-              )}
-            </motion.button>
-          </form>
-
-          <p className="mt-6 text-center text-sm text-on-surface-variant font-semibold">
-            Don&apos;t have an account?{' '}
-            <Link href="/auth/register" className="text-primary hover:underline font-bold transition-colors">
-              Create free account
-            </Link>
-          </p>
-
-          {/* Features */}
-          <div className="mt-8 pt-6 border-t border-outline-variant/30">
-            <div className="flex flex-wrap gap-3 justify-center">
-              {['Free Forever', 'No Credit Card', '500+ Questions'].map(f => (
-                <span key={f} className="flex items-center gap-1 text-xs text-on-surface-variant font-semibold">
-                  <CheckCircle size={10} className="text-emerald-600" />
-                  {f}
-                </span>
-              ))}
+              <Zap size={18} className="text-white" fill="white" />
             </div>
+            <span className="font-extrabold text-lg text-[#2563EB] tracking-tight">
+              CareerCracker AI
+            </span>
+          </div>
+
+          {/* Card */}
+          <div
+            className="bg-white rounded-2xl p-10 w-full"
+            style={{
+              border: '1.5px solid #E4E7EC',
+              boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)',
+            }}
+          >
+            {/* Heading */}
+            <div className="mb-8">
+              <h1 className="text-2xl font-black text-[#111827]">Welcome back</h1>
+              <p className="text-sm text-[#6B7280] mt-1">
+                Sign in to continue your preparation journey
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              {/* Email */}
+              <div>
+                <label className={labelClass}>Email Address</label>
+                <div className="relative">
+                  <Mail
+                    size={15}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]"
+                  />
+                  <input
+                    {...register('email')}
+                    type="email"
+                    placeholder="you@example.com"
+                    className={`${inputClass} pl-10`}
+                  />
+                </div>
+                {errors.email && (
+                  <p className="mt-1.5 text-xs text-[#DC2626] font-semibold">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Password */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className={`${labelClass} mb-0`}>Password</label>
+                  <Link
+                    href="/auth/forgot-password"
+                    className="text-xs font-semibold text-[#2563EB] hover:text-[#1D4ED8] transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <Lock
+                    size={15}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]"
+                  />
+                  <input
+                    {...register('password')}
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    className={`${inputClass} pl-10 pr-10`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="mt-1.5 text-xs text-[#DC2626] font-semibold">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Remember me */}
+              <div className="flex items-center gap-2.5">
+                <input
+                  {...register('rememberMe')}
+                  type="checkbox"
+                  id="rememberMe"
+                  className="w-4 h-4 rounded border-[#E4E7EC] text-[#2563EB] focus:ring-[#2563EB] cursor-pointer accent-[#2563EB]"
+                />
+                <label
+                  htmlFor="rememberMe"
+                  className="text-sm text-[#6B7280] font-medium cursor-pointer select-none"
+                >
+                  Remember me for 30 days
+                </label>
+              </div>
+
+              {/* Submit */}
+              <motion.button
+                type="submit"
+                disabled={isLoading}
+                className="btn-primary w-full py-3.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                whileHover={!isLoading ? { scale: 1.01 } : {}}
+                whileTap={!isLoading ? { scale: 0.99 } : {}}
+              >
+                {isLoading ? (
+                  <>
+                    <LoadingSpinner size="sm" />
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    Sign In
+                    <ArrowRight size={15} />
+                  </>
+                )}
+              </motion.button>
+            </form>
+
+            {/* Sign up link */}
+            <p className="mt-6 text-center text-sm text-[#6B7280] font-medium">
+              Don&apos;t have an account?{' '}
+              <Link
+                href="/auth/register"
+                className="text-[#2563EB] hover:text-[#1D4ED8] font-bold transition-colors"
+              >
+                Sign up free
+              </Link>
+            </p>
+          </div>
+
+          {/* Trust badges */}
+          <div className="flex flex-wrap gap-4 justify-center mt-6">
+            {['Free Forever', 'No Credit Card', 'Instant Access'].map((badge) => (
+              <span
+                key={badge}
+                className="flex items-center gap-1.5 text-xs text-[#6B7280] font-semibold"
+              >
+                <CheckCircle size={11} className="text-[#059669]" />
+                {badge}
+              </span>
+            ))}
           </div>
         </motion.div>
       </div>

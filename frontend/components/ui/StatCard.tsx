@@ -1,67 +1,65 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { LucideIcon, TrendingDown, TrendingUp } from 'lucide-react';
 
 interface StatCardProps {
   icon: LucideIcon;
   label: string;
   value: string | number;
-  trend?: number; // percentage change
+  trend?: number;
   trendLabel?: string;
-  color?: 'purple' | 'blue' | 'green' | 'orange' | 'red' | 'cyan';
+  color?: 'blue' | 'violet' | 'green' | 'amber' | 'red';
   className?: string;
-  animate?: boolean;
   suffix?: string;
   prefix?: string;
   size?: 'sm' | 'md' | 'lg';
 }
 
 const colorMap = {
-  purple: {
-    icon: 'bg-purple-500/20 text-purple-400',
-    glow: 'hover:shadow-[0_0_30px_rgba(124,58,237,0.2)]',
-    border: 'hover:border-purple-500/40',
-    gradient: 'from-purple-500/10 to-purple-500/5',
-    value: 'from-purple-400 to-blue-400',
-  },
   blue: {
-    icon: 'bg-blue-500/20 text-blue-400',
-    glow: 'hover:shadow-[0_0_30px_rgba(37,99,235,0.2)]',
-    border: 'hover:border-blue-500/40',
-    gradient: 'from-blue-500/10 to-blue-500/5',
-    value: 'from-blue-400 to-cyan-400',
+    iconBg: '#EFF6FF',
+    iconBorder: '#BFDBFE',
+    iconColor: '#2563EB',
+  },
+  violet: {
+    iconBg: '#F5F3FF',
+    iconBorder: '#DDD6FE',
+    iconColor: '#7C3AED',
   },
   green: {
-    icon: 'bg-emerald-500/20 text-emerald-400',
-    glow: 'hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]',
-    border: 'hover:border-emerald-500/40',
-    gradient: 'from-emerald-500/10 to-emerald-500/5',
-    value: 'from-emerald-400 to-teal-400',
+    iconBg: '#ECFDF5',
+    iconBorder: '#A7F3D0',
+    iconColor: '#059669',
   },
-  orange: {
-    icon: 'bg-orange-500/20 text-orange-400',
-    glow: 'hover:shadow-[0_0_30px_rgba(245,158,11,0.2)]',
-    border: 'hover:border-orange-500/40',
-    gradient: 'from-orange-500/10 to-orange-500/5',
-    value: 'from-orange-400 to-yellow-400',
+  amber: {
+    iconBg: '#FFFBEB',
+    iconBorder: '#FDE68A',
+    iconColor: '#D97706',
   },
   red: {
-    icon: 'bg-red-500/20 text-red-400',
-    glow: 'hover:shadow-[0_0_30px_rgba(239,68,68,0.2)]',
-    border: 'hover:border-red-500/40',
-    gradient: 'from-red-500/10 to-red-500/5',
-    value: 'from-red-400 to-pink-400',
+    iconBg: '#FEF2F2',
+    iconBorder: '#FECACA',
+    iconColor: '#DC2626',
   },
-  cyan: {
-    icon: 'bg-cyan-500/20 text-cyan-400',
-    glow: 'hover:shadow-[0_0_30px_rgba(6,182,212,0.2)]',
-    border: 'hover:border-cyan-500/40',
-    gradient: 'from-cyan-500/10 to-cyan-500/5',
-    value: 'from-cyan-400 to-blue-400',
+} as const;
+
+const sizeMap = {
+  sm: {
+    valueFontSize: '1.5rem',   // text-2xl
+    valueFontWeight: 900,
+    iconSize: 18,
   },
-};
+  md: {
+    valueFontSize: '1.875rem', // text-3xl
+    valueFontWeight: 900,
+    iconSize: 20,
+  },
+  lg: {
+    valueFontSize: '2.25rem',  // text-4xl
+    valueFontWeight: 900,
+    iconSize: 22,
+  },
+} as const;
 
 export function StatCard({
   icon: Icon,
@@ -69,76 +67,169 @@ export function StatCard({
   value,
   trend,
   trendLabel,
-  color = 'purple',
-  className,
-  animate = true,
-  suffix = '',
-  prefix = '',
+  color = 'blue',
+  className = '',
+  suffix,
+  prefix,
   size = 'md',
 }: StatCardProps) {
-  const colors = colorMap[color];
-  const isPositiveTrend = trend !== undefined && trend > 0;
-  const isNegativeTrend = trend !== undefined && trend < 0;
+  const palette = colorMap[color];
+  const sizing = sizeMap[size];
 
-  const TrendIcon = isPositiveTrend ? TrendingUp : isNegativeTrend ? TrendingDown : Minus;
-  const trendColor = isPositiveTrend ? 'text-emerald-400' : isNegativeTrend ? 'text-red-400' : 'text-slate-400';
+  const trendPositive = trend !== undefined && trend > 0;
+  const trendNegative = trend !== undefined && trend < 0;
+  const trendNeutral  = trend !== undefined && trend === 0;
+
+  const trendColor = trendPositive
+    ? '#059669'
+    : trendNegative
+    ? '#DC2626'
+    : '#9CA3AF';
+
+  const trendBg = trendPositive
+    ? '#ECFDF5'
+    : trendNegative
+    ? '#FEF2F2'
+    : '#F3F4F6';
+
+  const trendBorder = trendPositive
+    ? '#A7F3D0'
+    : trendNegative
+    ? '#FECACA'
+    : '#E4E7EC';
+
+  const TrendIcon = trendNegative ? TrendingDown : TrendingUp;
 
   return (
-    <motion.div
-      whileHover={{ y: -4, scale: 1.01 }}
-      transition={{ duration: 0.2 }}
-      className={cn(
-        'glass-card p-6 relative overflow-hidden cursor-default',
-        'border border-white/5 transition-all duration-300',
-        colors.glow, colors.border,
-        className
-      )}
+    <div
+      className={className}
+      style={{
+        backgroundColor: '#FFFFFF',
+        border: '1.5px solid #E4E7EC',
+        borderRadius: '1rem',
+        boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)',
+        padding: '1.5rem',
+        transition: 'border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease',
+        cursor: 'default',
+      }}
+      onMouseEnter={(e) => {
+        const el = e.currentTarget as HTMLDivElement;
+        el.style.borderColor = 'rgba(37,99,235,0.4)';
+        el.style.boxShadow =
+          '0 4px 6px rgba(17,24,39,0.07), 0 10px 28px rgba(17,24,39,0.08)';
+        el.style.transform = 'translateY(-2px)';
+      }}
+      onMouseLeave={(e) => {
+        const el = e.currentTarget as HTMLDivElement;
+        el.style.borderColor = '#E4E7EC';
+        el.style.boxShadow =
+          '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)';
+        el.style.transform = 'translateY(0)';
+      }}
     >
-      {/* Background gradient */}
-      <div className={cn(
-        'absolute inset-0 bg-gradient-to-br opacity-50 pointer-events-none',
-        colors.gradient
-      )} />
+      {/* Top row */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
-      {/* Corner glow */}
-      <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10 pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.5), transparent)' }}
-      />
-
-      <div className="relative z-10">
-        <div className="flex items-start justify-between mb-4">
-          <div className={cn('p-3 rounded-xl', colors.icon)}>
-            <Icon size={size === 'sm' ? 18 : size === 'lg' ? 26 : 22} strokeWidth={2} />
-          </div>
-          {trend !== undefined && (
-            <div className={cn('flex items-center gap-1 text-xs font-medium', trendColor)}>
-              <TrendIcon size={14} />
-              <span>{Math.abs(trend)}%</span>
-            </div>
-          )}
+        {/* Icon box */}
+        <div
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: '0.75rem',
+            backgroundColor: palette.iconBg,
+            border: `1.5px solid ${palette.iconBorder}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <Icon size={sizing.iconSize} color={palette.iconColor} strokeWidth={2} />
         </div>
 
-        <div className={cn('font-extrabold bg-gradient-to-r bg-clip-text text-transparent mb-1',
-          colors.value,
-          size === 'sm' ? 'text-2xl' : size === 'lg' ? 'text-4xl' : 'text-3xl'
-        )}>
-          {prefix}{animate ? (
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+        {/* Trend badge */}
+        {trend !== undefined && (
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.2rem',
+              backgroundColor: trendBg,
+              border: `1px solid ${trendBorder}`,
+              borderRadius: '9999px',
+              padding: '0.2rem 0.55rem',
+            }}
+          >
+            {!trendNeutral && (
+              <TrendIcon size={12} color={trendColor} strokeWidth={2.5} />
+            )}
+            <span
+              style={{
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                color: trendColor,
+                lineHeight: 1,
+              }}
             >
-              {value}
-            </motion.span>
-          ) : value}{suffix}
-        </div>
-
-        <p className="text-slate-400 text-sm font-medium">{label}</p>
-
-        {trendLabel && (
-          <p className="text-slate-500 text-xs mt-1">{trendLabel}</p>
+              {trendNeutral ? '—' : `${trendPositive ? '+' : ''}${trend}%`}
+            </span>
+          </div>
         )}
       </div>
-    </motion.div>
+
+      {/* Value */}
+      <p
+        style={{
+          marginTop: '1rem',
+          marginBottom: '0.25rem',
+          fontSize: sizing.valueFontSize,
+          fontWeight: sizing.valueFontWeight,
+          color: '#111827',
+          lineHeight: 1.1,
+          letterSpacing: '-0.02em',
+          fontFamily: 'inherit',
+        }}
+      >
+        {prefix && (
+          <span style={{ fontSize: '1.1rem', fontWeight: 700, opacity: 0.7 }}>
+            {prefix}
+          </span>
+        )}
+        {value}
+        {suffix && (
+          <span style={{ fontSize: '1.1rem', fontWeight: 700, opacity: 0.7, marginLeft: '0.15rem' }}>
+            {suffix}
+          </span>
+        )}
+      </p>
+
+      {/* Label */}
+      <p
+        style={{
+          fontSize: '0.875rem',
+          fontWeight: 500,
+          color: '#6B7280',
+          lineHeight: 1.4,
+        }}
+      >
+        {label}
+      </p>
+
+      {/* Trend label */}
+      {trendLabel && (
+        <p
+          style={{
+            marginTop: '0.35rem',
+            fontSize: '0.75rem',
+            color: '#9CA3AF',
+            lineHeight: 1.4,
+          }}
+        >
+          {trendLabel}
+        </p>
+      )}
+    </div>
   );
 }
+
+export default StatCard;

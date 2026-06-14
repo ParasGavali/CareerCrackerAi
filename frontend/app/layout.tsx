@@ -42,7 +42,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={plusJakarta.variable} suppressHydrationWarning>
-      <body className={`${plusJakarta.className} antialiased`} style={{ background: '#F8FAFC' }}>
+      <body className={`${plusJakarta.className} antialiased`} style={{ background: '#F8FAFF' }}>
         <AuthProvider>
           {children}
           <Toaster

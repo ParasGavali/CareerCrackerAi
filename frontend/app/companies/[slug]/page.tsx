@@ -1,13 +1,12 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { ProtectedRoute } from '@/components/ui/ProtectedRoute';
 import { Sidebar } from '@/components/layout/Sidebar';
 import {
-  Building2, Sparkles, ChevronRight, Award,
-  Terminal, ShieldCheck, HelpCircle, CheckCircle2,
-  BookOpen, Star, AlertCircle, ArrowLeft
+  Building2, ChevronRight, Award, Terminal,
+  ShieldCheck, BookOpen, Star, AlertCircle,
+  ArrowLeft, CheckCircle2, Clock
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -15,11 +14,7 @@ interface CompanySpec {
   name: string;
   tagline: string;
   overview: string;
-  pattern: {
-    sectionName: string;
-    questions: number;
-    time: string;
-  }[];
+  pattern: { sectionName: string; questions: number; time: string }[];
   strategies: string[];
   topics: string[];
   mockTestId: string;
@@ -29,154 +24,168 @@ interface CompanySpec {
 const companyData: Record<string, CompanySpec> = {
   tcs: {
     name: 'TCS (Ninja & Digital)',
-    tagline: 'India\'s Largest Placement Driver Assessment',
-    overview: 'Tata Consultancy Services hires through the National Qualifier Test (NQT). The recruitment is split into Ninja (general, 3.3 LPA) and Digital (advanced, 7 LPA) based on cognitive performance and programming abilities. Advanced coding performance is highly weighted.',
+    tagline: "India's Largest Campus Placement Assessment",
+    overview:
+      'TCS hires through the National Qualifier Test (NQT). Performance splits candidates into Ninja (3.3 LPA) and Digital (7 LPA) tracks based on cognitive scores and coding ability.',
     pattern: [
-      { sectionName: 'Numerical Ability (Aptitude)', questions: 15, time: '30 mins' },
-      { sectionName: 'Reasoning Ability (Logical)', questions: 15, time: '30 mins' },
-      { sectionName: 'Verbal Ability (English)', questions: 15, time: '20 mins' },
-      { sectionName: 'Hands-on Coding (2 Problems)', questions: 2, time: '45 mins' }
+      { sectionName: 'Numerical Ability', questions: 15, time: '30 mins' },
+      { sectionName: 'Reasoning Ability', questions: 15, time: '30 mins' },
+      { sectionName: 'Verbal Ability', questions: 15, time: '20 mins' },
+      { sectionName: 'Coding (2 Problems)', questions: 2, time: '45 mins' },
     ],
     strategies: [
-      'Focus heavily on Number Systems, Profit & Loss, and Time & Work as they form 60% of Numerical Ability.',
-      'Practice syllogisms, circular seating arrangements, and spatial reasoning for the Reasoning section.',
-      'TCS uses a compiler that supports standard languages. Always modularize your code and read from standard inputs.',
-      'TCS Digital candidates should practice dynamic programming (DP) and greedy algorithms.',
-      'Keep tab-switching at zero during the exam. The TCS browser monitors window focus actively.'
+      'Focus on Number Systems, Profit & Loss, and Time & Work — they form 60% of Numerical.',
+      'Practice syllogisms, circular seating, and spatial reasoning for the Reasoning section.',
+      'Always modularize your code and read from standard inputs.',
+      'TCS Digital candidates must practise dynamic programming and greedy algorithms.',
+      'Never tab-switch during the exam — TCS browser monitors window focus.',
     ],
     topics: ['Number Systems', 'Profit & Loss', 'Time & Work', 'Syllogism', 'Arrangements', 'DP', 'Greedy'],
     mockTestId: 'tcs-nqt-mock',
-    successRate: '92%'
+    successRate: '92%',
   },
   infosys: {
     name: 'Infosys (SE & SP)',
     tagline: 'System Engineer and Specialist Programmer Paths',
-    overview: 'Infosys assessments are highly competitive and emphasize strong logical puzzle-solving and algorithmic logic. Hiring includes the standard System Engineer (SE) and high-paying Specialist Programmer (SP) or Digital Specialist Engineer (DSE) roles.',
+    overview:
+      'Infosys tests strong logical puzzle-solving and algorithmic logic. Roles include System Engineer (SE) and high-paying Specialist Programmer (SP) / DSE tracks.',
     pattern: [
-      { sectionName: 'Mathematical Ability (Aptitude)', questions: 10, time: '25 mins' },
+      { sectionName: 'Mathematical Ability', questions: 10, time: '25 mins' },
       { sectionName: 'Logical Reasoning (Puzzles)', questions: 10, time: '25 mins' },
       { sectionName: 'Verbal Ability', questions: 10, time: '15 mins' },
       { sectionName: 'Pseudocode Debugging', questions: 5, time: '15 mins' },
-      { sectionName: 'Hands-on Coding (2-3 Problems)', questions: 2, time: '40 mins' }
+      { sectionName: 'Coding (2–3 Problems)', questions: 2, time: '40 mins' },
     ],
     strategies: [
-      'Infosys mathematical questions have higher difficulty. Master Permutations, Combinations, and Probability.',
+      'Master Permutations, Combinations, and Probability — questions are high difficulty.',
       'Practice complex seating logic and data sufficiency puzzles.',
-      'Review structural language features (pointers, static scopes) for the Pseudocode section.',
-      'Write clean algorithmic code. Infosys test cases cover extreme boundary conditions.',
-      'Take sectional time limits seriously. If you get stuck, move to the next question quickly.'
+      'Review structural language features for the Pseudocode section.',
+      'Write clean algorithmic code — test cases cover extreme boundary conditions.',
+      'If stuck, move on quickly. Sectional time limits are strict.',
     ],
-    topics: ['Probability', 'Permutations', 'Complex Puzzles', 'Pseudocode', 'Data Sufficiency', 'Arrays', 'Strings'],
+    topics: ['Probability', 'Permutations', 'Complex Puzzles', 'Pseudocode', 'Arrays', 'Strings'],
     mockTestId: 'infosys-se-mock',
-    successRate: '88%'
+    successRate: '88%',
   },
   accenture: {
     name: 'Accenture (ASE & FSE)',
     tagline: 'Cognitive and Technical Placement Assessment',
-    overview: 'Accenture\'s placement assessment is highly structured, testing cognitive skills, English communication, abstract reasoning, and practical programming logic. There are specific sectional cutoffs that must be cleared sequentially.',
+    overview:
+      "Accenture's assessment tests cognitive skills, English communication, abstract reasoning, and programming logic with sequential sectional cutoffs.",
     pattern: [
       { sectionName: 'English Ability', questions: 17, time: '15 mins' },
       { sectionName: 'Critical Reasoning & Problem Solving', questions: 18, time: '20 mins' },
       { sectionName: 'Abstract Reasoning', questions: 15, time: '15 mins' },
-      { sectionName: 'Common Applications & MS Office', questions: 12, time: '10 mins' },
-      { sectionName: 'Hands-on Coding (2 Problems)', questions: 2, time: '45 mins' }
+      { sectionName: 'Common Apps & MS Office', questions: 12, time: '10 mins' },
+      { sectionName: 'Coding (2 Problems)', questions: 2, time: '45 mins' },
     ],
     strategies: [
-      'Accentures verbal section requires extensive grammar accuracy (prepositions, conjunctions, voices).',
-      'Abstract reasoning features geometric rotations and grid completions. Practice pattern visualisations.',
-      'Memorize basic operating systems, MS-Office shortcuts, and security protocols.',
-      'Coding problems are moderately easy. Ensure you clear all 5 compilers test cases.',
-      'Prepare for a rigorous technical review if you perform exceptionally in the coding round.'
+      'Verbal section requires strong grammar accuracy — prepositions, conjunctions, voices.',
+      'Abstract reasoning has geometric rotations and grid completions. Practice pattern visualisation.',
+      'Memorize MS-Office shortcuts, OS basics, and security protocols.',
+      'Coding problems are moderately easy — clear all 5 compiler test cases.',
+      'Exceptional coding performance leads to a rigorous technical review round.',
     ],
-    topics: ['English Grammar', 'Abstract Patterns', 'Critical Reasoning', 'MS Office', 'Operating Systems', 'Sorting'],
+    topics: ['English Grammar', 'Abstract Patterns', 'Critical Reasoning', 'MS Office', 'OS', 'Sorting'],
     mockTestId: 'accenture-mock',
-    successRate: '89%'
+    successRate: '89%',
   },
   wipro: {
     name: 'Wipro (Elite NLTH)',
     tagline: 'Elite National Level Talent Hunt Assessment',
-    overview: 'Wipro hires through the Elite National Level Talent Hunt (NLTH). The test comprises an AMCAT-based cognitive section (Quant, Logical, Verbal), a writing evaluation test, and standard coding problems.',
+    overview:
+      'Wipro uses an AMCAT-based cognitive section plus a writing evaluation and coding problems. Speed is the key differentiator across all sections.',
     pattern: [
       { sectionName: 'Quantitative Ability', questions: 16, time: '20 mins' },
       { sectionName: 'Logical Ability', questions: 14, time: '20 mins' },
       { sectionName: 'Verbal Ability', questions: 22, time: '18 mins' },
-      { sectionName: 'WriteX (Essay Writing)', questions: 1, time: '20 mins' },
-      { sectionName: 'Automata Coding (2 Problems)', questions: 2, time: '45 mins' }
+      { sectionName: 'WriteX (Essay)', questions: 1, time: '20 mins' },
+      { sectionName: 'Automata Coding (2 Problems)', questions: 2, time: '45 mins' },
     ],
     strategies: [
-      'AMCAT-style questions emphasize Speed. Memorize calculations and short tricks.',
-      'Practice profit/loss, simple/compound interest, and ratios.',
-      'For Essay writing, maintain perfect grammar, avoid colloquial words, and structure with clear paragraphs.',
-      'The coding platform enforces strict standard outputs. Do not print unnecessary debug lines.',
-      'Ensure you practice basic sorting, string manipulations, and matrix updates.'
+      'AMCAT-style questions emphasize speed — memorize calculations and short tricks.',
+      'Practice profit/loss, SI/CI, and ratio problems.',
+      'For essay writing, maintain perfect grammar, no colloquial words, clear paragraphs.',
+      'Coding platform enforces strict standard outputs — no debug prints.',
+      'Practice sorting, string manipulations, and matrix updates.',
     ],
-    topics: ['Interest rates', 'Speed & Distance', 'Grammar', 'Essay Formatting', 'Matrices', 'String manipulation'],
+    topics: ['Interest Rates', 'Speed & Distance', 'Grammar', 'Essay', 'Matrices', 'Strings'],
     mockTestId: 'wipro-mock',
-    successRate: '91%'
+    successRate: '91%',
   },
   cognizant: {
     name: 'Cognizant (GenC & GenC Pro)',
     tagline: 'Cognitive and Algorithmic Graduate Assessment',
-    overview: 'Cognizant candidates are evaluated on general cognitive reasoning, structural coding, database operations (SQL), and analytical thinking. Success in coding leads to a GenC Pro profile upgrade.',
+    overview:
+      'Cognizant evaluates general cognitive reasoning, structural coding, SQL, and analytical thinking. Strong coding performance leads to a GenC Pro profile upgrade.',
     pattern: [
       { sectionName: 'Quantitative Aptitude', questions: 15, time: '25 mins' },
       { sectionName: 'Logical Reasoning', questions: 15, time: '25 mins' },
       { sectionName: 'Verbal Reasoning', questions: 15, time: '15 mins' },
-      { sectionName: 'Coding & DBMS Queries', questions: 3, time: '35 mins' }
+      { sectionName: 'Coding & DBMS Queries', questions: 3, time: '35 mins' },
     ],
     strategies: [
-      'Understand basic database normalization, primary keys, and JOIN SQL queries.',
-      'Aptitude focuses heavily on percentage calculations, ratios, and averages.',
-      'Practice deductive reasoning, coding-decoding, and family tree relations.',
-      'Review structural patterns for array traversal and binary structures.',
-      'Ensure your coding submissions have robust boundary validations.'
+      'Understand basic SQL — normalization, primary keys, and JOIN queries.',
+      'Aptitude focuses heavily on percentages, ratios, and averages.',
+      'Practice deductive reasoning, coding-decoding, and family trees.',
+      'Review array traversal and binary structure patterns.',
+      'Ensure coding submissions have robust boundary validations.',
     ],
-    topics: ['Averages', 'SQL Joins', 'Family Trees', 'Data structures', 'DBMS', 'Algorithms', 'Puzzles'],
-    mockTestId: 'tcs-nqt-mock', // default fallback
-    successRate: '94%'
+    topics: ['Averages', 'SQL Joins', 'Family Trees', 'Data Structures', 'DBMS', 'Algorithms'],
+    mockTestId: 'tcs-nqt-mock',
+    successRate: '94%',
   },
   capgemini: {
     name: 'Capgemini',
     tagline: 'Game-Based Cognitive Assessment & Pseudocodes',
-    overview: 'Capgemini recruitment utilizes game-based assessments (testing spatial memory, speed, calculations) followed by technical pseudocoding tests and communication evaluations.',
+    overview:
+      'Capgemini uses game-based assessments (spatial memory, speed, calculations) followed by pseudocoding tests and communication evaluations.',
     pattern: [
-      { sectionName: 'Game-Based Aptitude Test', questions: 4, time: '20 mins' },
+      { sectionName: 'Game-Based Aptitude', questions: 4, time: '20 mins' },
       { sectionName: 'Pseudocode Challenge', questions: 20, time: '25 mins' },
-      { sectionName: 'English Communication skills', questions: 30, time: '30 mins' },
-      { sectionName: 'Technical Interview Mock', questions: 1, time: '20 mins' }
+      { sectionName: 'English Communication', questions: 30, time: '30 mins' },
+      { sectionName: 'Technical Interview Mock', questions: 1, time: '20 mins' },
     ],
     strategies: [
-      'Game assessments test raw speed. Play practice grid, card flipping, and numerical bubble games.',
-      'Practice dry-running code loops, recursively nested functions, and bitwise operations.',
-      'Review basic data structures (Stacks, Queues, Linked Lists) as they form the pseudocode bases.',
-      'Maintain strong spoken grammar for the communication rounded tests.',
-      'Always structure logic on scratch papers before ticking answers in pseudocode.'
+      'Game assessments test raw speed — practice grid, card flipping, and numerical bubble games.',
+      'Dry-run code loops, recursive functions, and bitwise operations.',
+      'Review basic data structures (Stacks, Queues, Linked Lists).',
+      'Maintain strong spoken grammar for communication tests.',
+      'Structure logic on scratch paper before answering pseudocode questions.',
     ],
-    topics: ['Spatial Memory', 'Bitwise operations', 'Stacks & Queues', 'Loops dry-run', 'Vocabulary', 'Linked list'],
+    topics: ['Spatial Memory', 'Bitwise Ops', 'Stacks & Queues', 'Loops', 'Vocabulary', 'Linked List'],
     mockTestId: 'accenture-mock',
-    successRate: '85%'
+    successRate: '85%',
   },
   hcl: {
     name: 'HCL Tech',
     tagline: 'HCL Graduate Placement Assessment',
-    overview: 'HCL Technologies assessments test standard arithmetic ability, critical analysis, technical computer concepts, and elementary programming logic.',
+    overview:
+      'HCL tests standard arithmetic, critical analysis, technical computer concepts, and elementary programming logic. No negative marking.',
     pattern: [
       { sectionName: 'Numerical Ability', questions: 15, time: '20 mins' },
       { sectionName: 'Analytical Reasoning', questions: 15, time: '20 mins' },
       { sectionName: 'Technical Computer Concepts', questions: 10, time: '15 mins' },
-      { sectionName: 'Programming Hands-on', questions: 1, time: '25 mins' }
+      { sectionName: 'Programming Hands-on', questions: 1, time: '25 mins' },
     ],
     strategies: [
-      'Ensure strong knowledge of basic computer hardware, networking protocols, and operating systems.',
+      'Strong knowledge of hardware, networking protocols, and operating systems is essential.',
       'Solve HCF, LCM, divisibility rules, and series completion questions.',
-      'Practice elementary coding challenges (palindrome, reverse string, prime checkers).',
-      'Manage sectional timing meticulously. Do not spend too long on single puzzle logs.',
-      'HCL assessments have no negative markings; make intelligent guesses if running out of time.'
+      'Practice elementary coding challenges — palindrome, reverse string, prime checkers.',
+      'Manage sectional timing carefully. Do not spend too long on single puzzles.',
+      'No negative marking — make intelligent guesses if running out of time.',
     ],
-    topics: ['HCF & LCM', 'Networking basics', 'Divisibility', 'Series completion', 'Simple coding', 'Logic grids'],
+    topics: ['HCF & LCM', 'Networking Basics', 'Divisibility', 'Series Completion', 'Simple Coding'],
     mockTestId: 'infosys-se-mock',
-    successRate: '95%'
-  }
+    successRate: '95%',
+  },
+};
+
+const card: React.CSSProperties = {
+  background: '#FFFFFF',
+  border: '1px solid #E4E7EC',
+  borderRadius: '16px',
+  boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)',
 };
 
 export default function CompanyProfilePage() {
@@ -187,20 +196,25 @@ export default function CompanyProfilePage() {
 
   const handleLaunchExam = () => {
     if (spec) {
-      toast.success(`Launching ${spec.name} Assessment kit...`);
-      router.push(`/mock-tests`);
+      toast.success(`Launching ${spec.name} mock test…`);
+      router.push('/mock-tests');
     }
   };
 
   if (!spec) {
     return (
       <ProtectedRoute>
-        <div className="min-h-screen flex items-center justify-center bg-surface text-on-surface font-body-md">
-          <div className="text-center bg-surface-container-lowest p-8 border border-outline-variant/30 rounded-2xl shadow-sm max-w-sm">
-            <AlertCircle size={48} className="text-primary mx-auto mb-4" />
-            <h2 className="font-headline-md text-headline-md text-on-surface mb-4">Company Profile Not Found</h2>
-            <button onClick={() => router.push('/companies')} className="btn-glow mt-4 px-6 py-2.5 rounded-xl bg-primary hover:bg-secondary w-full">
-              Go Back
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F8FAFF', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <div style={{ ...card, padding: '40px', maxWidth: '360px', textAlign: 'center' }}>
+            <AlertCircle size={48} style={{ color: '#DC2626', margin: '0 auto 16px' }} />
+            <h2 style={{ fontSize: '1.125rem', fontWeight: 800, color: '#111827', marginBottom: '8px' }}>Company Not Found</h2>
+            <p style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '24px' }}>This company profile doesn&apos;t exist.</p>
+            <button
+              onClick={() => router.push('/companies')}
+              className="btn-primary"
+              style={{ width: '100%', justifyContent: 'center' }}
+            >
+              Go Back to Companies
             </button>
           </div>
         </div>
@@ -210,136 +224,146 @@ export default function CompanyProfilePage() {
 
   return (
     <ProtectedRoute>
-      <div className="flex min-h-screen bg-surface text-on-surface font-body-md">
-        <Sidebar activePath="/companies" />
+      <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#F8FAFF', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        <Sidebar />
 
-        <div className="flex-1 min-h-screen overflow-y-auto pl-0 lg:pl-64">
-          <div className="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-md">
+        <div style={{ flex: 1, marginLeft: '260px', overflowY: 'auto' }}>
+          <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '40px 32px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
+
             {/* Back button */}
             <button
               onClick={() => router.push('/companies')}
-              className="flex items-center gap-1.5 text-xs font-bold text-on-surface-variant hover:text-primary uppercase tracking-wider mb-6 cursor-pointer transition-colors"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.8125rem', fontWeight: 700, color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer', width: 'fit-content', padding: 0 }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#2563EB')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#6B7280')}
             >
-              <ArrowLeft size={14} /> Back to Hub
+              <ArrowLeft size={15} /> Back to Companies
             </button>
 
-            {/* Profile Hero Card */}
-            <div className="glass-card p-6 md:p-8 border border-outline-variant/30 relative overflow-hidden mb-8 ambient-shadow">
-              <div className="absolute top-0 right-0 w-36 h-36 bg-primary/5 rounded-bl-full blur-xl pointer-events-none" />
-              
-              <div className="relative z-10 space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">
+            {/* Hero Card */}
+            <div style={{ ...card, padding: '32px', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 0, right: 0, width: '200px', height: '200px', background: 'radial-gradient(circle at top right, rgba(37,99,235,0.06), transparent 70%)', pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+                  <span style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1D4ED8', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 12px', borderRadius: '99px' }}>
                     Placement Strategy Kit
                   </span>
-                  <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ECFDF5', border: '1px solid #A7F3D0', color: '#065F46', fontSize: '0.75rem', fontWeight: 700, padding: '4px 12px', borderRadius: '99px' }}>
                     <CheckCircle2 size={13} />
                     Historical Success Rate: {spec.successRate}
                   </div>
                 </div>
-
-                <h1 className="font-headline-lg text-headline-lg text-on-surface">{spec.name}</h1>
-                <p className="text-sm font-semibold text-secondary italic">{spec.tagline}</p>
-                <p className="text-xs md:text-sm text-on-surface-variant leading-relaxed mt-2">{spec.overview}</p>
+                <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#111827', marginBottom: '6px' }}>{spec.name}</h1>
+                <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#7C3AED', marginBottom: '14px', fontStyle: 'italic' }}>{spec.tagline}</p>
+                <p style={{ fontSize: '0.875rem', color: '#6B7280', lineHeight: 1.7, fontWeight: 500 }}>{spec.overview}</p>
               </div>
             </div>
 
-            {/* Grid structure: Left=Pattern table, Right=Strategy & Topics */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              
-              {/* Left Column: Pattern Structure (col-span-2) */}
-              <div className="md:col-span-2 space-y-6">
-                <div className="glass-card p-5 border border-outline-variant/30 ambient-shadow">
-                  <h3 className="text-base font-extrabold text-on-surface mb-4 flex items-center gap-2 border-b border-outline-variant/30 pb-3">
-                    <BookOpen size={18} className="text-primary" />
-                    Latest Test Pattern Structure
+            {/* Two-column grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+
+              {/* Left: Test Pattern */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ ...card, padding: '28px' }}>
+                  <h3 style={{ fontSize: '0.875rem', fontWeight: 800, color: '#111827', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #E4E7EC' }}>
+                    <BookOpen size={17} style={{ color: '#2563EB' }} />
+                    Latest Test Pattern
                   </h3>
-
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs border-collapse">
-                      <thead>
-                        <tr className="bg-surface-container text-on-surface-variant uppercase tracking-widest text-[9px] font-bold">
-                          <th className="py-3 px-4">Evaluation Section</th>
-                          <th className="py-3 px-4 text-center">Questions</th>
-                          <th className="py-3 px-4 text-right">Time Duration</th>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: '#F9FAFB' }}>
+                        <th style={{ padding: '10px 14px', textAlign: 'left', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#6B7280', borderBottom: '1px solid #E4E7EC' }}>Section</th>
+                        <th style={{ padding: '10px 14px', textAlign: 'center', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#6B7280', borderBottom: '1px solid #E4E7EC' }}>Questions</th>
+                        <th style={{ padding: '10px 14px', textAlign: 'right', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#6B7280', borderBottom: '1px solid #E4E7EC' }}>
+                          <Clock size={11} style={{ display: 'inline', marginRight: '3px' }} />Duration
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {spec.pattern.map((section, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #F3F4F6' }}
+                          onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFF')}
+                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                          <td style={{ padding: '13px 14px', fontSize: '0.8125rem', fontWeight: 600, color: '#111827' }}>{section.sectionName}</td>
+                          <td style={{ padding: '13px 14px', textAlign: 'center', fontSize: '0.8125rem', fontWeight: 700, color: '#2563EB' }}>{section.questions}</td>
+                          <td style={{ padding: '13px 14px', textAlign: 'right', fontSize: '0.8125rem', color: '#6B7280', fontWeight: 500 }}>{section.time}</td>
                         </tr>
-                      </thead>
-                      <tbody className="divide-y divide-outline-variant/30 text-on-surface font-medium">
-                        {spec.pattern.map((section, sIdx) => (
-                          <tr key={sIdx} className="hover:bg-surface-container-low/50">
-                            <td className="py-3.5 px-4 font-semibold text-on-surface">{section.sectionName}</td>
-                            <td className="py-3.5 px-4 text-center text-on-surface-variant font-mono">{section.questions}</td>
-                            <td className="py-3.5 px-4 text-right text-on-surface-variant font-mono">{section.time}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                      ))}
+                    </tbody>
+                  </table>
+                  <button
+                    onClick={handleLaunchExam}
+                    className="btn-primary"
+                    style={{ width: '100%', justifyContent: 'center', marginTop: '20px' }}
+                  >
+                    Launch Company Mock Exam
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
 
-                  {/* Launch Exam CTA */}
-                  <div className="mt-6">
-                    <button
-                      onClick={handleLaunchExam}
-                      className="w-full btn-glow py-3 rounded-xl text-white font-extrabold text-xs tracking-wider uppercase flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-primary hover:bg-secondary"
-                    >
-                      Launch Company Mock Exam
-                      <ChevronRight size={14} />
-                    </button>
+                {/* Strategy Tips */}
+                <div style={{ ...card, padding: '28px' }}>
+                  <h3 style={{ fontSize: '0.875rem', fontWeight: 800, color: '#111827', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #E4E7EC' }}>
+                    <Star size={17} style={{ color: '#D97706' }} />
+                    Preparation Strategy
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    {spec.strategies.map((tip, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+                        <span style={{
+                          width: '26px', height: '26px', flexShrink: 0, borderRadius: '8px',
+                          background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#2563EB',
+                          fontSize: '0.75rem', fontWeight: 800,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}>{idx + 1}</span>
+                        <p style={{ fontSize: '0.8125rem', color: '#4B5563', lineHeight: 1.65, fontWeight: 500, flex: 1 }}>{tip}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
 
-              {/* Right Column: Tips & Core Topics (col-span-1) */}
-              <div className="md:col-span-1 space-y-6">
-                
-                {/* Core topics */}
-                <div className="glass-card p-5 border border-outline-variant/30 ambient-shadow">
-                  <h3 className="text-xs font-black text-on-surface uppercase tracking-wider mb-3.5 flex items-center gap-2">
-                    <Terminal size={14} className="text-primary" />
-                    Frequently Asked Topics
+              {/* Right: Topics + Security notice */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ ...card, padding: '24px' }}>
+                  <h3 style={{ fontSize: '0.75rem', fontWeight: 800, color: '#111827', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                    <Terminal size={14} style={{ color: '#2563EB' }} />
+                    Key Topics
                   </h3>
-                  <div className="flex flex-wrap gap-2">
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     {spec.topics.map(topic => (
-                      <span
+                      <button
                         key={topic}
-                        className="bg-surface-container-low border border-outline-variant/50 hover:border-primary/30 text-[10px] text-on-surface-variant hover:text-primary font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
                         onClick={() => router.push('/practice')}
+                        style={{
+                          background: '#F9FAFB', border: '1px solid #E4E7EC', color: '#374151',
+                          fontSize: '0.75rem', fontWeight: 600, padding: '6px 12px', borderRadius: '8px',
+                          cursor: 'pointer', transition: 'all 0.18s',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = '#EFF6FF'; e.currentTarget.style.borderColor = '#BFDBFE'; e.currentTarget.style.color = '#2563EB'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = '#F9FAFB'; e.currentTarget.style.borderColor = '#E4E7EC'; e.currentTarget.style.color = '#374151'; }}
                       >
                         {topic}
-                      </span>
+                      </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Secure monitoring reminder */}
-                <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-5 space-y-3 text-xs leading-relaxed text-amber-800/80">
-                  <h4 className="font-extrabold text-amber-700 uppercase tracking-widest text-[10px] flex items-center gap-1.5">
+                <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: '14px', padding: '20px' }}>
+                  <h4 style={{ fontSize: '0.72rem', fontWeight: 800, color: '#92400E', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
                     <ShieldCheck size={14} />
-                    Secure Browser Rule
+                    Exam Security Notice
                   </h4>
-                  <p>
-                    All exams initiated on this platform enforce fullscreen sandboxes. Tab-switching is automatically logged and triggers security warnings. Ensure focused environments before commencing exams.
+                  <p style={{ fontSize: '0.8125rem', color: '#78350F', lineHeight: 1.65, fontWeight: 500 }}>
+                    Exams enforce fullscreen mode. Tab-switching is logged and triggers warnings. Ensure a quiet environment before starting.
                   </p>
                 </div>
-              </div>
-            </div>
 
-            {/* Preparation Strategies Section */}
-            <div className="glass-card p-6 border border-outline-variant/30 mt-8 ambient-shadow">
-              <h3 className="text-base font-extrabold text-on-surface mb-4 flex items-center gap-2 border-b border-outline-variant/30 pb-3">
-                <Star size={18} className="text-yellow-500 animate-spin" style={{ animationDuration: '4s' }} />
-                Targeted Preparation Strategy
-              </h3>
-
-              <div className="space-y-4">
-                {spec.strategies.map((tip, idx) => (
-                  <div key={idx} className="flex gap-4 items-start text-on-surface-variant text-xs md:text-sm leading-relaxed">
-                    <span className="w-6 h-6 rounded-lg bg-primary/10 border border-primary/20 text-primary font-black text-xs flex items-center justify-center shrink-0 mt-0.5 font-mono">
-                      {idx + 1}
-                    </span>
-                    <p className="flex-1">{tip}</p>
-                  </div>
-                ))}
+                <div style={{ ...card, padding: '24px', textAlign: 'center' }}>
+                  <Award size={28} style={{ color: '#2563EB', margin: '0 auto 10px' }} />
+                  <p style={{ fontSize: '2rem', fontWeight: 800, color: '#111827' }}>{spec.successRate}</p>
+                  <p style={{ fontSize: '0.8125rem', color: '#6B7280', fontWeight: 500, marginTop: '4px' }}>Historical Success Rate</p>
+                </div>
               </div>
             </div>
           </div>

@@ -43,7 +43,7 @@ function DashboardContent() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-surface">
+      <div className="flex-1 flex items-center justify-center bg-[#F8FAFF]">
         <LoadingSpinner size="lg" text="Loading your dashboard..." />
       </div>
     );
@@ -84,53 +84,58 @@ function DashboardContent() {
 
   const recentAttempts = stats?.recentAttempts || [];
 
+  const firstName = user?.name?.split(' ')[0] ?? 'there';
+
   return (
-    <div className="flex-1 overflow-auto bg-surface">
-      <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
-        {/* Welcome Header */}
+    <div className="flex-1 overflow-auto bg-[#F8FAFF]">
+      <div className="max-w-7xl mx-auto px-8 py-10 space-y-8">
+
+        {/* ── HEADER ROW ── */}
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
           className="flex flex-col md:flex-row md:items-center justify-between gap-4"
         >
           <div>
-            <h1 className="text-2xl md:text-3xl font-black text-on-surface">
-              Welcome back, <span className="bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text font-black">{user?.name?.split(' ')[0]}!</span> 👋
+            <h1 className="text-2xl font-black text-[#111827] leading-tight">
+              Good morning, {firstName}! 👋
             </h1>
-            <p className="text-on-surface-variant mt-1 flex items-center gap-2 font-medium">
-              <Calendar size={14} className="text-primary" />
+            <p className="text-sm text-[#6B7280] mt-1 flex items-center gap-1.5 font-medium">
+              <Calendar size={13} className="text-[#2563EB]" />
               {formatDate(new Date())} · Keep the streak going!
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
             <Link href="/practice">
-              <motion.button
-                className="btn-glow px-5 py-2.5 text-sm font-semibold rounded-xl text-white flex items-center gap-2 cursor-pointer shadow-sm"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Zap size={16} fill="white" />
+              <button className="btn-primary text-sm px-5 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer">
+                <Zap size={15} fill="white" />
                 Quick Practice
-              </motion.button>
+              </button>
             </Link>
             <Link href="/mock-tests">
-              <button className="px-5 py-2.5 text-sm font-semibold rounded-xl text-on-surface border border-outline-variant bg-surface-container-lowest hover:border-primary hover:text-primary transition-all flex items-center gap-2 cursor-pointer shadow-sm">
-                <FileText size={16} />
+              <button className="btn-secondary text-sm px-5 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer">
+                <FileText size={15} />
                 Take Mock Test
               </button>
             </Link>
           </div>
         </motion.div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* ── STAT CARDS (4-col) ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.05 }}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-5"
+        >
           <StatCard
             icon={Star}
             label="Overall Score"
             value={overallScore}
             trend={5.2}
             trendLabel="vs last week"
-            color="purple"
+            color="violet"
             suffix="/100"
           />
           <StatCard
@@ -154,49 +159,55 @@ function DashboardContent() {
             value={`#${rank}`}
             trend={-12}
             trendLabel="positions up"
-            color="orange"
+            color="amber"
           />
-        </div>
+        </motion.div>
 
-        {/* Main Grid */}
+        {/* ── MID ROW: Placement Readiness + Weekly Progress ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Placement Readiness */}
+
+          {/* Placement Readiness — col-span-1 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 ambient-shadow flex flex-col items-center"
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="bg-white rounded-2xl border border-[#E4E7EC] p-6 flex flex-col items-center"
+            style={{ boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)' }}
           >
-            <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider mb-6">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#6B7280] mb-6 self-start">
               Placement Readiness
-            </h3>
+            </p>
             <ProgressRing
               percentage={placementScore}
               size={160}
               strokeWidth={12}
-              gradientStart="#004ac6"
-              gradientEnd="#712ae2"
+              gradientStart="#2563EB"
+              gradientEnd="#7C3AED"
               label={getPlacementReadinessLabel(placementScore)}
               sublabel="Overall Score"
             />
             <div className="mt-6 w-full space-y-3">
               {companyReadiness.slice(0, 4).map(({ company, readiness }) => (
                 <div key={company}>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-on-surface-variant font-medium">{company}</span>
-                    <span style={{ color: getPlacementReadinessColor(readiness) }} className="font-semibold">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-xs font-medium text-[#6B7280]">{company}</span>
+                    <span
+                      className="text-xs font-bold"
+                      style={{ color: getPlacementReadinessColor(readiness) }}
+                    >
                       {readiness}%
                     </span>
                   </div>
-                  <div className="h-1.5 bg-surface-container rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-[#F3F4F6] rounded-full overflow-hidden">
                     <motion.div
                       className="h-full rounded-full"
                       style={{
-                        background: `linear-gradient(90deg, ${getPlacementReadinessColor(readiness)}, ${getPlacementReadinessColor(readiness)}99)`,
+                        background: 'linear-gradient(90deg, #2563EB, #7C3AED)',
+                        opacity: 0.75 + (readiness / 400),
                       }}
                       initial={{ width: 0 }}
                       animate={{ width: `${readiness}%` }}
-                      transition={{ duration: 1, delay: 0.3 }}
+                      transition={{ duration: 1, delay: 0.35 }}
                     />
                   </div>
                 </div>
@@ -204,82 +215,120 @@ function DashboardContent() {
             </div>
           </motion.div>
 
-          {/* Weekly Progress Chart */}
+          {/* Weekly Progress Chart — col-span-2 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 ambient-shadow lg:col-span-2"
+            transition={{ duration: 0.4, delay: 0.15 }}
+            className="bg-white rounded-2xl border border-[#E4E7EC] p-6 lg:col-span-2"
+            style={{ boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)' }}
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">Weekly Progress</h3>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-primary" />
-                  <span className="text-xs text-on-surface-variant font-semibold">Score</span>
-                </div>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+                Weekly Progress
+              </p>
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#2563EB]" />
+                <span className="text-xs text-[#6B7280] font-semibold">Score</span>
               </div>
             </div>
-            <div className="w-full">
-              <ResponsiveContainer width="100%" height={220}>
-                <AreaChart data={weeklyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#004ac6" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#004ac6" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e3e5" />
-                  <XAxis dataKey="date" tick={{ fill: '#737686', fontSize: 11 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: '#737686', fontSize: 11 }} domain={[0, 100]} axisLine={false} tickLine={false} />
-                  <Tooltip
-                    contentStyle={{
-                      background: '#ffffff',
-                      border: '1px solid #c3c6d7',
-                      borderRadius: '10px',
-                      color: '#191c1e',
-                      boxShadow: '0px 10px 30px rgba(15, 23, 42, 0.05)',
-                    }}
-                  />
-                  <Area type="monotone" dataKey="score" stroke="#004ac6" strokeWidth={2.5} fill="url(#scoreGradient)" dot={{ fill: '#004ac6', strokeWidth: 0, r: 4 }} activeDot={{ r: 6, fill: '#712ae2' }} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart data={weeklyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fill: '#6B7280', fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fill: '#6B7280', fontSize: 11 }}
+                  domain={[0, 100]}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: '#ffffff',
+                    border: '1.5px solid #E4E7EC',
+                    borderRadius: '12px',
+                    color: '#111827',
+                    boxShadow: '0 4px 14px rgba(17,24,39,0.08)',
+                    fontSize: '12px',
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="score"
+                  stroke="#2563EB"
+                  strokeWidth={2.5}
+                  fill="url(#scoreGradient)"
+                  dot={{ fill: '#2563EB', strokeWidth: 0, r: 4 }}
+                  activeDot={{ r: 6, fill: '#7C3AED' }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </motion.div>
         </div>
 
-        {/* Bottom Grid */}
+        {/* ── BOTTOM ROW: Weak Topics + Recent Activity ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Weak Topics */}
+
+          {/* Weak Topics — col-span-1 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 ambient-shadow"
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="bg-white rounded-2xl border border-[#E4E7EC] p-6 flex flex-col"
+            style={{ boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)' }}
           >
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">Weak Topics</h3>
-              <Link href="/analytics" className="text-xs text-primary hover:underline flex items-center gap-1 font-semibold">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+                Weak Topics
+              </p>
+              <Link
+                href="/analytics"
+                className="text-xs text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-0.5 font-semibold transition-colors"
+              >
                 View All <ChevronRight size={12} />
               </Link>
             </div>
-            <div className="space-y-4">
+
+            <div className="space-y-4 flex-1">
               {weakTopics.slice(0, 5).map(({ topic, accuracy: topicAccuracy }) => (
                 <div key={topic}>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-semibold text-on-surface truncate flex-1 mr-2">{topic}</span>
-                    <span className={cn(
-                      'text-xs font-bold flex-shrink-0',
-                      topicAccuracy < 50 ? 'text-red-600' : topicAccuracy < 65 ? 'text-amber-600' : 'text-emerald-600'
-                    )}>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-sm font-semibold text-[#111827] truncate flex-1 mr-2">
+                      {topic}
+                    </span>
+                    <span
+                      className={cn(
+                        'text-xs font-bold flex-shrink-0',
+                        topicAccuracy < 50
+                          ? 'text-[#DC2626]'
+                          : topicAccuracy < 65
+                          ? 'text-[#D97706]'
+                          : 'text-[#059669]'
+                      )}
+                    >
                       {topicAccuracy}%
                     </span>
                   </div>
-                  <div className="h-1.5 bg-surface-container rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-[#F3F4F6] rounded-full overflow-hidden">
                     <motion.div
                       className={cn(
                         'h-full rounded-full',
-                        topicAccuracy < 50 ? 'bg-red-500' : topicAccuracy < 65 ? 'bg-amber-500' : 'bg-emerald-500'
+                        topicAccuracy < 50
+                          ? 'bg-[#DC2626]'
+                          : topicAccuracy < 65
+                          ? 'bg-[#D97706]'
+                          : 'bg-[#059669]'
                       )}
                       initial={{ width: 0 }}
                       animate={{ width: `${topicAccuracy}%` }}
@@ -289,35 +338,43 @@ function DashboardContent() {
                 </div>
               ))}
             </div>
-            <Link href="/practice">
-              <button className="mt-5 w-full py-2.5 text-xs font-semibold rounded-xl text-primary border border-primary/30 hover:bg-primary/5 transition-all cursor-pointer">
+
+            <Link href="/practice" className="mt-5 block">
+              <button className="btn-secondary w-full text-sm py-2.5 rounded-xl cursor-pointer">
                 Practice Weak Topics →
               </button>
             </Link>
           </motion.div>
 
-          {/* Recent Activity */}
+          {/* Recent Activity — col-span-2 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 ambient-shadow lg:col-span-2"
+            transition={{ duration: 0.4, delay: 0.25 }}
+            className="bg-white rounded-2xl border border-[#E4E7EC] p-6 lg:col-span-2"
+            style={{ boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)' }}
           >
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">Recent Activity</h3>
-              <Link href="/mock-tests" className="text-xs text-primary hover:underline flex items-center gap-1 font-semibold">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+                Recent Activity
+              </p>
+              <Link
+                href="/mock-tests"
+                className="text-xs text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-0.5 font-semibold transition-colors"
+              >
                 All Tests <ChevronRight size={12} />
               </Link>
             </div>
 
             {recentAttempts.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <FileText size={28} className="text-primary" />
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-[#EFF6FF] flex items-center justify-center mb-4">
+                  <FileText size={28} className="text-[#2563EB]" />
                 </div>
-                <p className="text-on-surface-variant text-sm font-medium mb-4">No tests taken yet. Start your first mock test!</p>
+                <p className="text-[#6B7280] text-sm font-medium mb-1">No tests taken yet.</p>
+                <p className="text-[#9CA3AF] text-xs mb-5">Start your first mock test to track progress!</p>
                 <Link href="/mock-tests">
-                  <button className="btn-glow px-5 py-2.5 text-sm font-semibold rounded-xl text-white cursor-pointer">
+                  <button className="btn-primary px-5 py-2.5 text-sm rounded-xl cursor-pointer">
                     Take First Test
                   </button>
                 </Link>
@@ -327,24 +384,38 @@ function DashboardContent() {
                 {recentAttempts.slice(0, 5).map((attempt) => {
                   const grade = calculateGrade(attempt.percentage);
                   return (
-                    <div key={attempt._id} className="flex items-center justify-between p-3 rounded-xl bg-surface border border-outline-variant/30 hover:border-primary/50 hover:bg-surface-container-low transition-all group">
+                    <div
+                      key={attempt._id}
+                      className="bg-[#F9FAFB] rounded-xl p-4 flex items-center justify-between hover:bg-[#EFF6FF] transition-colors group"
+                    >
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-                          <FileText size={16} className="text-primary" />
+                        <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] flex items-center justify-center flex-shrink-0">
+                          <FileText size={16} className="text-[#2563EB]" />
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-on-surface group-hover:text-primary transition-colors">
+                          <p className="text-sm font-semibold text-[#111827] group-hover:text-[#2563EB] transition-colors">
                             {typeof attempt.test === 'object' ? attempt.test.title : 'Mock Test'}
                           </p>
-                          <p className="text-xs text-on-surface-variant font-medium mt-0.5">{formatDate(attempt.submittedAt)}</p>
+                          <p className="text-xs text-[#9CA3AF] font-medium mt-0.5">
+                            {formatDate(attempt.submittedAt)}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-sm text-on-surface-variant font-medium">{formatTime(attempt.timeTaken)}</span>
-                        <span className={cn('px-2.5 py-1 text-xs font-bold rounded-lg border', getScoreBgColor(attempt.percentage))}>
+                        <span className="text-xs text-[#6B7280] font-medium">
+                          {formatTime(attempt.timeTaken)}
+                        </span>
+                        <span
+                          className={cn(
+                            'px-2.5 py-1 text-xs font-bold rounded-lg border',
+                            getScoreBgColor(attempt.percentage)
+                          )}
+                        >
                           {grade}
                         </span>
-                        <span className="text-sm font-black text-on-surface">{attempt.percentage.toFixed(0)}%</span>
+                        <span className="text-sm font-black text-[#111827]">
+                          {attempt.percentage.toFixed(0)}%
+                        </span>
                       </div>
                     </div>
                   );
@@ -354,39 +425,53 @@ function DashboardContent() {
           </motion.div>
         </div>
 
-        {/* Recommended Tests */}
+        {/* ── RECOMMENDED TESTS (full-width) ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 ambient-shadow"
+          transition={{ duration: 0.4, delay: 0.3 }}
+          className="bg-white rounded-2xl border border-[#E4E7EC] p-6"
+          style={{ boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)' }}
         >
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">Recommended For You</h3>
-            <Link href="/mock-tests" className="text-xs text-primary hover:underline flex items-center gap-1 font-semibold">
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+              Recommended For You
+            </p>
+            <Link
+              href="/mock-tests"
+              className="text-xs text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-0.5 font-semibold transition-colors"
+            >
               Browse All <ChevronRight size={12} />
             </Link>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
               { title: 'TCS NQT Mock Test', company: 'TCS', duration: 210, difficulty: 'medium' as const, questions: 82, attempts: 12450 },
               { title: 'Infosys PrepInsta', company: 'Infosys', duration: 165, difficulty: 'easy' as const, questions: 60, attempts: 8320 },
               { title: 'Wipro NLTH Mock', company: 'Wipro', duration: 180, difficulty: 'medium' as const, questions: 70, attempts: 6100 },
             ].map((test) => (
-              <div key={test.title} className="p-4 rounded-xl bg-surface border border-outline-variant/40 hover:border-primary/50 hover:bg-surface-container-low transition-all group">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <span className="text-xl font-black text-primary">{test.company}</span>
-                    <p className="text-sm text-on-surface font-semibold mt-0.5">{test.title}</p>
-                  </div>
+              <div
+                key={test.title}
+                className="bg-[#F8FAFF] border border-[#E4E7EC] rounded-xl p-5 hover:border-[#BFDBFE] hover:bg-[#EFF6FF] transition-all group"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <span className="text-lg font-black text-[#2563EB]">{test.company}</span>
                   <DifficultyBadge difficulty={test.difficulty} size="sm" />
                 </div>
-                <div className="flex gap-3 text-xs text-on-surface-variant font-medium mb-4">
-                  <span className="flex items-center gap-1"><Clock size={10} />{test.duration}min</span>
-                  <span className="flex items-center gap-1"><BookOpen size={10} />{test.questions}Q</span>
+                <p className="text-sm font-semibold text-[#111827] mb-3 leading-snug">
+                  {test.title}
+                </p>
+                <div className="flex items-center gap-3 text-xs text-[#6B7280] font-medium mb-4">
+                  <span className="flex items-center gap-1">
+                    <Clock size={11} /> {test.duration} min
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <BookOpen size={11} /> {test.questions}Q
+                  </span>
                 </div>
-                <Link href="/mock-tests">
-                  <button className="w-full py-2 text-xs font-semibold rounded-lg text-primary border border-primary/30 hover:bg-primary/5 group-hover:border-primary/60 transition-all flex items-center justify-center gap-1 cursor-pointer">
+                <Link href="/mock-tests" className="block">
+                  <button className="w-full py-2 text-xs font-semibold rounded-lg text-[#2563EB] border border-[#BFDBFE] hover:bg-[#2563EB] hover:text-white group-hover:border-[#2563EB] transition-all flex items-center justify-center gap-1 cursor-pointer">
                     Start Test <ArrowRight size={12} />
                   </button>
                 </Link>
@@ -394,6 +479,7 @@ function DashboardContent() {
             ))}
           </div>
         </motion.div>
+
       </div>
     </div>
   );
@@ -402,9 +488,9 @@ function DashboardContent() {
 export default function DashboardPage() {
   return (
     <ProtectedRoute>
-      <div className="flex h-screen overflow-hidden bg-surface">
+      <div className="flex h-screen overflow-hidden bg-[#F8FAFF]">
         <Sidebar />
-        <div className="flex-1 ml-[260px] flex flex-col min-h-screen">
+        <div className="flex-1 ml-[260px] overflow-auto">
           <DashboardContent />
         </div>
       </div>

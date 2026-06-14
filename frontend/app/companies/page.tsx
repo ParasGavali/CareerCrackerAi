@@ -1,241 +1,250 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { ProtectedRoute } from '@/components/ui/ProtectedRoute';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { cn } from '@/lib/utils';
-import {
-  Building2, Sparkles, ChevronRight, Award,
-  Terminal, ShieldCheck, Briefcase, Zap
-} from 'lucide-react';
+import { Clock, Sparkles, Building2, CheckCircle2, FlaskConical, Trophy } from 'lucide-react';
 
-interface CompanyCard {
+interface CompanyData {
   slug: string;
   name: string;
-  tagline: string;
-  difficulty: 'Medium' | 'Hard' | 'Mixed';
+  tag: string;
+  pattern: string;
   duration: string;
-  sections: number;
-  highlightText: string;
-  glowColor: string;
-  borderColor: string;
-  bgGlow: string;
 }
+
+const companies: CompanyData[] = [
+  {
+    slug: 'tcs',
+    name: 'TCS',
+    tag: 'Mixed',
+    pattern: 'Numerical + Logic + Verbal',
+    duration: '30–60 mins',
+  },
+  {
+    slug: 'infosys',
+    name: 'Infosys',
+    tag: 'Hard',
+    pattern: 'Mathematical + Puzzles',
+    duration: '40–60 mins',
+  },
+  {
+    slug: 'accenture',
+    name: 'Accenture',
+    tag: 'Hard',
+    pattern: 'Critical Thinking + English',
+    duration: '45 mins',
+  },
+  {
+    slug: 'wipro',
+    name: 'Wipro',
+    tag: 'Medium',
+    pattern: 'Quantitative + Logical Ability',
+    duration: '35 mins',
+  },
+  {
+    slug: 'cognizant',
+    name: 'Cognizant',
+    tag: 'Medium',
+    pattern: 'Analytical + Verbal Ability',
+    duration: '30 mins',
+  },
+  {
+    slug: 'capgemini',
+    name: 'Capgemini',
+    tag: 'Mixed',
+    pattern: 'Pseudocode + English Skills',
+    duration: '30 mins',
+  },
+  {
+    slug: 'hcl',
+    name: 'HCL Tech',
+    tag: 'Medium',
+    pattern: 'Arithmetic + Critical Reasoning',
+    duration: '30 mins',
+  },
+];
+
+const stats = [
+  {
+    icon: Building2,
+    value: '7+',
+    label: 'Companies Covered',
+    color: '#2563EB',
+    bg: '#EFF6FF',
+  },
+  {
+    icon: FlaskConical,
+    value: '50+',
+    label: 'Total Mock Tests',
+    color: '#7C3AED',
+    bg: '#F5F3FF',
+  },
+  {
+    icon: Trophy,
+    value: '94%',
+    label: 'Success Rate',
+    color: '#059669',
+    bg: '#ECFDF5',
+  },
+];
 
 export default function CompanyHubPage() {
   const router = useRouter();
 
-  const companies: CompanyCard[] = [
-    {
-      slug: 'tcs',
-      name: 'TCS',
-      tagline: 'Ninja & Digital Recruitment Paths',
-      difficulty: 'Mixed',
-      duration: '30-60 mins',
-      sections: 3,
-      highlightText: 'Numerical + Logic + Verbal',
-      glowColor: 'from-[#2563eb] to-[#06b6d4]',
-      borderColor: 'group-hover:border-blue-500/30',
-      bgGlow: 'bg-blue-600/5'
-    },
-    {
-      slug: 'infosys',
-      name: 'Infosys',
-      tagline: 'System Engineer & Specialist Programmer',
-      difficulty: 'Hard',
-      duration: '40-60 mins',
-      sections: 3,
-      highlightText: 'Mathematical + Puzzles',
-      glowColor: 'from-[#06b6d4] to-[#10b981]',
-      borderColor: 'group-hover:border-cyan-500/30',
-      bgGlow: 'bg-cyan-600/5'
-    },
-    {
-      slug: 'accenture',
-      name: 'Accenture',
-      tagline: 'Associate Software Engineer Assessment',
-      difficulty: 'Hard',
-      duration: '45 mins',
-      sections: 3,
-      highlightText: 'Critical Thinking + English',
-      glowColor: 'from-[#7c3aed] to-[#2563eb]',
-      borderColor: 'group-hover:border-purple-500/30',
-      bgGlow: 'bg-purple-600/5'
-    },
-    {
-      slug: 'wipro',
-      name: 'Wipro',
-      tagline: 'Elite National Level Talent Hunt (NLTH)',
-      difficulty: 'Medium',
-      duration: '35 mins',
-      sections: 3,
-      highlightText: 'Quantitative + Logical Ability',
-      glowColor: 'from-[#a78bfa] to-[#60a5fa]',
-      borderColor: 'group-hover:border-violet-500/30',
-      bgGlow: 'bg-indigo-600/5'
-    },
-    {
-      slug: 'cognizant',
-      name: 'Cognizant',
-      tagline: 'GenC & GenC Pro Cognitive assessment',
-      difficulty: 'Medium',
-      duration: '30 mins',
-      sections: 3,
-      highlightText: 'Analytical + Verbal Ability',
-      glowColor: 'from-[#10b981] to-[#06b6d4]',
-      borderColor: 'group-hover:border-emerald-500/30',
-      bgGlow: 'bg-emerald-600/5'
-    },
-    {
-      slug: 'capgemini',
-      name: 'Capgemini',
-      tagline: 'Game-based & Pseudocode Assessment',
-      difficulty: 'Mixed',
-      duration: '30 mins',
-      sections: 3,
-      highlightText: 'Pseudocode + English skills',
-      glowColor: 'from-[#f59e0b] to-[#ef4444]',
-      borderColor: 'group-hover:border-amber-500/30',
-      bgGlow: 'bg-amber-600/5'
-    },
-    {
-      slug: 'hcl',
-      name: 'HCL Tech',
-      tagline: 'Graduate Hiring Program Assessment',
-      difficulty: 'Medium',
-      duration: '30 mins',
-      sections: 3,
-      highlightText: 'Arithmetic + Critical Reasoning',
-      glowColor: 'from-[#ef4444] to-[#7c3aed]',
-      borderColor: 'group-hover:border-red-500/30',
-      bgGlow: 'bg-red-600/5'
-    }
-  ];
-
   return (
     <ProtectedRoute>
-      <div className="flex min-h-screen bg-surface text-on-surface font-body-md">
-        <Sidebar activePath="/companies" />
+      <div className="flex h-screen overflow-hidden bg-[#F8FAFF]">
+        <Sidebar />
 
-        <div className="flex-1 min-h-screen overflow-y-auto pl-0 lg:pl-64">
-          <div className="max-w-6xl mx-auto px-margin-mobile md:px-margin-desktop py-md">
-            {/* Header */}
-            <div className="mb-8">
-              <h1 className="font-headline-lg text-headline-lg text-on-surface flex items-center gap-xs">
-                <Briefcase className="text-primary" />
-                Company Placement Hub
+        <main className="flex-1 ml-[260px] overflow-auto">
+          <div className="max-w-7xl mx-auto px-8 py-10 space-y-10">
+
+            {/* ── PAGE HEADER ── */}
+            <div>
+              <h1 className="text-2xl font-black text-[#111827] tracking-tight">
+                Company Preparation Hub
               </h1>
-              <p className="font-body-md text-body-md text-on-surface-variant mt-xs">
-                Access curated company-specific assessment strategies, historical test patterns, and customized mock tests.
+              <p className="text-sm text-[#6B7280] mt-1">
+                Company-specific mock tests, exam patterns, and preparation strategies — all in one place.
               </p>
             </div>
 
-            {/* TCS NQT Featured Hero banner */}
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
+            {/* ── TCS FEATURED BANNER ── */}
+            <div
               onClick={() => router.push('/companies/tcs')}
-              className="glass-card p-6 md:p-8 border border-outline-variant/30 bg-gradient-to-r from-secondary/5 via-surface-container-lowest to-primary/5 mb-8 relative overflow-hidden group cursor-pointer hover:border-primary/40 transition-all ambient-shadow"
+              className="relative overflow-hidden bg-gradient-to-br from-[#EFF6FF] to-white border border-[#BFDBFE] rounded-2xl p-8 cursor-pointer hover:shadow-lg transition-all duration-300 group"
+              style={{ boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(37,99,235,0.08)' }}
             >
-              {/* Glow spots */}
-              <div className="absolute top-[-50px] left-[-50px] w-48 h-48 bg-primary/5 rounded-full blur-[80px]" />
-              <div className="absolute bottom-[-50px] right-[-50px] w-48 h-48 bg-secondary/5 rounded-full blur-[80px]" />
+              {/* Decorative blobs */}
+              <div className="pointer-events-none absolute -top-10 -left-10 w-52 h-52 rounded-full bg-[#2563EB]/8 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-10 -right-10 w-52 h-52 rounded-full bg-[#7C3AED]/6 blur-3xl" />
 
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-                <div className="space-y-3 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-secondary/10 border border-secondary/20 text-secondary text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md flex items-center gap-1">
-                      <Sparkles size={11} /> FEATURED ASSESSMENT
+              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                {/* Left content */}
+                <div className="flex-1 space-y-4">
+                  {/* Badges row */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="inline-flex items-center gap-1.5 bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E] text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">
+                      <Sparkles size={10} />
+                      Most Popular
                     </span>
-                    <span className="bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded-md">
-                      Ninja & Digital 2026
+                    <span className="bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">
+                      Ninja &amp; Digital 2026
                     </span>
                   </div>
-                  <h2 className="text-xl md:text-2xl font-black text-on-surface leading-tight">
-                    TCS National Qualifier Test (NQT) Prep Kit
-                  </h2>
-                  <p className="text-on-surface-variant text-xs md:text-sm leading-relaxed max-w-2xl">
-                    Prepare for the massive campus recruitment drive of Tata Consultancy Services. Complete blueprint breakdown including Numerical Ability (Aptitude), Reasoning puzzles, and Advanced Coding templates.
+
+                  {/* Hero text */}
+                  <div>
+                    <p className="text-5xl font-black text-[#2563EB] leading-none tracking-tight mb-2">
+                      TCS
+                    </p>
+                    <h3 className="text-xl font-black text-[#111827] leading-snug">
+                      National Qualifier Test
+                    </h3>
+                  </div>
+
+                  <p className="text-sm text-[#6B7280] leading-relaxed max-w-xl">
+                    Prepare for Tata Consultancy Services' massive campus drive. Complete blueprint
+                    covering Numerical Ability, Logical Reasoning, and Verbal skills — with 3 full
+                    mock exams and 15+ aptitude blueprints.
                   </p>
-                  
-                  <div className="flex flex-wrap gap-4 text-xs text-outline pt-2">
-                    <span className="flex items-center gap-1"><Terminal size={13} /> 15 Aptitude blueprints</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1"><ShieldCheck size={13} /> 3 Complete Mock Exams</span>
+
+                  {/* Tag pills */}
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {['Numerical Ability', 'Logical Reasoning', 'Verbal Ability', '3 Mock Exams'].map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#2563EB] bg-white border border-[#BFDBFE] px-3 py-1 rounded-full"
+                      >
+                        <CheckCircle2 size={11} className="text-[#2563EB]" />
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
 
-                <button className="self-start md:self-auto btn-glow text-white font-extrabold text-xs tracking-wider uppercase px-5 py-3 rounded-xl flex items-center gap-1.5 transition-all">
-                  Launch Kit
-                  <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                </button>
+                {/* Right CTA */}
+                <div className="flex-shrink-0 self-start md:self-center">
+                  <button className="btn-primary px-6 py-3 rounded-xl text-sm font-bold tracking-wide shadow-md group-hover:shadow-lg transition-shadow">
+                    Prepare Now →
+                  </button>
+                </div>
               </div>
-            </motion.div>
+            </div>
 
-            {/* Title section */}
-            <h2 className="text-lg font-bold text-on-surface mb-6 flex items-center gap-2">
-              <Building2 size={18} className="text-primary" />
-              Target Recruitment Portals
-            </h2>
+            {/* ── ALL COMPANIES GRID ── */}
+            <div>
+              <h2 className="text-base font-bold text-[#111827] mb-5 flex items-center gap-2">
+                <Building2 size={16} className="text-[#2563EB]" />
+                All Companies
+              </h2>
 
-            {/* Companies Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {companies.map((company, index) => (
-                <motion.div
-                  key={company.slug}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  onClick={() => router.push(`/companies/${company.slug}`)}
-                  className={cn(
-                    'glass-card p-6 border border-outline-variant/30 cursor-pointer relative overflow-hidden group hover:bg-surface-container-low hover:border-primary/30 transition-all ambient-shadow'
-                  )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {companies.map((company) => (
+                  <div
+                    key={company.slug}
+                    onClick={() => router.push(`/companies/${company.slug}`)}
+                    className="group bg-white border border-[#E4E7EC] rounded-2xl p-6 hover:border-[#2563EB]/40 hover:shadow-md transition-all duration-200 cursor-pointer"
+                    style={{ boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)' }}
+                  >
+                    {/* Company name + tag */}
+                    <div className="flex items-start justify-between mb-1">
+                      <p className="text-2xl font-black text-[#111827] group-hover:text-[#2563EB] transition-colors leading-tight">
+                        {company.name}
+                      </p>
+                      <span className="badge-violet text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md flex-shrink-0 mt-1">
+                        {company.tag}
+                      </span>
+                    </div>
+
+                    {/* Pattern */}
+                    <p className="text-sm text-[#6B7280] mt-1 mb-3 leading-relaxed">
+                      {company.pattern}
+                    </p>
+
+                    {/* Divider */}
+                    <div className="border-t border-[#E4E7EC] pt-4">
+                      {/* Duration row */}
+                      <div className="flex items-center gap-1.5 text-xs text-[#6B7280]">
+                        <Clock size={13} className="text-[#9CA3AF]" />
+                        <span className="font-medium">{company.duration}</span>
+                      </div>
+
+                      {/* Prepare link */}
+                      <div className="mt-4">
+                        <span className="text-[#2563EB] font-semibold text-sm group-hover:underline transition-all">
+                          Prepare →
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── QUICK STATS ROW ── */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {stats.map(({ icon: Icon, value, label, color, bg }) => (
+                <div
+                  key={label}
+                  className="bg-white border border-[#E4E7EC] rounded-2xl p-6 text-center"
+                  style={{ boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)' }}
                 >
-                  {/* Hover background color glow */}
-                  <div className="absolute -top-12 -right-12 w-28 h-28 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none bg-gradient-to-br from-primary/10 to-secondary/10" />
-
-                  {/* Logo Text Styled Premium */}
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="h-10 px-3 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center font-black tracking-tight text-primary text-base">
-                      {company.name}
-                    </div>
-                    <span className="text-[9px] font-black uppercase bg-surface-container-high border border-outline-variant text-on-surface-variant px-2 py-0.5 rounded">
-                      Diff: {company.difficulty}
-                    </span>
+                  <div
+                    className="w-11 h-11 rounded-xl flex items-center justify-center mx-auto mb-3"
+                    style={{ background: bg }}
+                  >
+                    <Icon size={20} style={{ color }} />
                   </div>
-
-                  {/* Tagline */}
-                  <h4 className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors mb-1.5 leading-tight">
-                    {company.name} Placement prep
-                  </h4>
-                  <p className="text-on-surface-variant text-[11px] font-medium leading-relaxed mb-6">
-                    {company.tagline}
-                  </p>
-
-                  {/* Info pills */}
-                  <div className="border-t border-outline-variant/30 pt-4 space-y-2 text-xs">
-                    <div className="flex items-center justify-between text-on-surface-variant text-[10px]">
-                      <span>Pattern Style:</span>
-                      <span className="text-on-surface font-bold">{company.highlightText}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-on-surface-variant text-[10px]">
-                      <span>Exam Timing:</span>
-                      <span className="text-on-surface font-bold">{company.duration}</span>
-                    </div>
-                  </div>
-
-                  {/* Hover Arrow indicator */}
-                  <div className="mt-5 flex items-center justify-end text-[10px] uppercase tracking-wider font-extrabold text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
-                    Start Prep
-                    <ChevronRight size={12} className="ml-1" />
-                  </div>
-                </motion.div>
+                  <p className="text-2xl font-black text-[#111827]">{value}</p>
+                  <p className="text-sm text-[#6B7280] mt-1">{label}</p>
+                </div>
               ))}
             </div>
+
           </div>
-        </div>
+        </main>
       </div>
     </ProtectedRoute>
   );

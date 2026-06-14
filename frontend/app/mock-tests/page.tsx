@@ -11,8 +11,18 @@ import { testsApi } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import type { Test, TestAttempt } from '@/types';
 import {
-  BookOpen, Clock, FileText, ChevronRight, Award,
-  Sparkles, History, ShieldAlert, CheckCircle2
+  BookOpen,
+  Clock,
+  FileText,
+  ChevronRight,
+  Award,
+  History,
+  CheckCircle2,
+  LayoutGrid,
+  Building2,
+  Zap,
+  Tag,
+  RotateCcw,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -29,9 +39,8 @@ export default function MockTestsPage() {
       try {
         const [testsRes, attemptsRes] = await Promise.all([
           testsApi.getTests({ limit: 100 }),
-          testsApi.getMyAttempts({ limit: 5 })
+          testsApi.getMyAttempts({ limit: 5 }),
         ]);
-        
         setTests(testsRes.data.data || []);
         setAttempts(attemptsRes.data.data || []);
       } catch (e) {
@@ -45,12 +54,12 @@ export default function MockTestsPage() {
   }, []);
 
   const generateFallbackTests = (): Test[] => {
-    const companies = ['TCS', 'Infosys', 'Wipro', 'HCL', 'Cognizant', 'Capgemini', 'Accenture'];
     return [
       {
         _id: 'tcs-nqt-mock',
         title: 'TCS Ninja National Qualifier Test (NQT) - Mock 1',
-        description: 'Full-length mock test matching the latest TCS Ninja recruitment pattern including Numerical Ability, Verbal Ability, and Reasoning Ability.',
+        description:
+          'Full-length mock test matching the latest TCS Ninja recruitment pattern including Numerical Ability, Verbal Ability, and Reasoning Ability.',
         category: 'mixed',
         company: 'TCS',
         duration: 30,
@@ -62,12 +71,13 @@ export default function MockTestsPage() {
         attemptCount: 1420,
         tags: ['TCS', 'Ninja', 'NQT'],
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       },
       {
         _id: 'infosys-se-mock',
-        title: 'Infosys System Engineer (SE) recruitment - Mock 1',
-        description: 'Comprehensive mock test designed for Infosys SE hiring, focusing on Mathematical Ability, Logical Reasoning, and Verbal English.',
+        title: 'Infosys System Engineer (SE) Recruitment - Mock 1',
+        description:
+          'Comprehensive mock test designed for Infosys SE hiring, focusing on Mathematical Ability, Logical Reasoning, and Verbal English.',
         category: 'mixed',
         company: 'Infosys',
         duration: 40,
@@ -79,12 +89,13 @@ export default function MockTestsPage() {
         attemptCount: 890,
         tags: ['Infosys', 'SE'],
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       },
       {
         _id: 'accenture-mock',
         title: 'Accenture ASE Placement Qualifier',
-        description: 'Mock exam matching the Accenture Associate Software Engineer cognitive assessment including English Ability, Critical Reasoning, and Problem Solving.',
+        description:
+          'Mock exam matching the Accenture Associate Software Engineer cognitive assessment including English Ability, Critical Reasoning, and Problem Solving.',
         category: 'mixed',
         company: 'Accenture',
         duration: 45,
@@ -96,12 +107,13 @@ export default function MockTestsPage() {
         attemptCount: 1105,
         tags: ['Accenture', 'ASE'],
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       },
       {
         _id: 'wipro-mock',
         title: 'Wipro Elite NLTH Placement Mock',
-        description: 'Full exam simulation matching the Wipro Elite National Level Talent Hunt (NLTH) pattern containing Aptitude and English.',
+        description:
+          'Full exam simulation matching the Wipro Elite National Level Talent Hunt (NLTH) pattern containing Aptitude and English.',
         category: 'mixed',
         company: 'Wipro',
         duration: 35,
@@ -113,12 +125,13 @@ export default function MockTestsPage() {
         attemptCount: 955,
         tags: ['Wipro', 'Elite', 'NLTH'],
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       },
       {
         _id: 'quant-mega-mock',
         title: 'Quantitative Aptitude Mega Mock Test',
-        description: 'In-depth evaluation of your Quantitative abilities covering Number Systems, Profit & Loss, Time & Work, Speed Distance, and Ratios.',
+        description:
+          'In-depth evaluation of your Quantitative abilities covering Number Systems, Profit & Loss, Time & Work, Speed Distance, and Ratios.',
         category: 'quantitative',
         company: 'None',
         duration: 45,
@@ -130,12 +143,13 @@ export default function MockTestsPage() {
         attemptCount: 420,
         tags: ['Quantitative', 'Arithmetic'],
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       },
       {
         _id: 'logical-speed',
         title: 'Logical Reasoning Speed Challenge',
-        description: 'Time-bound speed assessment testing analytical puzzles, blood relations, syllogisms, coding-decoding, and series completion.',
+        description:
+          'Time-bound speed assessment testing analytical puzzles, blood relations, syllogisms, coding-decoding, and series completion.',
         category: 'logical',
         company: 'None',
         duration: 20,
@@ -147,8 +161,8 @@ export default function MockTestsPage() {
         attemptCount: 780,
         tags: ['Logical', 'Reasoning'],
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
+        updatedAt: new Date().toISOString(),
+      },
     ];
   };
 
@@ -158,73 +172,186 @@ export default function MockTestsPage() {
   };
 
   // Filter logic
-  const filteredTests = tests.filter(test => {
-    // Tab filtering
+  const filteredTests = tests.filter((test) => {
     if (activeTab === 'company' && test.company === 'None') return false;
     if (activeTab === 'topic' && test.company !== 'None') return false;
     if (activeTab === 'quick' && test.duration > 25) return false;
-
-    // Company specific dropdown filtering
-    if (activeTab === 'company' && selectedCompany !== 'all' && test.company !== selectedCompany) return false;
-
+    if (activeTab === 'company' && selectedCompany !== 'all' && test.company !== selectedCompany)
+      return false;
     return true;
   });
 
+  const companyTests = tests.filter((t) => t.company && t.company !== 'None');
+  const quickTests = tests.filter((t) => t.duration <= 25);
+
+  const tabs = [
+    { id: 'all', label: 'All Exams', icon: LayoutGrid },
+    { id: 'company', label: 'Company', icon: Building2 },
+    { id: 'topic', label: 'By Topic', icon: Tag },
+    { id: 'quick', label: 'Quick (<25m)', icon: Zap },
+  ] as const;
+
   return (
     <ProtectedRoute>
-      <div className="flex min-h-screen bg-surface text-on-surface font-body-md">
-        <Sidebar activePath="/mock-tests" />
+      <div className="flex h-screen overflow-hidden bg-[#F8FAFF]">
+        <Sidebar />
 
-        <div className="flex-1 min-h-screen overflow-y-auto pl-0 lg:pl-64">
-          <div className="max-w-6xl mx-auto px-margin-mobile md:px-margin-desktop py-md">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-md mb-md">
+        {/* Main scrollable content */}
+        <main className="flex-1 ml-[260px] overflow-auto">
+          <div className="max-w-7xl mx-auto px-8 py-10 space-y-8">
+
+            {/* ── PAGE HEADER ── */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="font-headline-lg text-headline-lg text-on-surface flex items-center gap-xs">
-                  <Award className="text-primary animate-pulse" />
-                  Mock Placement Arena
+                <h1 className="text-2xl font-black text-[#111827] tracking-tight">
+                  Mock Tests
                 </h1>
-                <p className="font-body-md text-body-md text-on-surface-variant mt-xs">
-                  Enforced fullscreen examinations matching exact company recruitment patterns.
+                <p className="text-sm text-[#6B7280] mt-1">
+                  Simulated placement assessments matching exact company recruitment patterns.
                 </p>
               </div>
-              <div className="flex items-center gap-xs bg-amber-500/10 border border-amber-500/20 px-4 py-2.5 rounded-lg">
-                <ShieldAlert size={18} className="text-amber-700" />
-                <span className="font-label-sm text-label-sm text-amber-800">Anti-Cheat Enabled (Auto Tab-Switch Detection)</span>
+
+              {/* Quick stats */}
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex items-center gap-2 bg-white border border-[#E4E7EC] rounded-xl px-4 py-2.5 shadow-sm">
+                  <FileText size={15} className="text-[#2563EB]" />
+                  <span className="text-xs font-semibold text-[#374151]">
+                    {tests.length} Tests
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 bg-white border border-[#E4E7EC] rounded-xl px-4 py-2.5 shadow-sm">
+                  <Building2 size={15} className="text-[#7C3AED]" />
+                  <span className="text-xs font-semibold text-[#374151]">
+                    {companyTests.length} Company
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 bg-white border border-[#E4E7EC] rounded-xl px-4 py-2.5 shadow-sm">
+                  <Zap size={15} className="text-[#D97706]" />
+                  <span className="text-xs font-semibold text-[#374151]">
+                    {quickTests.length} Quick
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Assessment Tabs & Company Filters */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-sm border-b border-outline-variant/30 pb-sm mb-md">
-              <div className="flex flex-wrap gap-xs bg-surface-container p-1 rounded-lg border border-outline-variant/30">
-                {[
-                  { id: 'all', label: 'All Exams' },
-                  { id: 'company', label: 'Company-Specific' },
-                  { id: 'topic', label: 'Section Tests' },
-                  { id: 'quick', label: 'Quick Tests (< 25m)' }
-                ].map(tab => (
-                  <button
-                    key={tab.id}
-                    onClick={() => { setActiveTab(tab.id as any); setSelectedCompany('all'); }}
-                    className={cn(
-                      'px-4 py-2 rounded-md font-label-md text-label-sm tracking-wide transition-all cursor-pointer',
-                      activeTab === tab.id
-                        ? 'bg-primary text-on-primary shadow-sm'
-                        : 'text-on-surface-variant hover:text-primary'
-                    )}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
+            {/* ── RECENT ATTEMPTS ── */}
+            {attempts.length > 0 && (
+              <section>
+                <div className="flex items-center gap-2 mb-4">
+                  <History size={15} className="text-[#6B7280]" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+                    Recent Attempts
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {attempts.map((attempt) => {
+                    const testMeta = attempt.test as any;
+                    const displayDate =
+                      attempt.submittedAt || attempt.createdAt
+                        ? new Date(
+                            attempt.submittedAt || attempt.createdAt
+                          ).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+                        : 'Recent';
+                    const pct = attempt.percentage ?? 0;
+                    const scoreColor =
+                      pct >= 70
+                        ? 'text-[#059669]'
+                        : pct >= 45
+                        ? 'text-[#D97706]'
+                        : 'text-[#DC2626]';
+
+                    return (
+                      <div
+                        key={attempt._id}
+                        className="bg-white border border-[#E4E7EC] rounded-xl p-5 hover:border-[#BFDBFE] hover:shadow-md transition-all"
+                        style={{ boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)' }}
+                      >
+                        {/* Top row */}
+                        <div className="flex items-start justify-between gap-2 mb-3">
+                          <div className="w-9 h-9 rounded-lg bg-[#EFF6FF] flex items-center justify-center shrink-0">
+                            <Award size={17} className="text-[#2563EB]" />
+                          </div>
+                          <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide bg-[#D1FAE5] text-[#059669] border border-[#6EE7B7] px-2 py-0.5 rounded-full">
+                            <CheckCircle2 size={10} />
+                            Completed
+                          </span>
+                        </div>
+
+                        <h4 className="font-bold text-sm text-[#111827] leading-snug line-clamp-2 mb-2">
+                          {testMeta?.title || 'Placement Assessment'}
+                        </h4>
+
+                        <div className="flex items-center gap-x-3 text-xs text-[#6B7280] mb-4 flex-wrap gap-y-1">
+                          <span>
+                            Score:{' '}
+                            <strong className={cn('font-bold', scoreColor)}>
+                              {attempt.score}/{attempt.totalQuestions * 10}
+                            </strong>
+                          </span>
+                          <span className="text-[#D1D5DB]">·</span>
+                          <span>
+                            Accuracy:{' '}
+                            <strong className={cn('font-bold', scoreColor)}>
+                              {attempt.percentage}%
+                            </strong>
+                          </span>
+                          <span className="text-[#D1D5DB]">·</span>
+                          <span className="text-[#9CA3AF]">{displayDate}</span>
+                        </div>
+
+                        <button
+                          onClick={() => router.push('/practice/quiz/results')}
+                          className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg border border-[#E4E7EC] text-[#6B7280] hover:border-[#2563EB] hover:text-[#2563EB] transition-all"
+                        >
+                          Review Results
+                          <ChevronRight size={13} />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {/* ── FILTER TABS + COMPANY FILTER ── */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              {/* Pill tabs */}
+              <div className="flex items-center gap-1 bg-white border border-[#E4E7EC] rounded-full p-1 w-fit shadow-sm">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        setActiveTab(tab.id);
+                        setSelectedCompany('all');
+                      }}
+                      className={cn(
+                        'flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold transition-all cursor-pointer',
+                        isActive
+                          ? 'bg-[#2563EB] text-white shadow-sm'
+                          : 'text-[#6B7280] hover:text-[#2563EB]'
+                      )}
+                    >
+                      <Icon size={13} />
+                      {tab.label}
+                    </button>
+                  );
+                })}
               </div>
 
+              {/* Company dropdown — only on company tab */}
               {activeTab === 'company' && (
-                <div className="flex items-center gap-xs self-start md:self-auto">
-                  <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Company:</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+                    Filter:
+                  </span>
                   <select
                     value={selectedCompany}
                     onChange={(e) => setSelectedCompany(e.target.value)}
-                    className="bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-1.5 font-label-md text-label-sm text-on-surface focus:outline-none focus:border-primary transition-all cursor-pointer"
+                    className="bg-white border border-[#E4E7EC] rounded-lg px-3 py-2 text-sm text-[#111827] font-medium focus:outline-none focus:border-[#2563EB] transition-all cursor-pointer shadow-sm"
                   >
                     <option value="all">All Companies</option>
                     <option value="TCS">TCS</option>
@@ -239,146 +366,145 @@ export default function MockTestsPage() {
               )}
             </div>
 
-            {/* Test Cards List */}
+            {/* ── TEST CARDS / LOADING / EMPTY ── */}
             {loading ? (
-              <div className="py-20 flex justify-center">
-                <LoadingSpinner size="lg" text="Loading available placement exams..." />
+              /* Loading state */
+              <div className="flex flex-col items-center justify-center py-24 gap-4">
+                <LoadingSpinner size="lg" text="Loading placement exams..." />
               </div>
             ) : filteredTests.length === 0 ? (
-              <div className="text-center py-20 bg-surface-container-lowest border border-outline-variant/30 rounded-xl max-w-xl mx-auto mt-sm ambient-shadow">
-                <BookOpen size={48} className="text-outline mx-auto mb-sm" />
-                <h3 className="font-headline-md text-headline-md text-on-surface mb-xs">No Placement Exams Found</h3>
-                <p className="font-body-md text-body-md text-on-surface-variant">No mock tests found matching the selected filters.</p>
+              /* Empty state */
+              <div className="flex flex-col items-center justify-center py-24 gap-5">
+                <div className="w-16 h-16 rounded-2xl bg-[#EFF6FF] flex items-center justify-center">
+                  <BookOpen size={32} className="text-[#2563EB]" />
+                </div>
+                <div className="text-center">
+                  <h3 className="text-lg font-bold text-[#111827] mb-1">No Tests Found</h3>
+                  <p className="text-sm text-[#6B7280] max-w-xs mx-auto">
+                    No mock tests match the current filters. Try switching tabs or adjusting your
+                    company filter.
+                  </p>
+                </div>
+                <button
+                  onClick={() => router.push('/practice')}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] text-sm font-semibold text-[#2563EB] hover:bg-[#DBEAFE] transition-all"
+                >
+                  <BookOpen size={15} />
+                  Go to Practice
+                </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-md mb-lg">
-                {filteredTests.map((test, index) => (
-                  <motion.div
-                    key={test._id}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                    className="bg-surface-container-lowest p-md flex flex-col justify-between border border-outline-variant/30 hover:border-primary/50 hover:bg-surface-container-low transition-all duration-300 rounded-xl relative overflow-hidden group ambient-shadow"
-                  >
-                    {/* Subtle border top glow for interaction */}
-                    <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              /* Test cards grid */
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                {filteredTests.map((test, index) => {
+                  const attemptForTest = attempts.find(
+                    (a) => (a.test as any)?._id === test._id || (a.test as any) === test._id
+                  );
+                  const questionCount = test.questions ? test.questions.length : 15;
 
-                    <div>
-                      {/* Top stats info row */}
-                      <div className="flex items-center justify-between mb-sm">
-                        {test.company && test.company !== 'None' ? (
-                          <span className="font-label-sm text-[10px] font-bold tracking-wider uppercase bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 rounded-md">
-                            {test.company} Premium Prep
+                  return (
+                    <motion.div
+                      key={test._id}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.28, delay: index * 0.05 }}
+                      className="group bg-white border border-[#E4E7EC] rounded-2xl p-6 flex flex-col justify-between hover:border-[#93C5FD] hover:shadow-md transition-all duration-300 relative overflow-hidden"
+                      style={{ boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)' }}
+                    >
+                      {/* Top accent line on hover */}
+                      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#2563EB] to-[#7C3AED] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl" />
+
+                      {/* Card body */}
+                      <div>
+                        {/* Company + difficulty row */}
+                        <div className="flex items-center justify-between mb-3">
+                          {test.company && test.company !== 'None' ? (
+                            <span className="text-[11px] font-black tracking-wider uppercase text-[#2563EB]">
+                              {test.company}
+                            </span>
+                          ) : (
+                            <span className="text-[11px] font-black tracking-wider uppercase text-[#7C3AED]">
+                              Topic Test
+                            </span>
+                          )}
+                          <DifficultyBadge difficulty={test.difficulty} />
+                        </div>
+
+                        {/* Title */}
+                        <h3 className="font-bold text-[#111827] text-base leading-snug mt-1 mb-3 group-hover:text-[#2563EB] transition-colors line-clamp-2">
+                          {test.title}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="text-sm text-[#6B7280] mb-4 leading-relaxed line-clamp-2">
+                          {test.description}
+                        </p>
+                      </div>
+
+                      {/* Card footer */}
+                      <div>
+                        {/* Stats row */}
+                        <div className="flex items-center gap-4 text-xs text-[#6B7280] border-t border-[#F3F4F6] pt-4 mb-4">
+                          <span className="flex items-center gap-1.5">
+                            <Clock size={13} className="text-[#9CA3AF]" />
+                            {test.duration} mins
                           </span>
-                        ) : (
-                          <span className="font-label-sm text-[10px] font-bold tracking-wider uppercase bg-secondary/10 text-secondary border border-secondary/20 px-2.5 py-1 rounded-md">
-                            Sectional exam
+                          <span className="flex items-center gap-1.5">
+                            <BookOpen size={13} className="text-[#9CA3AF]" />
+                            {questionCount} Qs
                           </span>
+                          <span className="flex items-center gap-1.5">
+                            <Award size={13} className="text-[#9CA3AF]" />
+                            {test.totalMarks || 100} Marks
+                          </span>
+                        </div>
+
+                        {/* Attempts count */}
+                        {test.attemptCount !== undefined && (
+                          <p className="text-xs text-[#9CA3AF] mb-3">
+                            {test.attemptCount.toLocaleString()} attempts
+                          </p>
                         )}
-                        <DifficultyBadge difficulty={test.difficulty} />
+
+                        {/* If already attempted — show score badge + retake */}
+                        {attemptForTest ? (
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={cn(
+                                'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold border',
+                                (attemptForTest.percentage ?? 0) >= 60
+                                  ? 'bg-[#D1FAE5] border-[#6EE7B7] text-[#059669]'
+                                  : 'bg-[#FEF3C7] border-[#FCD34D] text-[#D97706]'
+                              )}
+                            >
+                              <CheckCircle2 size={12} />
+                              {attemptForTest.percentage}% scored
+                            </div>
+                            <button
+                              onClick={() => handleStartTest(test._id)}
+                              className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-[#E4E7EC] text-sm font-semibold text-[#6B7280] py-2.5 hover:border-[#2563EB] hover:text-[#2563EB] transition-all cursor-pointer"
+                            >
+                              <RotateCcw size={13} />
+                              Retake
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleStartTest(test._id)}
+                            className="btn-primary w-full rounded-xl text-sm py-2.5 flex items-center justify-center gap-2 font-semibold cursor-pointer"
+                          >
+                            Start Test
+                            <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                          </button>
+                        )}
                       </div>
-
-                      {/* Title & Description */}
-                      <h3 className="font-headline-md text-body-lg font-bold text-on-surface mb-xs leading-tight group-hover:text-primary transition-colors">
-                        {test.title}
-                      </h3>
-                      <p className="font-body-md text-label-sm text-on-surface-variant leading-relaxed mb-sm line-clamp-2">
-                        {test.description}
-                      </p>
-                    </div>
-
-                    {/* Bottom stats and action bar */}
-                    <div>
-                      <div className="flex items-center gap-sm text-on-surface-variant font-label-sm text-xs border-t border-outline-variant/30 pt-sm mb-sm">
-                        <span className="flex items-center gap-xs">
-                          <Clock size={13} className="text-outline" />
-                          {test.duration} mins
-                        </span>
-                        <span className="flex items-center gap-xs">
-                          <FileText size={13} className="text-outline" />
-                          {test.questions ? test.questions.length : 15} Questions
-                        </span>
-                        <span className="flex items-center gap-xs">
-                          <Award size={13} className="text-outline" />
-                          {test.totalMarks || 100} Marks
-                        </span>
-                      </div>
-
-                      <button
-                        onClick={() => handleStartTest(test._id)}
-                        className="w-full btn-glow font-label-md text-label-md py-3 px-4 rounded-lg text-white font-bold tracking-wide flex items-center justify-center gap-xs transition-all cursor-pointer shadow-sm"
-                      >
-                        Launch Placement Exam
-                        <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                      </button>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  );
+                })}
               </div>
             )}
-
-            {/* Test Attempts History */}
-            <div className="mt-lg">
-              <h2 className="font-headline-md text-headline-md text-on-surface mb-md flex items-center gap-xs">
-                <History size={18} className="text-primary" />
-                Previous Placement Attempts
-              </h2>
-
-              {attempts.length === 0 ? (
-                <div className="text-center py-sm border border-dashed border-outline-variant rounded-xl bg-surface-container">
-                  <p className="font-body-md text-body-md text-on-surface-variant">You haven&apos;t taken any mock placement assessments yet.</p>
-                </div>
-              ) : (
-                <div className="space-y-sm">
-                  {attempts.map(attempt => {
-                    const testMeta = attempt.test as any;
-                    const displayDate = attempt.submittedAt || attempt.createdAt 
-                      ? new Date(attempt.submittedAt || attempt.createdAt).toLocaleDateString()
-                      : 'Recent';
-
-                    return (
-                      <div
-                        key={attempt._id}
-                        className="bg-surface-container-lowest p-sm border border-outline-variant/30 flex flex-col md:flex-row md:items-center justify-between gap-sm hover:border-primary/30 transition-all rounded-xl ambient-shadow"
-                      >
-                        <div className="flex items-start gap-sm">
-                          <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-0.5">
-                            <Award size={20} />
-                          </div>
-                          <div>
-                            <h4 className="font-label-md text-body-md font-bold text-on-surface">{testMeta?.title || 'Placement Assessment'}</h4>
-                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-label-sm text-xs text-on-surface-variant mt-1">
-                              <span>Score: <strong className="text-on-surface">{attempt.score}/{attempt.totalQuestions * 10}</strong></span>
-                              <span>•</span>
-                              <span>Accuracy: <strong className="text-on-surface">{attempt.percentage}%</strong></span>
-                              <span>•</span>
-                              <span>Date: <span className="text-on-surface">{displayDate}</span></span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between md:justify-end gap-sm border-t md:border-t-0 border-outline-variant/30 pt-sm md:pt-0">
-                          <div className="flex items-center gap-1.5 bg-emerald-500/10 text-emerald-700 border border-emerald-500/25 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide">
-                            <CheckCircle2 size={12} />
-                            Completed
-                          </div>
-
-                          <button
-                            onClick={() => router.push(`/practice/quiz/results`)}
-                            className="flex items-center gap-xs px-4 py-2 font-label-md text-label-sm rounded-lg border border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary transition-all cursor-pointer"
-                          >
-                            Review
-                            <ChevronRight size={13} />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
           </div>
-        </div>
+        </main>
       </div>
     </ProtectedRoute>
   );

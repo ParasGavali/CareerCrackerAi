@@ -7,15 +7,31 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { analyticsApi } from '@/lib/api';
-import { cn } from '@/lib/utils';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ResponsiveContainer, CartesianGrid, Tooltip, LineChart, Line, XAxis, YAxis
 } from 'recharts';
-import {
-  TrendingUp, Award, Calendar,
-  Lightbulb, Briefcase, Zap
-} from 'lucide-react';
+import { TrendingUp, Award, Calendar, Lightbulb, Briefcase, Zap } from 'lucide-react';
+
+const cardStyle: React.CSSProperties = {
+  background: '#FFFFFF',
+  border: '1px solid #E4E7EC',
+  borderRadius: '16px',
+  boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)',
+  padding: '24px',
+};
+
+const sectionLabel: React.CSSProperties = {
+  fontSize: '0.7rem',
+  fontWeight: 700,
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  color: '#6B7280',
+  marginBottom: '20px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+};
 
 export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
@@ -31,12 +47,10 @@ export default function AnalyticsPage() {
           analyticsApi.getCategoryPerformance(),
           analyticsApi.getWeeklyProgress()
         ]);
-        
         setReadinessScore(readinessRes.data.data?.score || 74);
         setCategoryData(categoryRes.data.data || []);
         setWeeklyData(weeklyRes.data.data || []);
-      } catch (e) {
-        console.error('API Error, falling back to mock analytics:', e);
+      } catch {
         loadFallbackAnalytics();
       } finally {
         setLoading(false);
@@ -47,119 +61,127 @@ export default function AnalyticsPage() {
 
   const loadFallbackAnalytics = () => {
     setReadinessScore(76);
-    
     setWeeklyData([
-      { date: 'Mon', score: 65, testsAttempted: 1 },
-      { date: 'Tue', score: 70, testsAttempted: 2 },
-      { date: 'Wed', score: 68, testsAttempted: 1 },
-      { date: 'Thu', score: 75, testsAttempted: 3 },
-      { date: 'Fri', score: 82, testsAttempted: 2 },
-      { date: 'Sat', score: 80, testsAttempted: 1 },
-      { date: 'Sun', score: 85, testsAttempted: 2 }
+      { date: 'Mon', score: 65 },
+      { date: 'Tue', score: 70 },
+      { date: 'Wed', score: 68 },
+      { date: 'Thu', score: 75 },
+      { date: 'Fri', score: 82 },
+      { date: 'Sat', score: 80 },
+      { date: 'Sun', score: 85 },
     ]);
-
     setCategoryData([
-      { category: 'Quantitative', accuracy: 72, questionsAttempted: 120 },
-      { category: 'Logical', accuracy: 84, questionsAttempted: 95 },
-      { category: 'Verbal', accuracy: 68, questionsAttempted: 80 }
+      { category: 'Quantitative', accuracy: 72 },
+      { category: 'Logical',      accuracy: 84 },
+      { category: 'Verbal',       accuracy: 68 },
     ]);
-  };
-
-  const getCompanyGlow = (score: number) => {
-    if (score >= 80) return 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20';
-    if (score >= 60) return 'bg-amber-500/10 text-amber-700 border-amber-500/20';
-    return 'bg-red-500/10 text-red-700 border-red-500/20';
   };
 
   const companyReadiness = [
-    { name: 'TCS Ninja', score: 82, tier: 'Ninja' },
-    { name: 'TCS Digital', score: 60, tier: 'Digital' },
-    { name: 'Infosys SE', score: 78, tier: 'System Engineer' },
-    { name: 'Wipro Elite', score: 85, tier: 'Elite NLTH' },
-    { name: 'Accenture ASE', score: 68, tier: 'Associate SE' },
-    { name: 'Cognizant GenC', score: 90, tier: 'GenC' },
-    { name: 'Capgemini', score: 55, tier: 'Cognitive' }
+    { name: 'TCS Ninja',      score: 82 },
+    { name: 'TCS Digital',    score: 60 },
+    { name: 'Infosys SE',     score: 78 },
+    { name: 'Wipro Elite',    score: 85 },
+    { name: 'Accenture ASE',  score: 68 },
+    { name: 'Cognizant GenC', score: 90 },
+    { name: 'Capgemini',      score: 55 },
   ];
+
+  const getReadinessColor = (score: number) => {
+    if (score >= 80) return '#059669';
+    if (score >= 60) return '#D97706';
+    return '#DC2626';
+  };
+
+  const getReadinessBadge = (score: number): React.CSSProperties => {
+    if (score >= 80) return { background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0' };
+    if (score >= 60) return { background: '#FFFBEB', color: '#92400E', border: '1px solid #FDE68A' };
+    return { background: '#FEF2F2', color: '#991B1B', border: '1px solid #FECACA' };
+  };
 
   return (
     <ProtectedRoute>
-      <div className="flex min-h-screen bg-surface text-on-surface font-body-md">
-        <Sidebar activePath="/analytics" />
+      <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#F8FAFF', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        <Sidebar />
 
-        <div className="flex-1 min-h-screen overflow-y-auto pl-0 lg:pl-64">
-          <div className="max-w-6xl mx-auto px-margin-mobile md:px-margin-desktop py-md">
-            {/* Header */}
-            <div className="mb-8">
-              <h1 className="font-headline-lg text-headline-lg text-on-surface flex items-center gap-2.5">
-                <TrendingUp className="text-primary animate-pulse" />
+        <div style={{ flex: 1, marginLeft: '260px', overflowY: 'auto' }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 32px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+
+            {/* Page Header */}
+            <div>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#111827', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <TrendingUp size={22} style={{ color: '#2563EB' }} />
                 Performance Analytics
               </h1>
-              <p className="font-body-md text-body-md text-on-surface-variant mt-1 font-medium">
-                Detailed breakdowns of your sectional strengths, weekly progression trends, and company placement readiness.
+              <p style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '6px', fontWeight: 500 }}>
+                Detailed breakdowns of your strengths, weekly trends, and company readiness.
               </p>
             </div>
 
             {loading ? (
-              <div className="py-20 flex justify-center">
-                <LoadingSpinner size="lg" text="Analyzing academic progress..." />
+              <div style={{ padding: '80px 0', display: 'flex', justifyContent: 'center' }}>
+                <LoadingSpinner size="lg" text="Analyzing your progress..." />
               </div>
             ) : (
-              <div className="space-y-8">
-                
-                {/* Section 1: Placement Readiness score */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Gauge */}
+              <>
+                {/* Row 1: Readiness Gauge + Company Bars */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
+
+                  {/* Placement Readiness Ring */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-surface-container-lowest p-6 flex flex-col items-center justify-center text-center border border-outline-variant/30 rounded-xl ambient-shadow relative overflow-hidden"
+                    style={{ ...cardStyle, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}
                   >
-                    <div className="absolute -top-12 -left-12 w-28 h-28 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
-                    
-                    <h3 className="text-sm font-bold text-on-surface uppercase tracking-wider mb-6 flex items-center gap-1.5">
-                      <Zap size={15} className="text-amber-500 fill-amber-500" />
-                      Placement Readiness Score
-                    </h3>
-
+                    <p style={sectionLabel}>
+                      <Zap size={13} style={{ color: '#D97706' }} />
+                      Placement Readiness
+                    </p>
                     <ProgressRing
                       percentage={readinessScore}
-                      size={160}
-                      strokeWidth={12}
-                      gradientStart="#004ac6"
-                      gradientEnd="#712ae2"
+                      size={150}
+                      strokeWidth={11}
+                      gradientStart="#2563EB"
+                      gradientEnd="#7C3AED"
                       label={`${readinessScore}%`}
                     />
-                    
-                    <p className="font-body-md text-xs text-on-surface-variant mt-6 leading-relaxed font-semibold">
-                      Your readiness is calculated dynamically based on overall accuracy, test frequency, and coding challenges cleared.
+                    <p style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '20px', lineHeight: 1.6, fontWeight: 500 }}>
+                      Calculated from accuracy, test frequency, and topics covered.
                     </p>
                   </motion.div>
 
-                  {/* Company readiness progress bars */}
+                  {/* Company Readiness */}
                   <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="bg-surface-container-lowest p-6 border border-outline-variant/30 rounded-xl ambient-shadow lg:col-span-2 flex flex-col justify-between"
+                    style={{ ...cardStyle }}
                   >
-                    <h3 className="text-xs font-black text-on-surface uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-outline-variant/30 pb-2.5">
-                      <Briefcase size={14} className="text-primary" />
-                      Target Company Evaluation Cutoffs
-                    </h3>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                    <p style={{ ...sectionLabel }}>
+                      <Briefcase size={13} style={{ color: '#2563EB' }} />
+                      Company Readiness
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px 32px' }}>
                       {companyReadiness.map((company) => (
-                        <div key={company.name} className="space-y-1.5">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="font-bold text-on-surface">{company.name}</span>
-                            <span className={cn('text-[9px] font-black uppercase px-2 py-0.5 rounded border', getCompanyGlow(company.score))}>
-                              {company.score}% Ready
+                        <div key={company.name}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                            <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#111827' }}>{company.name}</span>
+                            <span style={{
+                              fontSize: '0.68rem', fontWeight: 800, padding: '2px 8px',
+                              borderRadius: '99px', ...getReadinessBadge(company.score)
+                            }}>
+                              {company.score}%
                             </span>
                           </div>
-                          <div className="h-2 bg-surface-container rounded-full overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
-                              style={{ width: `${company.score}%` }}
+                          <div style={{ height: '6px', background: '#F3F4F6', borderRadius: '99px', overflow: 'hidden' }}>
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${company.score}%` }}
+                              transition={{ duration: 0.8, ease: 'easeOut' }}
+                              style={{
+                                height: '100%', borderRadius: '99px',
+                                background: `linear-gradient(90deg, ${getReadinessColor(company.score)}, ${getReadinessColor(company.score)}99)`,
+                              }}
                             />
                           </div>
                         </div>
@@ -168,103 +190,121 @@ export default function AnalyticsPage() {
                   </motion.div>
                 </div>
 
-                {/* Section 2: Charts (Radar & Line) */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Radar Chart */}
+                {/* Row 2: Radar Chart + Weekly Line Chart */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
+
+                  {/* Radar */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="bg-surface-container-lowest p-6 border border-outline-variant/30 rounded-xl ambient-shadow flex flex-col items-center justify-center col-span-1"
+                    transition={{ delay: 0.15 }}
+                    style={{ ...cardStyle, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                   >
-                    <h3 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-6">Sectional Balance</h3>
-                    <div className="w-full h-56 flex items-center justify-center text-xs">
+                    <p style={sectionLabel}>Sectional Balance</p>
+                    <div style={{ width: '100%', height: '220px' }}>
                       <ResponsiveContainer width="100%" height="100%">
-                        <RadarChart cx="50%" cy="50%" outerRadius="75%" data={categoryData}>
-                          <PolarGrid stroke="#eceef0" />
-                          <PolarAngleAxis dataKey="category" stroke="#434655" fontSize={10} tickLine={false} />
-                          <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#737686" fontSize={9} />
-                          <Radar name="Accuracy" dataKey="accuracy" stroke="#004ac6" fill="#004ac6" fillOpacity={0.2} />
+                        <RadarChart cx="50%" cy="50%" outerRadius="72%" data={categoryData}>
+                          <PolarGrid stroke="#E4E7EC" />
+                          <PolarAngleAxis dataKey="category" tick={{ fill: '#6B7280', fontSize: 11 }} tickLine={false} />
+                          <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#9CA3AF', fontSize: 9 }} />
+                          <Radar name="Accuracy" dataKey="accuracy" stroke="#2563EB" fill="#2563EB" fillOpacity={0.15} strokeWidth={2} />
                         </RadarChart>
                       </ResponsiveContainer>
                     </div>
                   </motion.div>
 
-                  {/* Line Chart (Weekly Trend) */}
+                  {/* Weekly Line Chart */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.25 }}
-                    className="bg-surface-container-lowest p-6 border border-outline-variant/30 rounded-xl ambient-shadow lg:col-span-2"
+                    transition={{ delay: 0.2 }}
+                    style={{ ...cardStyle }}
                   >
-                    <h3 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-6 flex items-center gap-1.5">
-                      <Calendar size={13} className="text-primary" />
-                      Weekly Progress Tracker
-                    </h3>
-
-                    <div className="w-full h-52 text-on-surface-variant">
+                    <p style={sectionLabel}>
+                      <Calendar size={13} style={{ color: '#2563EB' }} />
+                      Weekly Progress
+                    </p>
+                    <div style={{ width: '100%', height: '220px' }}>
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={weeklyData} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#eceef0" />
-                          <XAxis dataKey="date" stroke="#737686" fontSize={10} axisLine={false} tickLine={false} />
-                          <YAxis stroke="#737686" fontSize={10} axisLine={false} tickLine={false} domain={[0, 100]} />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
+                          <XAxis dataKey="date" tick={{ fill: '#6B7280', fontSize: 11 }} axisLine={false} tickLine={false} />
+                          <YAxis tick={{ fill: '#6B7280', fontSize: 11 }} axisLine={false} tickLine={false} domain={[0, 100]} />
                           <Tooltip
                             contentStyle={{
-                              background: '#ffffff',
-                              border: '1px solid #c3c6d7',
-                              borderRadius: '10px',
-                              color: '#191c1e',
-                              boxShadow: '0px 10px 30px rgba(15, 23, 42, 0.05)',
+                              background: '#FFFFFF', border: '1px solid #E4E7EC',
+                              borderRadius: '10px', color: '#111827',
+                              boxShadow: '0 4px 16px rgba(17,24,39,0.08)',
                             }}
                           />
-                          <Line type="monotone" dataKey="score" stroke="#004ac6" strokeWidth={2.5} activeDot={{ r: 6 }} dot={{ fill: '#004ac6' }} />
+                          <Line
+                            type="monotone" dataKey="score" stroke="#2563EB" strokeWidth={2.5}
+                            dot={{ fill: '#2563EB', strokeWidth: 0, r: 4 }}
+                            activeDot={{ r: 6, fill: '#7C3AED' }}
+                          />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
                   </motion.div>
                 </div>
 
-                {/* Section 3: Recommendations / Tips */}
+                {/* Row 3: AI Recommendations */}
                 <motion.div
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="bg-surface-container-lowest p-6 border border-outline-variant/30 rounded-xl ambient-shadow"
+                  transition={{ delay: 0.25 }}
+                  style={{ ...cardStyle }}
                 >
-                  <h3 className="text-xs font-black text-on-surface uppercase tracking-widest mb-5 flex items-center gap-2 border-b border-outline-variant/30 pb-2.5">
-                    <Lightbulb size={14} className="text-amber-500 fill-amber-500 animate-pulse" />
-                    AI Action Recommendations
-                  </h3>
+                  <p style={sectionLabel}>
+                    <Lightbulb size={13} style={{ color: '#D97706' }} />
+                    AI Recommendations
+                  </p>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Advice 1 */}
-                    <div className="p-4 rounded-xl bg-secondary/5 border border-secondary/15 flex gap-3.5 text-xs md:text-sm leading-relaxed text-on-surface-variant font-semibold">
-                      <div className="w-8 h-8 rounded-lg bg-secondary/10 border border-secondary/20 text-secondary flex items-center justify-center shrink-0">
-                        <Zap size={16} fill="currentColor" />
+                    {/* Tip 1 */}
+                    <div style={{
+                      padding: '20px', borderRadius: '12px',
+                      background: '#F5F3FF', border: '1px solid #DDD6FE',
+                      display: 'flex', gap: '14px',
+                    }}>
+                      <div style={{
+                        width: '36px', height: '36px', flexShrink: 0, borderRadius: '10px',
+                        background: '#EDE9FE', border: '1px solid #DDD6FE',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <Zap size={16} style={{ color: '#7C3AED' }} />
                       </div>
                       <div>
-                        <h4 className="font-bold text-on-surface mb-1">Boost Verbal Accuracy</h4>
-                        <p className="text-on-surface-variant text-xs font-medium">
-                          Your Verbal section accuracy is currently at <strong>68%</strong>. Practice sentence correction and synonyms pools before taking the Accenture ASE or Capgemini assessments.
+                        <h4 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#111827', marginBottom: '6px' }}>Boost Verbal Accuracy</h4>
+                        <p style={{ fontSize: '0.8125rem', color: '#6B7280', fontWeight: 500, lineHeight: 1.6 }}>
+                          Your Verbal accuracy is at <strong style={{ color: '#111827' }}>68%</strong>. Practice sentence correction and synonyms before Accenture or Capgemini assessments.
                         </p>
                       </div>
                     </div>
 
-                    {/* Advice 2 */}
-                    <div className="p-4 rounded-xl bg-primary/5 border border-primary/15 flex gap-3.5 text-xs md:text-sm leading-relaxed text-on-surface-variant font-semibold">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shrink-0">
-                        <Award size={16} />
+                    {/* Tip 2 */}
+                    <div style={{
+                      padding: '20px', borderRadius: '12px',
+                      background: '#EFF6FF', border: '1px solid #BFDBFE',
+                      display: 'flex', gap: '14px',
+                    }}>
+                      <div style={{
+                        width: '36px', height: '36px', flexShrink: 0, borderRadius: '10px',
+                        background: '#DBEAFE', border: '1px solid #BFDBFE',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <Award size={16} style={{ color: '#2563EB' }} />
                       </div>
                       <div>
-                        <h4 className="font-bold text-on-surface mb-1">Specialist Programmers (SP) Prep</h4>
-                        <p className="text-on-surface-variant text-xs font-medium">
-                          Excellent Logical reasoning accuracy (<strong>84%</strong>)! Leverage this in the upcoming Infosys DSE or Specialist Programmer exam. Keep solving arrays coding logs.
+                        <h4 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#111827', marginBottom: '6px' }}>Leverage Your Logical Strength</h4>
+                        <p style={{ fontSize: '0.8125rem', color: '#6B7280', fontWeight: 500, lineHeight: 1.6 }}>
+                          Excellent Logical Reasoning accuracy at <strong style={{ color: '#111827' }}>84%</strong>. Use this advantage for Infosys DSE or Specialist Programmer roles.
                         </p>
                       </div>
                     </div>
                   </div>
                 </motion.div>
-              </div>
+              </>
             )}
           </div>
         </div>

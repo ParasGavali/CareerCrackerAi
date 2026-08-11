@@ -26,8 +26,8 @@ export function ProgressRing({
   label,
   sublabel,
   color,
-  gradientStart = '#7c3aed',
-  gradientEnd = '#2563eb',
+  gradientStart = '#2563eb',
+  gradientEnd = '#7c3aed',
   className,
   animate = true,
   showPercentage = true,
@@ -62,7 +62,7 @@ export function ProgressRing({
             cy={center}
             r={radius}
             fill="none"
-            stroke="rgba(30, 30, 58, 0.8)"
+            stroke="#E9EBF0"
             strokeWidth={strokeWidth}
           />
 
@@ -86,7 +86,7 @@ export function ProgressRing({
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           {showPercentage && (
             <motion.span
-              className="font-extrabold text-white leading-none"
+              className="font-extrabold leading-none"
               style={{
                 fontSize: size * 0.2,
                 background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
@@ -104,7 +104,7 @@ export function ProgressRing({
           )}
           {label && !showPercentage && (
             <span
-              className="font-bold text-white text-center leading-tight"
+              className="font-bold text-[#111827] text-center leading-tight"
               style={{ fontSize: size * 0.14, maxWidth: size * 0.7 }}
             >
               {label}
@@ -112,7 +112,7 @@ export function ProgressRing({
           )}
           {sublabel && (
             <span
-              className="text-slate-400 text-center mt-0.5"
+              className="text-[#9CA3AF] text-center mt-0.5"
               style={{ fontSize: size * 0.09 }}
             >
               {sublabel}
@@ -123,8 +123,8 @@ export function ProgressRing({
 
       {label && showPercentage && (
         <div className="mt-3 text-center">
-          <p className="text-white font-semibold text-sm">{label}</p>
-          {sublabel && <p className="text-slate-400 text-xs mt-0.5">{sublabel}</p>}
+          <p className="text-[#111827] font-bold text-sm">{label}</p>
+          {sublabel && <p className="text-[#9CA3AF] text-xs mt-0.5">{sublabel}</p>}
         </div>
       )}
     </div>

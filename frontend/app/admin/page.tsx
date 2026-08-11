@@ -3,17 +3,21 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ProtectedRoute } from '@/components/ui/ProtectedRoute';
-import { Sidebar } from '@/components/layout/Sidebar';
+import { AppShell } from '@/components/layout/AppShell';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { StatCard } from '@/components/ui/StatCard';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { Button } from '@/components/ui/Button';
+import { Input, Select, Textarea } from '@/components/ui/Input';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { adminApi, questionsApi } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import type { User, Question } from '@/types';
+import type { User, Question, AdminStats } from '@/types';
 import {
   ShieldAlert, Settings, Users, Database,
   FileSpreadsheet, Trash2, Plus, Edit3, Search,
-  CheckCircle, ShieldCheck, XCircle, ArrowRight, X
+  ShieldCheck, X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -22,28 +26,41 @@ export default function AdminPage() {
   const { user } = useAuth();
 
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState<any>({
+  const [stats, setStats] = useState<AdminStats>({
     totalUsers: 1420,
     totalQuestions: 152,
     totalTests: 15,
-    attemptsToday: 48
+    attemptsToday: 48,
+    activeUsers: 0,
+    newUsersThisWeek: 0
   });
 
   const [activeTab, setActiveTab] = useState<'users' | 'questions'>('users');
-  
-  // Data lists
+
   const [usersList, setUsersList] = useState<User[]>([]);
   const [questionsList, setQuestionsList] = useState<Question[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  
-  // Create / Edit Question Modal States
+
   const [showQModal, setShowQModal] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Partial<Question> | null>(null);
 
+  const generateMockAdminData = () => {
+    setUsersList([
+      { _id: '101', name: 'Rohan Sharma', email: 'student@careercracker.ai', role: 'student', college: 'Global Engineering College', department: 'Computer Engineering', batch: '2026', score: 780, totalScore: 780, testsAttempted: 18, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      { _id: '102', name: 'Aarav Mehta', email: 'aarav@iitb.ac.in', role: 'student', college: 'IIT Bombay', department: 'Computer Engineering', batch: '2026', score: 1250, totalScore: 1250, testsAttempted: 32, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      { _id: '103', name: 'System Admin', email: 'admin@careercracker.ai', role: 'admin', college: 'Global Engineering College', department: 'Computer Engineering', batch: '2026', score: 0, totalScore: 0, testsAttempted: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+    ]);
+
+    setQuestionsList([
+      { _id: '201', questionText: 'What is the HCF of 36, 48, and 60?', options: [{ id: 'a', text: '6' }, { id: 'b', text: '12' }, { id: 'c', text: '18' }, { id: 'd', text: '24' }], correctOption: 'b', explanation: 'HCF is 12.', category: 'Quantitative Aptitude', subcategory: 'number-systems', difficulty: 'easy', companies: ['TCS'], tags: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      { _id: '202', questionText: 'What is the remainder when 2^100 is divided by 3?', options: [{ id: 'a', text: '0' }, { id: 'b', text: '1' }, { id: 'c', text: '2' }, { id: 'd', text: '3' }], correctOption: 'b', explanation: 'Remainder is 1.', category: 'Quantitative Aptitude', subcategory: 'number-systems', difficulty: 'medium', companies: ['Infosys'], tags: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      { _id: '203', questionText: "A is B's brother. C is A's mother. How is C related to B?", options: [{ id: 'a', text: 'Mother' }, { id: 'b', text: 'Sister' }, { id: 'c', text: 'Aunt' }, { id: 'd', text: 'Daughter' }], correctOption: 'a', explanation: 'C is the mother.', category: 'Logical Reasoning', subcategory: 'blood-relations', difficulty: 'easy', companies: ['Wipro'], tags: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+    ]);
+  };
+
   useEffect(() => {
-    // Only load if user is admin
     if (user && user.role !== 'admin') {
-      setLoading(false);
+      Promise.resolve().then(() => setLoading(false));
       return;
     }
 
@@ -59,7 +76,9 @@ export default function AdminPage() {
           totalUsers: 1420,
           totalQuestions: 152,
           totalTests: 15,
-          attemptsToday: 48
+          attemptsToday: 48,
+          activeUsers: 0,
+          newUsersThisWeek: 0
         });
         setUsersList(usersRes.data.data || []);
         setQuestionsList(questionsRes.data.data || []);
@@ -74,20 +93,6 @@ export default function AdminPage() {
     loadAdminData();
   }, [user]);
 
-  const generateMockAdminData = () => {
-    setUsersList([
-      { _id: '101', name: 'Rohan Sharma', email: 'student@careercracker.ai', role: 'student', college: 'Global Engineering College', department: 'Computer Engineering', batch: '2026', score: 780, totalScore: 780, testsAttempted: 18, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-      { _id: '102', name: 'Aarav Mehta', email: 'aarav@iitb.ac.in', role: 'student', college: 'IIT Bombay', department: 'Computer Engineering', batch: '2026', score: 1250, totalScore: 1250, testsAttempted: 32, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-      { _id: '103', name: 'System Admin', email: 'admin@careercracker.ai', role: 'admin', college: 'Global Engineering College', department: 'Computer Engineering', batch: '2026', score: 0, totalScore: 0, testsAttempted: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
-    ]);
-
-    setQuestionsList([
-      { _id: '201', questionText: 'What is the HCF of 36, 48, and 60?', options: [{ id: 'a', text: '6' }, { id: 'b', text: '12' }, { id: 'c', text: '18' }, { id: 'd', text: '24' }], correctOption: 'b', explanation: 'HCF is 12.', category: 'Quantitative Aptitude', subcategory: 'number-systems', difficulty: 'easy', companies: ['TCS'], tags: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-      { _id: '202', questionText: 'What is the remainder when 2^100 is divided by 3?', options: [{ id: 'a', text: '0' }, { id: 'b', text: '1' }, { id: 'c', text: '2' }, { id: 'd', text: '3' }], correctOption: 'b', explanation: 'Remainder is 1.', category: 'Quantitative Aptitude', subcategory: 'number-systems', difficulty: 'medium', companies: ['Infosys'], tags: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-      { _id: '203', questionText: 'A is B\'s brother. C is A\'s mother. How is C related to B?', options: [{ id: 'a', text: 'Mother' }, { id: 'b', text: 'Sister' }, { id: 'c', text: 'Aunt' }, { id: 'd', text: 'Daughter' }], correctOption: 'a', explanation: 'C is the mother.', category: 'Logical Reasoning', subcategory: 'blood-relations', difficulty: 'easy', companies: ['Wipro'], tags: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
-    ]);
-  };
-
   const handleUpdateRole = async (userId: string, newRole: string) => {
     const roleCast = newRole as 'student' | 'admin';
     try {
@@ -96,7 +101,6 @@ export default function AdminPage() {
       toast.success('Role updated successfully!');
     } catch (e) {
       console.error(e);
-      // Local updates for fallback mode
       setUsersList(prev => prev.map(u => u._id === userId ? { ...u, role: roleCast } : u));
       toast.success('Role updated successfully! (Demo mode)');
     }
@@ -133,11 +137,9 @@ export default function AdminPage() {
     if (!editingQuestion || !editingQuestion.questionText) return;
 
     if (editingQuestion._id) {
-      // Edit mode
       toast.success('Question updated successfully!');
       setQuestionsList(prev => prev.map(q => q._id === editingQuestion._id ? (editingQuestion as Question) : q));
     } else {
-      // Create mode
       const newQ = {
         ...editingQuestion,
         _id: `q-gen-${Date.now()}`,
@@ -152,38 +154,36 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
-        <LoadingSpinner size="xl" text="Initializing secure Admin operations context..." />
+      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFF]">
+        <LoadingSpinner size="xl" text="Initializing Admin operations context..." />
       </div>
     );
   }
 
-  // Access Denied Enforcer Screen
   if (user && user.role !== 'admin') {
     return (
-      <ProtectedRoute>
-        <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0f] text-white p-4">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-red-600/5 rounded-full blur-[120px] pointer-events-none" />
-          
-          <div className="glass-card p-8 max-w-md w-full text-center border-red-500/20 relative z-10">
-            <ShieldAlert size={56} className="text-red-500 mx-auto mb-5 animate-pulse" />
-            <h1 className="text-xl font-black text-white mb-2 uppercase tracking-wide">403: Forbidden</h1>
-            <p className="text-xs text-slate-400 mb-6 leading-relaxed">
+      <AppShell>
+        <div className="page-container flex justify-center pt-16">
+          <Card className="p-10 max-w-md w-full text-center">
+            <ShieldAlert size={56} className="text-[#DC2626] mx-auto mb-5 animate-pulse" />
+            <h1 className="text-xl font-black text-[#111827] mb-2 uppercase tracking-wide">403: Forbidden</h1>
+            <p className="text-sm text-[#6B7280] mb-6 leading-relaxed">
               This panel is role-restricted to Placement Officers and System Administrators. Your student profile does not possess necessary clearance.
             </p>
-            <button
+            <Button
+              variant="primary"
+              size="md"
+              className="w-full justify-center"
               onClick={() => router.push('/dashboard')}
-              className="w-full btn-glow py-3 rounded-xl text-white font-extrabold text-xs tracking-wider uppercase cursor-pointer"
             >
               Go to Student Dashboard
-            </button>
-          </div>
+            </Button>
+          </Card>
         </div>
-      </ProtectedRoute>
+      </AppShell>
     );
   }
 
-  // Filtered lists
   const filteredUsers = usersList.filter(u =>
     u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -196,377 +196,329 @@ export default function AdminPage() {
   );
 
   return (
-    <ProtectedRoute>
-      <div className="flex min-h-screen bg-[#0a0a0f] text-white">
-        <Sidebar />
+    <AppShell>
+      <div className="page-container space-y-8">
+        <PageHeader
+          title="Placement Control Center"
+          subtitle="Manage college user accounts, curate aptitude question pools, and inspect placement test analytics."
+          icon={<Settings size={20} className="text-[#7C3AED]" />}
+          actions={
+            <span className="inline-flex items-center gap-1.5 bg-[#F5F3FF] border border-[#DDD6FE] px-3 py-1.5 rounded-lg text-xs text-[#7C3AED] font-bold">
+              <ShieldCheck size={14} />
+              Clearance: ROOT
+            </span>
+          }
+        />
 
-        <div className="flex-1 min-h-screen overflow-y-auto pl-0 lg:pl-64">
-          <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
-            
-            {/* Header */}
-            <div className="flex items-center justify-between gap-6 mb-8">
-              <div>
-                <h1 className="text-2xl md:text-3xl font-extrabold text-white flex items-center gap-2.5">
-                  <Settings className="text-purple-500" />
-                  Placement Control Center
-                </h1>
-                <p className="text-sm text-slate-400 mt-1">
-                  Manage college user accounts, curate aptitude question pools, and inspect placement test analytics.
-                </p>
-              </div>
-              <div className="flex items-center gap-1 bg-purple-500/10 border border-purple-500/20 px-3 py-1.5 rounded-lg text-xs text-purple-400 font-bold">
-                <ShieldCheck size={14} />
-                Clearance: ROOT
-              </div>
-            </div>
+        {/* Quick Metrics */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard icon={Users} label="Registered Users" value={stats.totalUsers} color="violet" size="sm" />
+          <StatCard icon={Database} label="Seeded Questions" value={stats.totalQuestions} color="green" size="sm" />
+          <StatCard icon={FileSpreadsheet} label="Mock Blueprints" value={stats.totalTests} color="blue" size="sm" />
+          <StatCard icon={ShieldCheck} label="Assessments Today" value={stats.attemptsToday} color="amber" size="sm" />
+        </div>
 
-            {/* Quick Metrics Statistics Banner */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="glass-card p-4 border-white/5 flex items-center gap-3">
-                <Users className="text-purple-400 shrink-0" size={24} />
-                <div>
-                  <span className="text-[9px] text-slate-500 uppercase font-black">Registered Users</span>
-                  <h3 className="text-base font-bold text-white leading-tight mt-0.5">{stats.totalUsers}</h3>
-                </div>
-              </div>
-
-              <div className="glass-card p-4 border-white/5 flex items-center gap-3">
-                <Database className="text-emerald-400 shrink-0" size={24} />
-                <div>
-                  <span className="text-[9px] text-slate-500 uppercase font-black">Seeded Questions</span>
-                  <h3 className="text-base font-bold text-white leading-tight mt-0.5">{stats.totalQuestions}</h3>
-                </div>
-              </div>
-
-              <div className="glass-card p-4 border-white/5 flex items-center gap-3">
-                <FileSpreadsheet className="text-blue-400 shrink-0" size={24} />
-                <div>
-                  <span className="text-[9px] text-slate-500 uppercase font-black">Mock Blueprints</span>
-                  <h3 className="text-base font-bold text-white leading-tight mt-0.5">{stats.totalTests}</h3>
-                </div>
-              </div>
-
-              <div className="glass-card p-4 border-white/5 flex items-center gap-3">
-                <ShieldCheck className="text-yellow-400 shrink-0" size={24} />
-                <div>
-                  <span className="text-[9px] text-slate-500 uppercase font-black">Assessments Today</span>
-                  <h3 className="text-base font-bold text-white leading-tight mt-0.5">{stats.attemptsToday}</h3>
-                </div>
-              </div>
-            </div>
-
-            {/* Tabs & Search Filter */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4 mb-6">
-              <div className="flex bg-white/5 p-1 rounded-xl self-start">
-                <button
-                  onClick={() => { setActiveTab('users'); setSearchQuery(''); }}
-                  className={cn(
-                    'px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer',
-                    activeTab === 'users' ? 'bg-purple-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-200'
-                  )}
-                >
-                  Student Database
-                </button>
-                <button
-                  onClick={() => { setActiveTab('questions'); setSearchQuery(''); }}
-                  className={cn(
-                    'px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer',
-                    activeTab === 'questions' ? 'bg-purple-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-200'
-                  )}
-                >
-                  Curate Question Pool
-                </button>
-              </div>
-
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <div className="relative flex-1 sm:w-64">
-                  <Search className="absolute left-3 top-2.5 text-slate-500" size={14} />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={activeTab === 'users' ? 'Search students...' : 'Search questions...'}
-                    className="w-full bg-slate-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-all"
-                  />
-                </div>
-                {activeTab === 'questions' && (
-                  <button
-                    onClick={() => {
-                      setEditingQuestion({
-                        questionText: '',
-                        options: [{ id: 'a', text: '' }, { id: 'b', text: '' }, { id: 'c', text: '' }, { id: 'd', text: '' }],
-                        correctOption: 'a',
-                        category: 'Quantitative Aptitude',
-                        subcategory: '',
-                        difficulty: 'easy',
-                        explanation: ''
-                      });
-                      setShowQModal(true);
-                    }}
-                    className="btn-glow px-4.5 py-2 text-xs font-black uppercase rounded-xl text-white flex items-center gap-1.5 cursor-pointer shrink-0"
-                  >
-                    <Plus size={14} /> Add
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Main Content Areas */}
-            {activeTab === 'users' ? (
-              // Student Database table
-              <div className="glass-card border-white/5 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-xs md:text-sm">
-                    <thead>
-                      <tr className="border-b border-white/5 bg-slate-950 text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">
-                        <th className="py-4.5 px-6">User</th>
-                        <th className="py-4.5 px-6">College / Batch</th>
-                        <th className="py-4.5 px-6">Score</th>
-                        <th className="py-4.5 px-6">Current Role</th>
-                        <th className="py-4.5 px-6 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5 text-slate-300">
-                      {filteredUsers.map((item) => (
-                        <tr key={item._id} className="hover:bg-white/[0.01] transition-all">
-                          <td className="py-4 px-6 font-semibold">
-                            <div>
-                              <span className="text-white text-sm font-bold block">{item.name}</span>
-                              <span className="text-slate-500 text-xs mt-0.5 font-normal block">{item.email}</span>
-                            </div>
-                          </td>
-                          <td className="py-4 px-6 text-slate-400 font-medium text-xs">
-                            <span className="block text-slate-300 font-bold">{item.college || 'Global Engineering College'}</span>
-                            <span className="block text-slate-500 text-[10px] uppercase font-black mt-0.5">{item.department || 'CE'} • Batch {item.batch || '2026'}</span>
-                          </td>
-                          <td className="py-4 px-6 font-mono font-bold text-slate-300">
-                            {item.totalScore || 0} pts
-                          </td>
-                          <td className="py-4 px-6">
-                            <select
-                              value={item.role}
-                              onChange={(e) => handleUpdateRole(item._id, e.target.value)}
-                              className="bg-slate-950 border border-white/5 rounded-lg px-2.5 py-1 text-xs text-slate-300 focus:outline-none focus:border-purple-500 cursor-pointer"
-                            >
-                              <option value="student">Student</option>
-                              <option value="admin">Administrator</option>
-                            </select>
-                          </td>
-                          <td className="py-4 px-6 text-right">
-                            <button
-                              onClick={() => handleDeleteUser(item._id)}
-                              className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-all cursor-pointer"
-                              title="Deactivate Account"
-                            >
-                              <Trash2 size={13} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            ) : (
-              // Questions Management pool
-              <div className="glass-card border-white/5 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-xs md:text-sm">
-                    <thead>
-                      <tr className="border-b border-white/5 bg-slate-950 text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">
-                        <th className="py-4.5 px-6">Question Context</th>
-                        <th className="py-4.5 px-6">Difficulty</th>
-                        <th className="py-4.5 px-6">Category</th>
-                        <th className="py-4.5 px-6 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5 text-slate-300">
-                      {filteredQuestions.map((q) => (
-                        <tr key={q._id} className="hover:bg-white/[0.01] transition-all">
-                          <td className="py-4 px-6 font-semibold max-w-md">
-                            <span className="text-white text-xs md:text-sm font-bold line-clamp-2 block leading-relaxed">
-                              {q.questionText}
-                            </span>
-                          </td>
-                          <td className="py-4 px-6">
-                            <span className={cn(
-                              'text-[9px] uppercase font-black px-2 py-0.5 rounded border font-mono',
-                              q.difficulty === 'easy' ? 'bg-emerald-500/15 border-emerald-500/25 text-emerald-400' :
-                              q.difficulty === 'medium' ? 'bg-orange-500/15 border-orange-500/25 text-orange-400' :
-                              'bg-red-500/15 border-red-500/25 text-red-400'
-                            )}>
-                              {q.difficulty}
-                            </span>
-                          </td>
-                          <td className="py-4 px-6 text-slate-400 font-medium text-xs">
-                            <span className="block text-slate-300 font-bold">{q.category}</span>
-                            <span className="block text-slate-500 text-[10px] font-mono mt-0.5">{q.subcategory}</span>
-                          </td>
-                          <td className="py-4 px-6 text-right space-x-2 shrink-0">
-                            <button
-                              onClick={() => { setEditingQuestion(q); setShowQModal(true); }}
-                              className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 hover:bg-purple-500 hover:text-white transition-all cursor-pointer inline-block"
-                            >
-                              <Edit3 size={13} />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteQuestion(q._id)}
-                              className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-all cursor-pointer inline-block"
-                            >
-                              <Trash2 size={13} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* ─── ADD/EDIT QUESTION DIALOG MODAL ────────────────────────── */}
-            <AnimatePresence>
-              {showQModal && editingQuestion && (
-                <>
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 overflow-y-auto"
-                    onClick={() => setShowQModal(false)}
-                  >
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      className="glass-card max-w-lg w-full p-6 border-white/5 relative z-10 overflow-y-auto max-h-[90vh]"
-                      onClick={e => e.stopPropagation()}
-                    >
-                      <div className="flex items-center justify-between border-b border-white/5 pb-3.5 mb-5">
-                        <h3 className="text-base font-bold text-white flex items-center gap-1.5">
-                          <Database size={18} className="text-purple-400" />
-                          {editingQuestion._id ? 'Edit Question' : 'Add New Question'}
-                        </h3>
-                        <button onClick={() => setShowQModal(false)} className="text-slate-400 hover:text-white cursor-pointer">
-                          <X size={20} />
-                        </button>
-                      </div>
-
-                      <form onSubmit={handleSaveQuestion} className="space-y-4 text-xs font-semibold">
-                        {/* Question Text */}
-                        <div className="space-y-1.5">
-                          <label className="text-slate-400 uppercase tracking-wider text-[9px] block">Question Text</label>
-                          <textarea
-                            required
-                            value={editingQuestion.questionText}
-                            onChange={(e) => setEditingQuestion(prev => ({ ...prev, questionText: e.target.value }))}
-                            placeholder="Enter the aptitude question text..."
-                            className="w-full h-20 bg-slate-900 border border-white/5 rounded-xl p-3 text-slate-300 focus:outline-none focus:border-purple-500 transition-all resize-none font-normal"
-                          />
-                        </div>
-
-                        {/* Options A, B, C, D */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {editingQuestion.options?.map((opt, idx) => (
-                            <div key={idx} className="space-y-1">
-                              <label className="text-slate-400 uppercase tracking-wider text-[9px] block">Option {String.fromCharCode(65 + idx)}</label>
-                              <input
-                                type="text"
-                                required
-                                value={opt.text}
-                                onChange={(e) => {
-                                  const text = e.target.value;
-                                  setEditingQuestion(prev => {
-                                    if (!prev) return null;
-                                    const nextOpts = [...(prev.options || [])];
-                                    nextOpts[idx] = { ...nextOpts[idx], text };
-                                    return { ...prev, options: nextOpts };
-                                  });
-                                }}
-                                placeholder={`Enter option ${String.fromCharCode(65 + idx)}...`}
-                                className="w-full bg-slate-900 border border-white/5 rounded-xl px-3 py-2 text-slate-300 focus:outline-none focus:border-purple-500 transition-all font-normal"
-                              />
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Dropdowns row */}
-                        <div className="grid grid-cols-3 gap-3">
-                          {/* Correct option */}
-                          <div className="space-y-1">
-                            <label className="text-slate-400 uppercase tracking-wider text-[9px] block">Correct Answer</label>
-                            <select
-                              value={editingQuestion.correctOption}
-                              onChange={(e) => setEditingQuestion(prev => ({ ...prev, correctOption: e.target.value }))}
-                              className="w-full bg-slate-900 border border-white/5 rounded-xl px-3 py-2 text-slate-300 focus:outline-none focus:border-purple-500 transition-all cursor-pointer font-bold"
-                            >
-                              <option value="a">A</option>
-                              <option value="b">B</option>
-                              <option value="c">C</option>
-                              <option value="d">D</option>
-                            </select>
-                          </div>
-
-                          {/* Difficulty */}
-                          <div className="space-y-1">
-                            <label className="text-slate-400 uppercase tracking-wider text-[9px] block">Difficulty</label>
-                            <select
-                              value={editingQuestion.difficulty}
-                              onChange={(e) => setEditingQuestion(prev => ({ ...prev, difficulty: e.target.value as any }))}
-                              className="w-full bg-slate-900 border border-white/5 rounded-xl px-3 py-2 text-slate-300 focus:outline-none focus:border-purple-500 transition-all cursor-pointer font-bold"
-                            >
-                              <option value="easy">Easy</option>
-                              <option value="medium">Medium</option>
-                              <option value="hard">Hard</option>
-                            </select>
-                          </div>
-
-                          {/* Category */}
-                          <div className="space-y-1">
-                            <label className="text-slate-400 uppercase tracking-wider text-[9px] block">Category</label>
-                            <select
-                              value={editingQuestion.category}
-                              onChange={(e) => setEditingQuestion(prev => ({ ...prev, category: e.target.value as any }))}
-                              className="w-full bg-slate-900 border border-white/5 rounded-xl px-3 py-2 text-slate-300 focus:outline-none focus:border-purple-500 transition-all cursor-pointer font-bold"
-                            >
-                              <option value="Quantitative Aptitude">Quantitative</option>
-                              <option value="Logical Reasoning">Logical</option>
-                              <option value="Verbal Ability">Verbal</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        {/* Explanation */}
-                        <div className="space-y-1.5">
-                          <label className="text-slate-400 uppercase tracking-wider text-[9px] block">Explanation & Short Trick</label>
-                          <textarea
-                            required
-                            value={editingQuestion.explanation}
-                            onChange={(e) => setEditingQuestion(prev => ({ ...prev, explanation: e.target.value }))}
-                            placeholder="Provide step by step calculations for correct answer..."
-                            className="w-full h-16 bg-slate-900 border border-white/5 rounded-xl p-3 text-slate-300 focus:outline-none focus:border-purple-500 transition-all resize-none font-normal"
-                          />
-                        </div>
-
-                        {/* Submit button */}
-                        <div className="pt-2">
-                          <button
-                            type="submit"
-                            className="w-full btn-glow py-3 rounded-xl text-white font-extrabold text-xs tracking-wider uppercase cursor-pointer"
-                          >
-                            Save Question to Database
-                          </button>
-                        </div>
-                      </form>
-                    </motion.div>
-                  </motion.div>
-                </>
+        {/* Tabs & Search */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E4E7EC]">
+          <div className="flex bg-[#F8FAFF] p-1 rounded-xl border border-[#E4E7EC] self-start">
+            <button
+              onClick={() => { setActiveTab('users'); setSearchQuery(''); }}
+              className={cn(
+                'px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer',
+                activeTab === 'users' ? 'bg-[#7C3AED] text-white shadow-lg' : 'text-[#6B7280] hover:text-[#7C3AED]'
               )}
-            </AnimatePresence>
+            >
+              Student Database
+            </button>
+            <button
+              onClick={() => { setActiveTab('questions'); setSearchQuery(''); }}
+              className={cn(
+                'px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer',
+                activeTab === 'questions' ? 'bg-[#7C3AED] text-white shadow-lg' : 'text-[#6B7280] hover:text-[#7C3AED]'
+              )}
+            >
+              Curate Question Pool
+            </button>
+          </div>
 
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <div className="relative flex-1 sm:w-64">
+              <Search className="absolute left-3 top-2.5 text-[#9CA3AF]" size={14} />
+              <Input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={activeTab === 'users' ? 'Search students...' : 'Search questions...'}
+                className="pl-9 bg-white"
+              />
+            </div>
+            {activeTab === 'questions' && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  setEditingQuestion({
+                    questionText: '',
+                    options: [{ id: 'a', text: '' }, { id: 'b', text: '' }, { id: 'c', text: '' }, { id: 'd', text: '' }],
+                    correctOption: 'a',
+                    category: 'Quantitative Aptitude',
+                    subcategory: '',
+                    difficulty: 'easy',
+                    explanation: ''
+                  });
+                  setShowQModal(true);
+                }}
+                className="shrink-0"
+              >
+                <Plus size={14} /> Add
+              </Button>
+            )}
           </div>
         </div>
+
+        {/* Main Content */}
+        {activeTab === 'users' ? (
+          <Card className="p-0 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs md:text-sm">
+                <thead>
+                  <tr className="border-b border-[#E4E7EC] bg-[#F8FAFF] text-[#6B7280] font-extrabold uppercase tracking-wider text-[10px]">
+                    <th className="py-4 px-6">User</th>
+                    <th className="py-4 px-6">College / Batch</th>
+                    <th className="py-4 px-6">Score</th>
+                    <th className="py-4 px-6">Current Role</th>
+                    <th className="py-4 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#F3F4F6] text-[#111827]">
+                  {filteredUsers.map((item) => (
+                    <tr key={item._id} className="hover:bg-[#F8FAFF] transition-all">
+                      <td className="py-4 px-6 font-semibold">
+                        <div>
+                          <span className="text-[#111827] text-sm font-bold block">{item.name}</span>
+                          <span className="text-[#9CA3AF] text-xs mt-0.5 font-normal block">{item.email}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 text-[#6B7280] font-medium text-xs">
+                        <span className="block text-[#374151] font-bold">{item.college || 'Global Engineering College'}</span>
+                        <span className="block text-[#9CA3AF] text-[10px] uppercase font-black mt-0.5">{item.department || 'CE'} • Batch {item.batch || '2026'}</span>
+                      </td>
+                      <td className="py-4 px-6 font-mono font-bold text-[#374151]">
+                        {item.totalScore || 0} pts
+                      </td>
+                      <td className="py-4 px-6">
+                        <Select
+                          value={item.role}
+                          onChange={(e) => handleUpdateRole(item._id, e.target.value)}
+                          className="w-36 py-1.5 text-xs"
+                        >
+                          <option value="student">Student</option>
+                          <option value="admin">Administrator</option>
+                        </Select>
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <button
+                          onClick={() => handleDeleteUser(item._id)}
+                          className="p-2 rounded-lg bg-[#FEF2F2] border border-[#FECACA] text-[#DC2626] hover:bg-[#DC2626] hover:text-white transition-all cursor-pointer"
+                          title="Deactivate Account"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        ) : (
+          <Card className="p-0 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs md:text-sm">
+                <thead>
+                  <tr className="border-b border-[#E4E7EC] bg-[#F8FAFF] text-[#6B7280] font-extrabold uppercase tracking-wider text-[10px]">
+                    <th className="py-4 px-6">Question Context</th>
+                    <th className="py-4 px-6">Difficulty</th>
+                    <th className="py-4 px-6">Category</th>
+                    <th className="py-4 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#F3F4F6] text-[#111827]">
+                  {filteredQuestions.map((q) => (
+                    <tr key={q._id} className="hover:bg-[#F8FAFF] transition-all">
+                      <td className="py-4 px-6 font-semibold max-w-md">
+                        <span className="text-[#111827] text-xs md:text-sm font-bold line-clamp-2 block leading-relaxed">
+                          {q.questionText}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className={cn(
+                          'text-[9px] uppercase font-black px-2 py-0.5 rounded border font-mono',
+                          q.difficulty === 'easy' ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#059669]' :
+                          q.difficulty === 'medium' ? 'bg-[#FFFBEB] border-[#FDE68A] text-[#D97706]' :
+                          'bg-[#FEF2F2] border-[#FECACA] text-[#DC2626]'
+                        )}>
+                          {q.difficulty}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-[#6B7280] font-medium text-xs">
+                        <span className="block text-[#374151] font-bold">{q.category}</span>
+                        <span className="block text-[#9CA3AF] text-[10px] font-mono mt-0.5">{q.subcategory}</span>
+                      </td>
+                      <td className="py-4 px-6 text-right space-x-2 shrink-0">
+                        <button
+                          onClick={() => { setEditingQuestion(q); setShowQModal(true); }}
+                          className="p-2 rounded-lg bg-[#F5F3FF] border border-[#DDD6FE] text-[#7C3AED] hover:bg-[#7C3AED] hover:text-white transition-all cursor-pointer inline-block"
+                        >
+                          <Edit3 size={13} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteQuestion(q._id)}
+                          className="p-2 rounded-lg bg-[#FEF2F2] border border-[#FECACA] text-[#DC2626] hover:bg-[#DC2626] hover:text-white transition-all cursor-pointer inline-block"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        )}
+
+        {/* Add/Edit Question Modal */}
+        <AnimatePresence>
+          {showQModal && editingQuestion && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 overflow-y-auto"
+              onClick={() => setShowQModal(false)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="bg-white border border-[#E4E7EC] rounded-2xl max-w-lg w-full p-6 relative z-10 overflow-y-auto max-h-[90vh] shadow-2xl"
+                onClick={e => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between border-b border-[#E4E7EC] pb-3.5 mb-5">
+                  <h3 className="text-base font-bold text-[#111827] flex items-center gap-1.5">
+                    <Database size={18} className="text-[#7C3AED]" />
+                    {editingQuestion._id ? 'Edit Question' : 'Add New Question'}
+                  </h3>
+                  <button onClick={() => setShowQModal(false)} className="text-[#9CA3AF] hover:text-[#111827] cursor-pointer">
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <form onSubmit={handleSaveQuestion} className="space-y-4 text-xs font-semibold">
+                  <div className="space-y-1.5">
+                    <label className="text-[#6B7280] uppercase tracking-wider text-[9px] block">Question Text</label>
+                    <Textarea
+                      required
+                      value={editingQuestion.questionText}
+                      onChange={(e) => setEditingQuestion(prev => ({ ...prev, questionText: e.target.value }))}
+                      placeholder="Enter the aptitude question text..."
+                      className="h-20 resize-none bg-[#F8FAFF]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {editingQuestion.options?.map((opt, idx) => (
+                      <div key={idx} className="space-y-1">
+                        <label className="text-[#6B7280] uppercase tracking-wider text-[9px] block">Option {String.fromCharCode(65 + idx)}</label>
+                        <Input
+                          type="text"
+                          required
+                          value={opt.text}
+                          onChange={(e) => {
+                            const text = e.target.value;
+                            setEditingQuestion(prev => {
+                              if (!prev) return null;
+                              const nextOpts = [...(prev.options || [])];
+                              nextOpts[idx] = { ...nextOpts[idx], text };
+                              return { ...prev, options: nextOpts };
+                            });
+                          }}
+                          placeholder={`Enter option ${String.fromCharCode(65 + idx)}...`}
+                          className="bg-[#F8FAFF]"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[#6B7280] uppercase tracking-wider text-[9px] block">Correct Answer</label>
+                      <Select
+                        value={editingQuestion.correctOption}
+                        onChange={(e) => setEditingQuestion(prev => ({ ...prev, correctOption: e.target.value }))}
+                        className="font-bold"
+                      >
+                        <option value="a">A</option>
+                        <option value="b">B</option>
+                        <option value="c">C</option>
+                        <option value="d">D</option>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[#6B7280] uppercase tracking-wider text-[9px] block">Difficulty</label>
+                      <Select
+                        value={editingQuestion.difficulty}
+                        onChange={(e) => setEditingQuestion(prev => ({ ...prev, difficulty: e.target.value as Question['difficulty'] }))}
+                        className="font-bold"
+                      >
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[#6B7280] uppercase tracking-wider text-[9px] block">Category</label>
+                      <Select
+                        value={editingQuestion.category}
+                        onChange={(e) => setEditingQuestion(prev => ({ ...prev, category: e.target.value }))}
+                        className="font-bold"
+                      >
+                        <option value="Quantitative Aptitude">Quantitative</option>
+                        <option value="Logical Reasoning">Logical</option>
+                        <option value="Verbal Ability">Verbal</option>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[#6B7280] uppercase tracking-wider text-[9px] block">Explanation & Short Trick</label>
+                    <Textarea
+                      required
+                      value={editingQuestion.explanation}
+                      onChange={(e) => setEditingQuestion(prev => ({ ...prev, explanation: e.target.value }))}
+                      placeholder="Provide step by step calculations for correct answer..."
+                      className="h-16 resize-none bg-[#F8FAFF]"
+                    />
+                  </div>
+
+                  <div className="pt-2">
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      size="md"
+                      className="w-full justify-center uppercase tracking-wider"
+                    >
+                      Save Question to Database
+                    </Button>
+                  </div>
+                </form>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </ProtectedRoute>
+    </AppShell>
   );
 }

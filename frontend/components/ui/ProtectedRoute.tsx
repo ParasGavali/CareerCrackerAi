@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { Button } from '@/components/ui/Button';
 import { ShieldOff } from 'lucide-react';
 
 interface ProtectedRouteProps {
@@ -28,7 +29,7 @@ export function ProtectedRoute({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0f' }}>
+      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFF]">
         <LoadingSpinner size="xl" text="Verifying access..." />
       </div>
     );
@@ -40,22 +41,19 @@ export function ProtectedRoute({
 
   if (requiredRole && user?.role !== requiredRole) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0f' }}>
-        <div className="glass-card p-12 text-center max-w-md mx-auto">
-          <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <ShieldOff size={40} className="text-red-400" />
+      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFF]">
+        <div className="bg-white border border-[#E4E7EC] rounded-2xl p-12 text-center max-w-md mx-auto shadow-[0_1px_3px_rgba(17,24,39,0.06),0_4px_14px_rgba(17,24,39,0.04)]">
+          <div className="w-20 h-20 bg-red-50 border border-[#FECACA] rounded-full flex items-center justify-center mx-auto mb-6">
+            <ShieldOff size={40} className="text-[#DC2626]" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Access Denied</h1>
-          <p className="text-slate-400 mb-6">
+          <h1 className="text-2xl font-black text-[#111827] mb-2">Access Denied</h1>
+          <p className="text-[#6B7280] mb-6">
             You don&apos;t have permission to access this page.
             {requiredRole === 'admin' && ' Admin privileges are required.'}
           </p>
-          <button
-            onClick={() => router.push('/dashboard')}
-            className="btn-glow px-6 py-3 rounded-xl text-white font-semibold"
-          >
+          <Button onClick={() => router.push('/dashboard')}>
             Go to Dashboard
-          </button>
+          </Button>
         </div>
       </div>
     );

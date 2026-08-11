@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
 import { Navbar } from '@/components/layout/Navbar';
+import { Button } from '@/components/ui/Button';
 import {
   BookOpen, FileText, Code2, Brain, Building2, Trophy,
   ArrowRight, Star, CheckCircle, Users, Target, Award,
@@ -164,7 +165,7 @@ function StatCard({
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const { count, trigger } = useCountUp(value);
-  useEffect(() => { if (inView) trigger(); }, [inView]);
+  useEffect(() => { if (inView) trigger(); }, [inView, trigger]);
 
   return (
     <div ref={ref} className="flex flex-col items-center text-center px-6 py-2">
@@ -265,15 +266,15 @@ export default function LandingPage() {
             className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-6"
           >
             <Link href="/auth/register">
-              <button className="btn-primary px-8 py-3.5 rounded-xl text-base flex items-center gap-2">
+              <Button size="lg">
                 Start Free Today
                 <ArrowRight size={18} />
-              </button>
+              </Button>
             </Link>
-            <button className="btn-secondary px-8 py-3.5 rounded-xl text-base flex items-center gap-2">
+            <Button variant="secondary" size="lg">
               See How It Works
               <ChevronRight size={16} />
-            </button>
+            </Button>
           </motion.div>
 
           {/* trust strip */}
@@ -473,7 +474,7 @@ export default function LandingPage() {
               </span>
             </h2>
             <p className="text-lg text-[#6B7280] max-w-2xl mx-auto">
-              Tailored guides, question banks and mock tests for each company's unique test pattern and interview process.
+              Tailored guides, question banks and mock tests for each company&apos;s unique test pattern and interview process.
             </p>
           </motion.div>
 
@@ -504,7 +505,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-2xl font-bold text-[#111827] mb-2">TCS National Qualifier Test (NQT)</h3>
                 <p className="text-sm text-[#6B7280] mb-5 max-w-2xl leading-relaxed">
-                  India's largest campus recruitment drive. Covers Numerical Ability, Verbal Ability, Reasoning Ability,
+                  India&apos;s largest campus recruitment drive. Covers Numerical Ability, Verbal Ability, Reasoning Ability,
                   Programming Logic &amp; Coding — with 82 questions over 3h 30min.
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -519,10 +520,10 @@ export default function LandingPage() {
                 </div>
               </div>
               <Link href="/companies/tcs" className="shrink-0">
-                <button className="btn-primary px-7 py-3.5 rounded-xl text-sm flex items-center gap-2">
+                <Button size="md">
                   Prepare for TCS
                   <ArrowRight size={16} />
-                </button>
+                </Button>
               </Link>
             </div>
           </motion.div>

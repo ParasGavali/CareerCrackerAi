@@ -55,47 +55,47 @@ export function calculateGrade(percentage: number): string {
 }
 
 export function getScoreColor(score: number): string {
-  if (score >= 80) return 'text-emerald-400';
-  if (score >= 60) return 'text-blue-400';
-  if (score >= 40) return 'text-yellow-400';
-  return 'text-red-400';
+  if (score >= 80) return 'text-emerald-700';
+  if (score >= 60) return 'text-blue-700';
+  if (score >= 40) return 'text-amber-700';
+  return 'text-red-700';
 }
 
 export function getScoreBgColor(score: number): string {
-  if (score >= 80) return 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400';
-  if (score >= 60) return 'bg-blue-500/20 border-blue-500/30 text-blue-400';
-  if (score >= 40) return 'bg-yellow-500/20 border-yellow-500/30 text-yellow-400';
-  return 'bg-red-500/20 border-red-500/30 text-red-400';
+  if (score >= 80) return 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46]';
+  if (score >= 60) return 'bg-[#EFF6FF] border-[#BFDBFE] text-[#1D4ED8]';
+  if (score >= 40) return 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E]';
+  return 'bg-[#FEF2F2] border-[#FECACA] text-[#991B1B]';
 }
 
 export function getGradeColor(grade: string): string {
   switch (grade) {
-    case 'A+': return 'text-emerald-400';
-    case 'A': return 'text-green-400';
-    case 'B+': return 'text-blue-400';
-    case 'B': return 'text-indigo-400';
-    case 'C': return 'text-yellow-400';
-    case 'D': return 'text-orange-400';
-    default: return 'text-red-400';
+    case 'A+': return 'text-emerald-700';
+    case 'A': return 'text-green-700';
+    case 'B+': return 'text-blue-700';
+    case 'B': return 'text-indigo-700';
+    case 'C': return 'text-amber-700';
+    case 'D': return 'text-orange-700';
+    default: return 'text-red-700';
   }
 }
 
 // ==================== DIFFICULTY ====================
 export function getDifficultyColor(difficulty: string): string {
   switch (difficulty?.toLowerCase()) {
-    case 'easy': return 'text-emerald-400';
-    case 'medium': return 'text-yellow-400';
-    case 'hard': return 'text-red-400';
-    default: return 'text-slate-400';
+    case 'easy': return 'text-emerald-700';
+    case 'medium': return 'text-amber-700';
+    case 'hard': return 'text-red-700';
+    default: return 'text-slate-600';
   }
 }
 
 export function getDifficultyBg(difficulty: string): string {
   switch (difficulty?.toLowerCase()) {
-    case 'easy': return 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400';
-    case 'medium': return 'bg-yellow-500/15 border-yellow-500/30 text-yellow-400';
-    case 'hard': return 'bg-red-500/15 border-red-500/30 text-red-400';
-    default: return 'bg-slate-500/15 border-slate-500/30 text-slate-400';
+    case 'easy': return 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46]';
+    case 'medium': return 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E]';
+    case 'hard': return 'bg-[#FEF2F2] border-[#FECACA] text-[#991B1B]';
+    default: return 'bg-[#F9FAFB] border-[#E5E7EB] text-[#374151]';
   }
 }
 
@@ -184,12 +184,12 @@ export function getPlacementReadinessColor(score: number): string {
 // ==================== CODING ====================
 export function getStatusColor(status: string): string {
   switch (status) {
-    case 'accepted': return 'text-emerald-400';
-    case 'wrong_answer': return 'text-red-400';
-    case 'time_limit_exceeded': return 'text-yellow-400';
-    case 'runtime_error': return 'text-orange-400';
-    case 'compilation_error': return 'text-red-400';
-    default: return 'text-slate-400';
+    case 'accepted': return 'text-emerald-700';
+    case 'wrong_answer': return 'text-red-700';
+    case 'time_limit_exceeded': return 'text-amber-700';
+    case 'runtime_error': return 'text-orange-700';
+    case 'compilation_error': return 'text-red-700';
+    default: return 'text-slate-600';
   }
 }
 

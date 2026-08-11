@@ -1,10 +1,13 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { ProtectedRoute } from '@/components/ui/ProtectedRoute';
-import { Sidebar } from '@/components/layout/Sidebar';
+import { AppShell } from '@/components/layout/AppShell';
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
 import {
-  Building2, ChevronRight, Award, Terminal,
+  ChevronRight, Award, Terminal,
   ShieldCheck, BookOpen, Star, AlertCircle,
   ArrowLeft, CheckCircle2, Clock
 } from 'lucide-react';
@@ -181,13 +184,6 @@ const companyData: Record<string, CompanySpec> = {
   },
 };
 
-const card: React.CSSProperties = {
-  background: '#FFFFFF',
-  border: '1px solid #E4E7EC',
-  borderRadius: '16px',
-  boxShadow: '0 1px 3px rgba(17,24,39,0.06), 0 4px 14px rgba(17,24,39,0.04)',
-};
-
 export default function CompanyProfilePage() {
   const params = useParams();
   const router = useRouter();
@@ -203,172 +199,148 @@ export default function CompanyProfilePage() {
 
   if (!spec) {
     return (
-      <ProtectedRoute>
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F8FAFF', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          <div style={{ ...card, padding: '40px', maxWidth: '360px', textAlign: 'center' }}>
-            <AlertCircle size={48} style={{ color: '#DC2626', margin: '0 auto 16px' }} />
-            <h2 style={{ fontSize: '1.125rem', fontWeight: 800, color: '#111827', marginBottom: '8px' }}>Company Not Found</h2>
-            <p style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '24px' }}>This company profile doesn&apos;t exist.</p>
-            <button
-              onClick={() => router.push('/companies')}
-              className="btn-primary"
-              style={{ width: '100%', justifyContent: 'center' }}
-            >
-              Go Back to Companies
-            </button>
-          </div>
+      <AppShell>
+        <div className="page-container flex justify-center pt-16">
+          <EmptyState
+            icon={<AlertCircle size={32} className="text-[#DC2626]" />}
+            title="Company Not Found"
+            description="This company profile doesn't exist."
+            action={
+              <Button variant="primary" size="md" onClick={() => router.push('/companies')}>
+                Go Back to Companies
+              </Button>
+            }
+          />
         </div>
-      </ProtectedRoute>
+      </AppShell>
     );
   }
 
   return (
-    <ProtectedRoute>
-      <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#F8FAFF', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-        <Sidebar />
+    <AppShell>
+      <div className="page-container space-y-7">
+        <button
+          onClick={() => router.push('/companies')}
+          className="inline-flex items-center gap-2 text-sm font-bold text-[#6B7280] hover:text-[#2563EB] transition-colors w-fit cursor-pointer"
+        >
+          <ArrowLeft size={15} />
+          Back to Companies
+        </button>
 
-        <div style={{ flex: 1, marginLeft: '260px', overflowY: 'auto' }}>
-          <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '40px 32px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
-
-            {/* Back button */}
-            <button
-              onClick={() => router.push('/companies')}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.8125rem', fontWeight: 700, color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer', width: 'fit-content', padding: 0 }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#2563EB')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#6B7280')}
-            >
-              <ArrowLeft size={15} /> Back to Companies
-            </button>
-
-            {/* Hero Card */}
-            <div style={{ ...card, padding: '32px', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 0, right: 0, width: '200px', height: '200px', background: 'radial-gradient(circle at top right, rgba(37,99,235,0.06), transparent 70%)', pointerEvents: 'none' }} />
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-                  <span style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1D4ED8', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 12px', borderRadius: '99px' }}>
-                    Placement Strategy Kit
-                  </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ECFDF5', border: '1px solid #A7F3D0', color: '#065F46', fontSize: '0.75rem', fontWeight: 700, padding: '4px 12px', borderRadius: '99px' }}>
-                    <CheckCircle2 size={13} />
-                    Historical Success Rate: {spec.successRate}
-                  </div>
-                </div>
-                <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#111827', marginBottom: '6px' }}>{spec.name}</h1>
-                <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#7C3AED', marginBottom: '14px', fontStyle: 'italic' }}>{spec.tagline}</p>
-                <p style={{ fontSize: '0.875rem', color: '#6B7280', lineHeight: 1.7, fontWeight: 500 }}>{spec.overview}</p>
-              </div>
+        {/* Hero Card */}
+        <Card className="p-8 relative overflow-hidden">
+          <div className="pointer-events-none absolute top-0 right-0 w-52 h-52 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.06),transparent_70%)]" />
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+              <Badge variant="blue" size="sm">
+                Placement Strategy Kit
+              </Badge>
+              <span className="inline-flex items-center gap-1.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] text-xs font-bold px-3 py-1 rounded-full">
+                <CheckCircle2 size={13} />
+                Historical Success Rate: {spec.successRate}
+              </span>
             </div>
+            <h1 className="text-3xl font-black text-[#111827] mb-1.5">{spec.name}</h1>
+            <p className="text-[15px] font-semibold text-[#7C3AED] italic mb-3.5">{spec.tagline}</p>
+            <p className="text-sm text-[#6B7280] leading-relaxed font-medium max-w-3xl">{spec.overview}</p>
+          </div>
+        </Card>
 
-            {/* Two-column grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
-
-              {/* Left: Test Pattern */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div style={{ ...card, padding: '28px' }}>
-                  <h3 style={{ fontSize: '0.875rem', fontWeight: 800, color: '#111827', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #E4E7EC' }}>
-                    <BookOpen size={17} style={{ color: '#2563EB' }} />
-                    Latest Test Pattern
-                  </h3>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr style={{ background: '#F9FAFB' }}>
-                        <th style={{ padding: '10px 14px', textAlign: 'left', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#6B7280', borderBottom: '1px solid #E4E7EC' }}>Section</th>
-                        <th style={{ padding: '10px 14px', textAlign: 'center', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#6B7280', borderBottom: '1px solid #E4E7EC' }}>Questions</th>
-                        <th style={{ padding: '10px 14px', textAlign: 'right', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#6B7280', borderBottom: '1px solid #E4E7EC' }}>
-                          <Clock size={11} style={{ display: 'inline', marginRight: '3px' }} />Duration
-                        </th>
+        {/* Two-column grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left: Test Pattern + Strategy */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            <Card className="p-7">
+              <h3 className="text-sm font-bold text-[#111827] flex items-center gap-2 mb-5 pb-4 border-b border-[#E4E7EC]">
+                <BookOpen size={17} className="text-[#2563EB]" />
+                Latest Test Pattern
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs md:text-sm">
+                  <thead>
+                    <tr className="bg-[#F9FAFB]">
+                      <th className="py-2.5 px-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-[#6B7280] border-b border-[#E4E7EC]">Section</th>
+                      <th className="py-2.5 px-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-[#6B7280] border-b border-[#E4E7EC]">Questions</th>
+                      <th className="py-2.5 px-3.5 text-right text-[11px] font-bold uppercase tracking-wider text-[#6B7280] border-b border-[#E4E7EC]">
+                        <Clock size={11} className="inline mr-1" />
+                        Duration
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {spec.pattern.map((section, idx) => (
+                      <tr key={idx} className="border-b border-[#F3F4F6] hover:bg-[#F8FAFF] transition-colors">
+                        <td className="py-3 px-3.5 text-[13px] font-semibold text-[#111827]">{section.sectionName}</td>
+                        <td className="py-3 px-3.5 text-center text-[13px] font-bold text-[#2563EB]">{section.questions}</td>
+                        <td className="py-3 px-3.5 text-right text-[13px] text-[#6B7280] font-medium">{section.time}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {spec.pattern.map((section, idx) => (
-                        <tr key={idx} style={{ borderBottom: '1px solid #F3F4F6' }}
-                          onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFF')}
-                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                          <td style={{ padding: '13px 14px', fontSize: '0.8125rem', fontWeight: 600, color: '#111827' }}>{section.sectionName}</td>
-                          <td style={{ padding: '13px 14px', textAlign: 'center', fontSize: '0.8125rem', fontWeight: 700, color: '#2563EB' }}>{section.questions}</td>
-                          <td style={{ padding: '13px 14px', textAlign: 'right', fontSize: '0.8125rem', color: '#6B7280', fontWeight: 500 }}>{section.time}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <Button variant="primary" size="md" className="w-full mt-5 justify-center" onClick={handleLaunchExam}>
+                Launch Company Mock Exam
+                <ChevronRight size={16} />
+              </Button>
+            </Card>
+
+            {/* Strategy Tips */}
+            <Card className="p-7">
+              <h3 className="text-sm font-bold text-[#111827] flex items-center gap-2 mb-5 pb-4 border-b border-[#E4E7EC]">
+                <Star size={17} className="text-[#D97706]" />
+                Preparation Strategy
+              </h3>
+              <div className="flex flex-col gap-3.5">
+                {spec.strategies.map((tip, idx) => (
+                  <div key={idx} className="flex gap-3.5 items-start">
+                    <span className="w-[26px] h-[26px] flex-shrink-0 rounded-lg bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] text-xs font-bold flex items-center justify-center">
+                      {idx + 1}
+                    </span>
+                    <p className="text-[13px] text-[#4B5563] leading-relaxed font-medium flex-1">{tip}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+
+          {/* Right: Topics + Security + Success */}
+          <div className="flex flex-col gap-5">
+            <Card className="p-6">
+              <h3 className="text-xs font-bold text-[#111827] uppercase tracking-wider flex items-center gap-2 mb-4">
+                <Terminal size={14} className="text-[#2563EB]" />
+                Key Topics
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {spec.topics.map(topic => (
                   <button
-                    onClick={handleLaunchExam}
-                    className="btn-primary"
-                    style={{ width: '100%', justifyContent: 'center', marginTop: '20px' }}
+                    key={topic}
+                    onClick={() => router.push('/practice')}
+                    className="bg-[#F9FAFB] border border-[#E4E7EC] text-[#374151] text-xs font-semibold px-3 py-1.5 rounded-lg cursor-pointer transition-all hover:bg-[#EFF6FF] hover:border-[#BFDBFE] hover:text-[#2563EB]"
                   >
-                    Launch Company Mock Exam
-                    <ChevronRight size={16} />
+                    {topic}
                   </button>
-                </div>
-
-                {/* Strategy Tips */}
-                <div style={{ ...card, padding: '28px' }}>
-                  <h3 style={{ fontSize: '0.875rem', fontWeight: 800, color: '#111827', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #E4E7EC' }}>
-                    <Star size={17} style={{ color: '#D97706' }} />
-                    Preparation Strategy
-                  </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                    {spec.strategies.map((tip, idx) => (
-                      <div key={idx} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-                        <span style={{
-                          width: '26px', height: '26px', flexShrink: 0, borderRadius: '8px',
-                          background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#2563EB',
-                          fontSize: '0.75rem', fontWeight: 800,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}>{idx + 1}</span>
-                        <p style={{ fontSize: '0.8125rem', color: '#4B5563', lineHeight: 1.65, fontWeight: 500, flex: 1 }}>{tip}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                ))}
               </div>
+            </Card>
 
-              {/* Right: Topics + Security notice */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div style={{ ...card, padding: '24px' }}>
-                  <h3 style={{ fontSize: '0.75rem', fontWeight: 800, color: '#111827', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                    <Terminal size={14} style={{ color: '#2563EB' }} />
-                    Key Topics
-                  </h3>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {spec.topics.map(topic => (
-                      <button
-                        key={topic}
-                        onClick={() => router.push('/practice')}
-                        style={{
-                          background: '#F9FAFB', border: '1px solid #E4E7EC', color: '#374151',
-                          fontSize: '0.75rem', fontWeight: 600, padding: '6px 12px', borderRadius: '8px',
-                          cursor: 'pointer', transition: 'all 0.18s',
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.background = '#EFF6FF'; e.currentTarget.style.borderColor = '#BFDBFE'; e.currentTarget.style.color = '#2563EB'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = '#F9FAFB'; e.currentTarget.style.borderColor = '#E4E7EC'; e.currentTarget.style.color = '#374151'; }}
-                      >
-                        {topic}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: '14px', padding: '20px' }}>
-                  <h4 style={{ fontSize: '0.72rem', fontWeight: 800, color: '#92400E', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
-                    <ShieldCheck size={14} />
-                    Exam Security Notice
-                  </h4>
-                  <p style={{ fontSize: '0.8125rem', color: '#78350F', lineHeight: 1.65, fontWeight: 500 }}>
-                    Exams enforce fullscreen mode. Tab-switching is logged and triggers warnings. Ensure a quiet environment before starting.
-                  </p>
-                </div>
-
-                <div style={{ ...card, padding: '24px', textAlign: 'center' }}>
-                  <Award size={28} style={{ color: '#2563EB', margin: '0 auto 10px' }} />
-                  <p style={{ fontSize: '2rem', fontWeight: 800, color: '#111827' }}>{spec.successRate}</p>
-                  <p style={{ fontSize: '0.8125rem', color: '#6B7280', fontWeight: 500, marginTop: '4px' }}>Historical Success Rate</p>
-                </div>
-              </div>
+            <div className="bg-[#FFFBEB] border border-[#FDE68A] rounded-2xl p-5">
+              <h4 className="text-xs font-bold text-[#92400E] uppercase tracking-wider flex items-center gap-1.5 mb-2.5">
+                <ShieldCheck size={14} />
+                Exam Security Notice
+              </h4>
+              <p className="text-[13px] text-[#78350F] leading-relaxed font-medium">
+                Exams enforce fullscreen mode. Tab-switching is logged and triggers warnings. Ensure a quiet environment before starting.
+              </p>
             </div>
+
+            <Card className="p-6 text-center">
+              <Award size={28} className="text-[#2563EB] mx-auto mb-2.5" />
+              <p className="text-3xl font-black text-[#111827]">{spec.successRate}</p>
+              <p className="text-[13px] text-[#6B7280] font-medium mt-1">Historical Success Rate</p>
+            </Card>
           </div>
         </div>
       </div>
-    </ProtectedRoute>
+    </AppShell>
   );
 }

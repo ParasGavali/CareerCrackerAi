@@ -43,8 +43,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+    let cancelled = false;
+
+    const boot = async () => {
+      const token = getAccessToken();
+      if (token && isAuthenticated()) {
+        try {
+          const response = await authApi.getMe();
+          if (!cancelled && response.data?.data) {
+            setUser(response.data.data);
+          }
+        } catch {
+          if (!cancelled) {
+            clearTokens();
+            setUser(null);
+          }
+        }
+      }
+      if (!cancelled) {
+        setIsLoading(false);
+      }
+    };
+
+    Promise.resolve().then(boot);
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const login = async (email: string, password: string) => {
     const response = await authApi.login(email, password);

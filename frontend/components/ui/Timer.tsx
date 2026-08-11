@@ -28,7 +28,7 @@ export function Timer({
   dangerThreshold = 10,
 }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
-  const [started, setStarted] = useState(autoStart);
+  const started = autoStart;
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const expiredRef = useRef(false);
 
@@ -38,15 +38,15 @@ export function Timer({
   const isPulse = timeLeft <= 60 && timeLeft > 0;
 
   const getColor = useCallback(() => {
-    if (isDanger) return '#ef4444';
-    if (isWarning) return '#f59e0b';
-    return '#7c3aed';
+    if (isDanger) return '#DC2626';
+    if (isWarning) return '#D97706';
+    return '#2563EB';
   }, [isDanger, isWarning]);
 
-  const getTextColor = useCallback(() => {
-    if (isDanger) return 'text-red-400';
-    if (isWarning) return 'text-yellow-400';
-    return 'text-slate-200';
+  const getTextClasses = useCallback(() => {
+    if (isDanger) return 'text-[#DC2626]';
+    if (isWarning) return 'text-[#D97706]';
+    return 'text-[#111827]';
   }, [isDanger, isWarning]);
 
   useEffect(() => {
@@ -94,7 +94,7 @@ export function Timer({
               cy={ring / 2}
               r={radius}
               fill="none"
-              stroke="rgba(30, 30, 58, 0.8)"
+              stroke="#E9EBF0"
               strokeWidth={strokeWidth}
             />
             {/* Progress ring */}
@@ -113,7 +113,7 @@ export function Timer({
           </svg>
         </motion.div>
         <div className="absolute flex flex-col items-center">
-          <span className={cn('font-bold tabular-nums', fontSize, getTextColor())}>
+          <span className={cn('font-bold tabular-nums', fontSize, getTextClasses())}>
             {formatTime(timeLeft)}
           </span>
         </div>
@@ -128,11 +128,10 @@ export function Timer({
         className={cn(
           'font-mono font-bold tabular-nums px-3 py-1.5 rounded-lg border',
           isDanger
-            ? 'text-red-400 bg-red-500/10 border-red-500/30'
+            ? 'text-[#DC2626] bg-[#FEF2F2] border-[#FECACA]'
             : isWarning
-            ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30'
-            : 'text-slate-200 bg-slate-800/50 border-slate-700/50',
-          isPulse && 'animate-pulse-glow',
+            ? 'text-[#D97706] bg-[#FFFBEB] border-[#FDE68A]'
+            : 'text-[#111827] bg-white border-[#E4E7EC] shadow-[0_1px_2px_rgba(17,24,39,0.04)]',
           fontSize,
           className
         )}

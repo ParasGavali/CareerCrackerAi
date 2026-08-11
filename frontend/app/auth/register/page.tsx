@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { buttonVariants } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import {
   Zap, Eye, EyeOff, Mail, Lock, User, Phone, GraduationCap,
@@ -429,7 +430,7 @@ export default function RegisterPage() {
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="btn-primary w-full py-3.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                className={buttonVariants({ variant: 'primary', size: 'lg', className: 'w-full' })}
                 whileHover={!isLoading ? { scale: 1.01 } : {}}
                 whileTap={!isLoading ? { scale: 0.99 } : {}}
               >

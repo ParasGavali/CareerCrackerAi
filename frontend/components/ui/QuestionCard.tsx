@@ -46,59 +46,59 @@ export function QuestionCard({
   const getOptionClasses = (state: string) => {
     switch (state) {
       case 'selected':
-        return 'border-purple-500/60 bg-purple-500/20 text-white';
+        return 'border-[#2563EB] bg-[#EFF6FF] text-[#111827]';
       case 'correct':
-        return 'border-emerald-500/60 bg-emerald-500/15 text-emerald-300';
+        return 'border-[#6EE7B7] bg-[#ECFDF5] text-[#111827]';
       case 'wrong':
-        return 'border-red-500/60 bg-red-500/15 text-red-300';
+        return 'border-[#FECACA] bg-[#FEF2F2] text-[#111827]';
       default:
-        return 'border-white/8 bg-slate-900/40 text-slate-300 hover:border-purple-500/40 hover:bg-purple-500/10';
+        return 'border-[#E4E7EC] bg-white text-[#111827] hover:border-[#BFDBFE] hover:bg-[#F8FAFF]';
     }
   };
 
   const getLabelClasses = (state: string) => {
     switch (state) {
       case 'selected':
-        return 'bg-purple-500 text-white';
+        return 'bg-[#2563EB] text-white';
       case 'correct':
-        return 'bg-emerald-500 text-white';
+        return 'bg-[#059669] text-white';
       case 'wrong':
-        return 'bg-red-500 text-white';
+        return 'bg-[#DC2626] text-white';
       default:
-        return 'bg-slate-800 text-slate-400 group-hover:bg-purple-500/30 group-hover:text-purple-300';
+        return 'bg-[#F3F4F6] text-[#6B7280] group-hover:bg-[#2563EB] group-hover:text-white';
     }
   };
 
   return (
-    <div className={cn('glass-card p-6 md:p-8', className)}>
+    <div className={cn('bg-white border border-[#E4E7EC] rounded-2xl p-6 md:p-8 shadow-[0_1px_3px_rgba(17,24,39,0.06),0_4px_14px_rgba(17,24,39,0.04)]', className)}>
       {/* Question header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <span className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">
             Question
           </span>
-          <span className="text-sm font-bold text-purple-400">
+          <span className="text-sm font-bold text-[#2563EB]">
             {questionNumber} / {totalQuestions}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <span className={cn(
-            'text-xs px-2.5 py-1 rounded-full font-medium border',
+            'text-xs px-2.5 py-1 rounded-full font-semibold border',
             question.difficulty === 'easy'
-              ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
+              ? 'text-[#065F46] bg-[#ECFDF5] border-[#A7F3D0]'
               : question.difficulty === 'medium'
-              ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30'
-              : 'text-red-400 bg-red-500/10 border-red-500/30'
+              ? 'text-[#92400E] bg-[#FFFBEB] border-[#FDE68A]'
+              : 'text-[#991B1B] bg-[#FEF2F2] border-[#FECACA]'
           )}>
             {question.difficulty}
           </span>
-          <span className="text-xs text-slate-500">{question.subcategory}</span>
+          <span className="text-xs text-[#9CA3AF]">{question.subcategory}</span>
         </div>
       </div>
 
       {/* Question text */}
       <div className="mb-8">
-        <p className="text-white text-base md:text-lg leading-relaxed font-medium">
+        <p className="text-[#111827] text-base md:text-lg leading-relaxed font-semibold">
           {question.questionText}
         </p>
       </div>
@@ -113,7 +113,7 @@ export function QuestionCard({
             <motion.button
               key={option.id}
               className={cn(
-                'group w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 text-left',
+                'group w-full flex items-center gap-4 p-4 rounded-xl border-[1.5px] transition-all duration-200 text-left',
                 'cursor-pointer relative overflow-hidden',
                 getOptionClasses(state),
                 disabled && 'cursor-default'
@@ -135,7 +135,7 @@ export function QuestionCard({
               </span>
 
               {/* Option text */}
-              <span className="flex-1 text-sm leading-relaxed">
+              <span className="flex-1 text-sm leading-relaxed font-medium">
                 {option.text}
               </span>
 
@@ -149,8 +149,8 @@ export function QuestionCard({
                     className="flex-shrink-0"
                   >
                     {state === 'correct'
-                      ? <CheckCircle size={20} className="text-emerald-400" />
-                      : <XCircle size={20} className="text-red-400" />
+                      ? <CheckCircle size={20} className="text-[#059669]" />
+                      : <XCircle size={20} className="text-[#DC2626]" />
                     }
                   </motion.div>
                 )}
@@ -159,7 +159,7 @@ export function QuestionCard({
               {/* Hover shimmer */}
               {isHovered && !showResult && !disabled && (
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/5 to-transparent"
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-[#2563EB]/5 to-transparent"
                   initial={{ x: '-100%' }}
                   animate={{ x: '100%' }}
                   transition={{ duration: 0.6 }}
@@ -178,12 +178,12 @@ export function QuestionCard({
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
-            className="mt-6 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20"
+            className="mt-6 p-4 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE]"
           >
-            <p className="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-2">
-              💡 Explanation
+            <p className="text-xs font-bold text-[#2563EB] uppercase tracking-wider mb-2">
+              Explanation
             </p>
-            <p className="text-slate-300 text-sm leading-relaxed">
+            <p className="text-[#374151] text-sm leading-relaxed">
               {question.explanation}
             </p>
           </motion.div>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { buttonVariants } from '@/components/ui/Button';
 import { cn, generateAvatar, getAvatarColor } from '@/lib/utils';
 import {
   Zap, Menu, X, Bell, ChevronDown, User, Trophy, LogOut,
@@ -27,6 +28,13 @@ export function Navbar() {
   const [mobileOpen,   setMobileOpen]   = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled,     setScrolled]     = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    setMobileOpen(false);
+    setUserMenuOpen(false);
+  }
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -36,12 +44,6 @@ export function Navbar() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  /* ── close on route change ── */
-  useEffect(() => {
-    setMobileOpen(false);
-    setUserMenuOpen(false);
-  }, [pathname]);
 
   /* ── close dropdown on outside click ── */
   useEffect(() => {
@@ -241,7 +243,7 @@ export function Navbar() {
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="btn-glow px-5 py-2 text-sm font-bold rounded-xl text-white"
+                  className={buttonVariants({ variant: 'primary', size: 'sm' })}
                 >
                   Get Started
                 </Link>

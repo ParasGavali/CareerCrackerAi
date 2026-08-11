@@ -11,23 +11,23 @@ interface DifficultyBadgeProps {
 const config = {
   easy: {
     label: 'Easy',
-    classes: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30',
-    dot: 'bg-emerald-400',
+    classes: 'bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]',
+    dot: 'bg-[#059669]',
   },
   medium: {
     label: 'Medium',
-    classes: 'bg-yellow-500/15 text-yellow-400 border border-yellow-500/30',
-    dot: 'bg-yellow-400',
+    classes: 'bg-[#FFFBEB] text-[#92400E] border border-[#FDE68A]',
+    dot: 'bg-[#D97706]',
   },
   hard: {
     label: 'Hard',
-    classes: 'bg-red-500/15 text-red-400 border border-red-500/30',
-    dot: 'bg-red-400',
+    classes: 'bg-[#FEF2F2] text-[#991B1B] border border-[#FECACA]',
+    dot: 'bg-[#DC2626]',
   },
   mixed: {
     label: 'Mixed',
-    classes: 'bg-purple-500/15 text-purple-400 border border-purple-500/30',
-    dot: 'bg-purple-400',
+    classes: 'bg-[#F5F3FF] text-[#6D28D9] border border-[#DDD6FE]',
+    dot: 'bg-[#7C3AED]',
   },
 };
 
@@ -41,8 +41,8 @@ export function DifficultyBadge({ difficulty, size = 'md', className }: Difficul
   const key = difficulty?.toLowerCase() as keyof typeof config;
   const cfg = config[key] || {
     label: difficulty,
-    classes: 'bg-slate-500/15 text-slate-400 border border-slate-500/30',
-    dot: 'bg-slate-400',
+    classes: 'bg-[#F9FAFB] text-[#374151] border border-[#E5E7EB]',
+    dot: 'bg-[#6B7280]',
   };
 
   return (
